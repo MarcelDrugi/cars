@@ -1,0 +1,57 @@
+#BACKEND
+
+backend/venv
+backend/cars/cars/.env
+backend/.idea/shelf/
+backend/.idea/*.iws
+backend/.idea/workspace.xml
+backend/.idea/tasks.xml
+
+
+#FRONTEND
+
+# compiled output
+frontend/cars/dist
+frontend/cars/tmp
+frontend/cars/out-tsc
+# Only exists if Bazel was run
+frontend/cars/bazel-out
+
+# dependencies
+frontend/cars/node_modules
+
+# profiling files
+frontend/cars/chrome-profiler-events*.json
+frontend/cars/speed-measure-plugin*.json
+
+# IDEs and editors
+frontend/cars/.idea
+frontend/cars/.project
+frontend/cars/.classpath
+frontend/cars/.c9/
+frontend/cars/*.launch
+frontend/cars/.settings/
+frontend/cars/*.sublime-workspace
+
+# IDE - VSCode
+frontend/cars/.vscode/*
+frontend/cars/!.vscode/settings.json
+frontend/cars/!.vscode/tasks.json
+frontend/cars/!.vscode/launch.json
+frontend/cars/!.vscode/extensions.json
+frontend/cars/.history/*
+
+# misc
+frontend/cars/.sass-cache
+frontend/cars/connect.lock
+frontend/cars/coverage
+frontend/cars/libpeerconnection.log
+frontend/cars/npm-debug.log
+frontend/cars/yarn-error.log
+frontend/cars/testem.log
+frontend/cars/typings
+
+# System Files
+frontend/cars/.DS_Store
+frontend/cars/Thumbs.db
+
