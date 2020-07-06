@@ -1,1 +1,14 @@
-Aplikacja cars działa!
+<h1>Witaj w aplikacji car-rental</h1>
+<div *ngIf="username">Jesteś zalogowany jako <b>{{username}}</b> <button (click)="logOut()">WYLOGUJ</button></div>
+<ul>
+  <li>
+      <a [routerLink]="['/signup']">rejestracja</a>
+  </li>
+  <li>
+      <a [routerLink]="['/signin']">logowanie</a>
+  </li>
+  <div class="outer-outlet">
+      <router-outlet></router-outlet>
+  </div>
+</ul>
+

@@ -1,0 +1,23 @@
+LOGOWANIE:
+<br>
+<br>
+<form [formGroup]="form" (ngSubmit)="validData()">
+  <div class="form-group">
+    <label>Nick</label>
+    <input type="text" formControlName="username" class="form-control" />
+    <div *ngIf="sent && form.controls.username.errors" class="regFormError">
+        <div *ngIf="form.controls.username.errors.required">Proszę wybrać swój nick.</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Hasło</label>
+    <input type="text" formControlName="password" class="form-control" />
+    <div *ngIf="sent && form.controls.password.errors" class="regFormError">
+      <div *ngIf="form.controls.password.errors.required">Proszę podać hasło.</div>
+      <div *ngIf="form.controls.password.errors.minlength">Zbyt krótkie hasło.</div>
+    </div>
+  </div>
+  <div *ngIf="sent && usernamePasswordError" class="regFormError">Podano błędne dane. Proszę spróbować ponownie</div>
+  <button>Zaloguj</button>
+</form>
+
