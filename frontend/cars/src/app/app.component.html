@@ -1,5 +1,7 @@
 <h1>Witaj w aplikacji car-rental</h1>
-<div *ngIf="username">Jesteś zalogowany jako <b>{{username}}</b> <button (click)="logOut()">WYLOGUJ</button></div>
+<div *ngIf="username">
+  <div class="username">Jesteś zalogowany jako <b>{{username}}</b> </div>
+  <button (click)="logOut()">WYLOGUJ</button></div>
 <ul>
   <li>
       <a [routerLink]="['/signup']">rejestracja</a>

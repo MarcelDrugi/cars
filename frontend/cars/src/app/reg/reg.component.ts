@@ -25,7 +25,7 @@ export class RegComponent implements OnInit {
     private router: Router
   ) { }
 
-  validData(): void {
+  public validData(): void {
     this.sent = true;
     this.takenUsernameError = false;
     this.unknownError = false;
@@ -33,7 +33,7 @@ export class RegComponent implements OnInit {
       this.regUser = {
         username: this.form.value.username,
         first_name: this.form.value.firstName,
-        last_name: this.form.value.firstName,
+        last_name: this.form.value.lastName,
         email: this.form.value.email,
         password: this.form.value.password
       };
@@ -41,7 +41,7 @@ export class RegComponent implements OnInit {
     }
   }
 
-  postRegData(): void {
+  private postRegData(): void {
     this.regService.postRegData(this.regUser).subscribe(
       (post: Register) => {
         console.log(post);
@@ -61,7 +61,7 @@ export class RegComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.form = this.formBuilder.group({
       username: ['', Validators.required],
       firstName: ['', Validators.required],

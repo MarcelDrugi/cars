@@ -7,12 +7,13 @@ import { RegComponent } from './reg/reg.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LogComponent } from './log/log.component';
 import {AccDataService} from './shared/services/acc-data.service';
+import {BackendInfoService} from './shared/services/backend-info.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     RegComponent,
-    LogComponent
+    LogComponent,
   ],
   imports: [
     BrowserModule,
@@ -25,7 +26,7 @@ import {AccDataService} from './shared/services/acc-data.service';
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [AccDataService],
+  providers: [AccDataService, BackendInfoService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

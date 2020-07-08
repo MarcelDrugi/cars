@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { LogService } from './services/log.service';
 import { AccDataService } from './shared/services/acc-data.service';
 
 @Component({
@@ -12,13 +11,13 @@ export class AppComponent implements OnInit {
   public login = false;
   public username: string;
 
-  constructor(private logService: LogService, private accDataService: AccDataService) { }
+  constructor(private accDataService: AccDataService) { }
 
   public logOut() {
     this.accDataService.token = null;
     this.accDataService.setUsername('');
   }
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.accDataService.getUsername().subscribe((username: string) => {
       this.username = username;
     });
