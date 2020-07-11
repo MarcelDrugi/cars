@@ -6,6 +6,7 @@ backend/.idea/shelf/
 backend/.idea/*.iws
 backend/.idea/workspace.xml
 backend/.idea/tasks.xml
+backend/cars/car_rental/__pycache__/
 
 
 #FRONTEND

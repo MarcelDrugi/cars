@@ -1,0 +1,26 @@
+from django.core.signals import request_started
+import requests
+from django.urls import reverse
+
+
+def before_request(sender, environ, **kwargs):
+    method = environ['REQUEST_METHOD']
+    if 'HTTP_AUTHORIZATION' in environ:
+        url = 'http://' + environ['HTTP_HOST'] + reverse('refresh_jwt_token')
+        current_token = environ['HTTP_AUTHORIZATION'][4:]
+        json_data = {
+            'token': current_token,
+        }
+        headers = {
+            'Content-Type': 'application/json',
+        }
+        ref_tok_response = requests.post(
+            url,
+            headers=headers,
+            json=json_data,
+        ).json()
+        if 'token' in ref_tok_response:
+            environ['new_token'] = ref_tok_response['token']
+
+
+request_started.connect(before_request)

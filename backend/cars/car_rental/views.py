@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.db import transaction
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 from rest_framework.generics import CreateAPIView
@@ -18,14 +18,15 @@ class SignUp(CreateAPIView):
         serialized = UserSerializer(data=request.data)
         if serialized.is_valid():
             try:
-                user = User.objects.create_user(
-                    first_name=serialized.initial_data['first_name'],
-                    last_name=serialized.initial_data['last_name'],
-                    email=serialized.initial_data['email'],
-                    username=serialized.initial_data['username'],
-                    password=serialized.initial_data['password'],
-                )
-                Clients.objects.create_client(user=user)
+                with transaction.atomic():
+                    user = User.objects.create_user(
+                        first_name=serialized.initial_data['first_name'],
+                        last_name=serialized.initial_data['last_name'],
+                        email=serialized.initial_data['email'],
+                        username=serialized.initial_data['username'],
+                        password=serialized.initial_data['password'],
+                    )
+                    Clients.objects.create_client(user=user)
                 return Response(
                     serialized.data,
                     status=status.HTTP_201_CREATED
@@ -55,7 +56,13 @@ class SignUp(CreateAPIView):
 
 class Test(APIView):
     def get(self, request, **kwargs):
+        refreshed_token = None
+        if 'new_token' in request.META:
+            refreshed_token = request.META['new_token']
         return Response(
-            {'odpowiedz': 'Udalo mi się wysłać odpowiedz'},
+            {
+                'odpowiedz': 'sukces',
+                'refreshed_token': refreshed_token
+            },
             status=status.HTTP_200_OK
         )

@@ -2,20 +2,7 @@ from django.db import models
 from django.core.validators import MinLengthValidator, MaxValueValidator, \
     MinValueValidator
 from django.contrib.auth.models import User
-from django.contrib.auth.models import Permission
-
-# MANAGER CUSTOMIZATION
-
-
-class ClientManager(models.Manager):
-    def create_client(self, user):
-        client = self.create(user=user)
-        client_perm = Permission.objects.get(name='clients_permission')
-        user.user_permissions.add(client_perm)
-        return client
-
-
-# MODELS
+from .managers import ClientManager
 
 
 class Discounts(models.Model):
@@ -26,6 +13,9 @@ class Discounts(models.Model):
         validators=[MaxValueValidator(0.1), MinValueValidator(0.99)],
     )
 
+    def __str__(self):
+        return 'discount nr: ' + str(self.discount_code)
+
 
 class Clients(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -33,7 +23,5 @@ class Clients(models.Model):
 
     objects = ClientManager()
 
-    class Meta:
-        permissions = (
-            ('client', 'clients_permission'),
-        )
+    def __str__(self):
+        return 'client: ' + self.user.username
