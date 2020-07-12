@@ -8,8 +8,8 @@ backend/.idea/workspace.xml
 backend/.idea/tasks.xml
 backend/cars/car_rental/__pycache__
 backend/cars/cars/__pycache__
+*/__pycache__
 **/__pycache__
-
 
 #FRONTEND
 
