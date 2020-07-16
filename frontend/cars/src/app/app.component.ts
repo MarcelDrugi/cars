@@ -14,12 +14,13 @@ export class AppComponent implements OnInit {
   constructor(private accDataService: AccDataService) { }
 
   public logOut() {
-    this.accDataService.token = null;
+    this.accDataService.setToken(null);
     this.accDataService.setUsername('');
   }
   public ngOnInit(): void {
     this.accDataService.getUsername().subscribe((username: string) => {
       this.username = username;
     });
+    console.log(this.accDataService.getToken())
   }
 }

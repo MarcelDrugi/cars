@@ -50,12 +50,12 @@ describe('AppComponent', () => {
 
   it('calling logOut() should set the token variable to null', () => {
     accDataService = TestBed.get(AccDataService);
-    accDataService.token = '123456789';
+    accDataService.setToken('123456789');
     spyOn(accDataService, 'setUsername');
 
     component.logOut();
 
-    expect(accDataService.token).toBe(null);
+    expect(accDataService.getToken()).toBe(null);
   });
 
   it('calling ngOnInit() should set the username such as return getUsername() in AccDataService', () => {

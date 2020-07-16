@@ -8,12 +8,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LogComponent } from './log/log.component';
 import {AccDataService} from './shared/services/acc-data.service';
 import {BackendInfoService} from './shared/services/backend-info.service';
+import { AddEditCarComponent } from './add-edit-car/add-edit-car.component';
+import { GetPublicDataService } from './services/get-public-data.service';
+import { AddSegmentComponent } from './add-segment/add-segment.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RegComponent,
     LogComponent,
+    AddEditCarComponent,
+    AddSegmentComponent,
   ],
   imports: [
     BrowserModule,
@@ -26,7 +31,7 @@ import {BackendInfoService} from './shared/services/backend-info.service';
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [AccDataService, BackendInfoService],
+  providers: [AccDataService, BackendInfoService, GetPublicDataService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

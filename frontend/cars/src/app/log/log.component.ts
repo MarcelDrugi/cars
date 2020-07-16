@@ -38,9 +38,8 @@ export class LogComponent implements OnInit {
 
   private postLogData() {
     this.logService.postLogData(this.logUser).subscribe(
-      (post: Token) => {
-        console.log(post);
-        this.accDataService.token = post.token;
+      (resp: Token) => {
+        this.accDataService.setToken(resp.token);
         this.accDataService.setUsername(this.logUser.username);
       },
       error => {

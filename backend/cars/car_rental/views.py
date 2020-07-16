@@ -1,20 +1,39 @@
+from django.core.files.storage import FileSystemStorage
 from django.db import transaction
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView
-from rest_framework.generics import CreateAPIView
+from django.shortcuts import get_object_or_404
+from rest_framework.generics import CreateAPIView, GenericAPIView
+from rest_framework.mixins import ListModelMixin, CreateModelMixin
+from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .models import Clients
-from .serializers import UserSerializer
+from .models import Clients, PriceLists, Segments, Cars
+from .serializers import UserSerializer, SegmentSerializer, \
+    CreateCarSerializer, CarSerializer
 
 
 class MainView(TemplateView):
     template_name = 'car_rental/index.html'
 
 
+class TokenRefresh(GenericAPIView):
+    """
+    Base class for all endpoints that refresh the authorization token.
+    Refreshing occurs in the signal 'request_started'. The token is passed
+    from the signal as request's metadata. The _get_new_token () function
+    extracts the refreshed token from the metadata and returns as a string.
+    """
+    def _take_new_token(self):
+        refreshed_token = None
+        if 'new_token' in self.request.META:
+            refreshed_token = self.request.META['new_token']
+        return refreshed_token
+
+
 class SignUp(CreateAPIView):
-    def post(self, request, **kwargs):
+    def create(self, request, **kwargs):
         serialized = UserSerializer(data=request.data)
         if serialized.is_valid():
             try:
@@ -65,4 +84,48 @@ class Test(APIView):
                 'refreshed_token': refreshed_token
             },
             status=status.HTTP_200_OK
+        )
+
+
+class CarsAPI(TokenRefresh, CreateModelMixin, ListModelMixin):
+    serializer_class = CarSerializer
+    queryset = Segments.objects.select_related().all()
+
+    def get(self, request, **kwargs):
+        response = self.list(request, **kwargs)
+        response.data.append(
+            {'token': self._take_new_token()}
+        )
+        return response
+
+    def post(self, request, **kwargs):
+        serialized = CreateCarSerializer(data=request.data)
+        if serialized.is_valid():
+            serialized.save()
+
+        return Response(
+            {'token': self._take_new_token()},
+            status=status.HTTP_201_CREATED
+        )
+
+
+class SegmentsAPI(TokenRefresh, ListModelMixin, CreateModelMixin):
+    serializer_class = SegmentSerializer
+    queryset = Segments.objects.select_related().all()
+
+    def get(self, request, **kwargs):
+        response = self.list(request, **kwargs)
+        response.data.append(
+            {'token': self._take_new_token()}
+        )
+        return response
+
+    def post(self, request, **kwargs):
+        serialized = SegmentSerializer(data=request.data)
+        if serialized.is_valid():
+            serialized.save()
+
+        return Response(
+            {'token': self._take_new_token()},
+            status=status.HTTP_201_CREATED
         )
