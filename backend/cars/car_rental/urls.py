@@ -9,5 +9,11 @@ urlpatterns = [
     path('signup', views.SignUp.as_view(), name='sign_up'),
     path('test', views.Test.as_view(), name='test'),
     path('cars', views.CarsAPI.as_view(), name='cars'),
+    path('delcar/<int:pk>', views.DeleteCarAPI.as_view(), name='del_car'),
     path('segments', views.SegmentsAPI.as_view(), name='segments'),
+    path(
+        'delsegment/<int:pk>',
+        views.DeleteSegmentAPI.as_view(),
+        name='del_segment'
+    ),
 ]

@@ -10,28 +10,28 @@
   <br>
   <div class="columns">
     <div class="column is-6">
-      <h4 class="title is-4"> WPROWADŹ ISTNIEJĄCY SAMOCHÓD</h4>
-      <form [formGroup]="form" (ngSubmit)="validData()">
+      <h4 class="title is-4"> WPROWADŹ NOWY SAMOCHÓD SAMOCHÓD</h4>
+      <form [formGroup]="addCarForm" (ngSubmit)="validData('create')">
         <div class="form-group">
           <label>Marka: </label>
           <input type="text" formControlName="brand" class="form-control" />
-          <div *ngIf="sent && form.controls.brand.errors" class="regFormError">
-              <div *ngIf="form.controls.brans.errors.required">Proszę podać markę</div>
+          <div *ngIf="sent && addCarForm.controls.brand.errors" class="regFormError">
+              <div *ngIf="addCarForm.controls.brand.errors.required">Proszę podać markę</div>
           </div>
         </div>
         <div class="form-group">
           <label>Model: </label>
           <input type="text" formControlName="model" class="form-control" />
-          <div *ngIf="sent && form.controls.model.errors" class="regFormError">
-              <div *ngIf="form.controls.model.errors.required">Proszę podać nazwę modelu.</div>
+          <div *ngIf="sent && addCarForm.controls.model.errors" class="regFormError">
+              <div *ngIf="addCarForm.controls.model.errors.required">Proszę podać nazwę modelu.</div>
           </div>
         </div>
         <div class="form-group">
           <label>Nr rejestracyjny: </label>
-          <input type="text" formControlName="regNumber" class="form-control" />
-          <div *ngIf="sent && form.controls.regNumber.errors" class="regFormError">
-              <div *ngIf="form.controls.regNumber.errors.required">Proszę podać nr rejestracyjny</div>
-              <div *ngIf="form.controls.regNumber.errors.minlength || form.controls.regNumber.errors.maxlength">Niepoprawny format nr rejestracyjnego</div>
+          <input type="text" formControlName="reg_number" class="form-control" />
+          <div *ngIf="sent && addCarForm.controls.reg_number.errors" class="regFormError">
+              <div *ngIf="addCarForm.controls.reg_number.errors.required">Proszę podać nr rejestracyjny</div>
+              <div *ngIf="addCarForm.controls.reg_number.errors.minlength || addCarForm.controls.reg_number.errors.maxlength">Niepoprawny format nr rejestracyjnego</div>
           </div>
         </div>
         <div class="form-group">
@@ -42,13 +42,13 @@
               {{segment.name}}
             </option>
           </select>
-          <div *ngIf="sent && form.controls.segment.errors" class="regFormError">
-              <div *ngIf="form.controls.segment.errors.required">Proszę wybrać segment</div>
+          <div *ngIf="sent && addCarForm.controls.segment.errors" class="regFormError">
+              <div *ngIf="addCarForm.controls.segment.errors.required">Proszę wybrać segment</div>
           </div>
         </div>
         <div class="form-group">
-          <label>Zdjęcie: </label>
-          <input type="file" (change)="validImg($event.target.files)" formControlName="img" class="form-control" />
+          <label> <img [hidden]="!createImgSrc" src={{createImgSrc}} width="80" height="80"> Zdjęcie: </label>
+          <input type="file" (change)="validImg($event, 'create')" formControlName="img" class="form-control" />
           <div *ngIf="sizeError" class="regFormError">
             Zbyt duży plik. Maksymalny rozmiar to: {{maxSize/1000}}KB
           </div>
@@ -60,13 +60,80 @@
         <button>Stwórz auto</button>
       </form>
 
-      <div *ngIf="confirmation">
+      <div *ngIf="createConfirmation">
         STWORZONO SAMOCHÓD!
       </div>
     </div>
     <div class="column is-6">
       <h4 class="title is-4"> ZMODYFIKUJ/USUŃ ISTNIEJĄCY SAMOCHÓD</h4>
-      <!-- <button (click)="getCars()">POBIERZ SAMOCHODY</button> -->
+      <form>
+        <div class="form-group">
+          <label>Samochód: </label>
+          <select (change)="carSelection($event)">
+            <option value="" disabled [defaultSelected]=true>wybierz samochód</option>
+            <option *ngFor="let car of cars" [value]="car.reg_number">
+              {{car.brand}} {{car.model}} {{car.reg_number}}
+            </option>
+          </select>
+        </div>
+      </form>
+      <div *ngIf="editCar">
+        <form [formGroup]="existingCarForm" (ngSubmit)="validData('update')">
+          <div class="form-group">
+            <label>Marka: </label>
+            <input type="text" formControlName="brand" class="form-control" />
+            <div *ngIf="editionSent && existingCarForm.controls.brand.errors" class="regFormError">
+                <div *ngIf="existingCarForm.controls.brand.errors.required">Proszę podać markę</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Model: </label>
+            <input type="text" formControlName="model" class="form-control" />
+            <div *ngIf="editionSent && existingCarForm.controls.model.errors" class="regFormError">
+                <div *ngIf="existingCarForm.controls.model.errors.required">Proszę podać nazwę modelu.</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Nr rejestracyjny: </label>
+            <input type="text" formControlName="reg_number" class="form-control" />
+            <div *ngIf="editionSent && existingCarForm.controls.reg_number.errors" class="regFormError">
+                <div *ngIf="existingCarForm.controls.reg_number.errors.required">Proszę podać nr rejestracyjny</div>
+                <div *ngIf="existingCarForm.controls.reg_number.errors.minlength || existingCarForm.controls.reg_number.errors.maxlength">Niepoprawny format nr rejestracyjnego</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Segment: </label>
+            <select (change)="addSegment($event.target.value)">
+              <option value="selectedCar.segment['id']" [defaultSelected]=true>{{selectedCar.segment['name']}}</option>
+              <option *ngFor="let segment of segments" [value]="segment.id">
+                {{segment.name}}
+              </option>
+            </select>
+            <div *ngIf="editionSent && existingCarForm.controls.segment.errors" class="regFormError">
+                <div *ngIf="existingCarForm.controls.segment.errors.required">Proszę wybrać segment</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label ><img [hidden]="!changeImgSrc" src={{changeImgSrc}} width="80" height="80"> Zmień zdjęcie</label>
+            <input type="file" (change)="validImg($event, 'change')" formControlName="img" class="form-control" />
+            <div *ngIf="sizeError" class="regFormError">
+              Zbyt duży plik. Maksymalny rozmiar to: {{maxSize/1000}}KB
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Opis pojazdu: </label>
+            <input type="text" formControlName="description" class="form-control" />
+          </div>
+          <button>Zmień auto</button>
+        </form>
+        <button (click)="deleteCar()">USUŃ SAMOCHÓD</button>
+        <div *ngIf="updateConfirmation">
+          ZMIENIONO DANE SAMOCHODU!
+        </div>
+        <div *ngIf="delConfirmation">
+          USUNIĘTO SAMOCHÓD
+        </div>
+      </div>
     </div>
   </div>
 </section>

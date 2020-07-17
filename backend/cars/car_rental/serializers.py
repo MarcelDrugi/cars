@@ -34,6 +34,26 @@ class SegmentSerializer(serializers.ModelSerializer):
         )
         return segment
 
+    def update(self, instance, validated_data):
+        print('instancja', instance)
+        print(validated_data['pricing'])
+        pricing = get_object_or_404(
+            PriceLists,
+            id=int(validated_data['pricing']['id'])
+        )
+        print(pricing)
+        '''
+        pricing['hour'] = validated_data['pricing']['hour']
+        pricing['day'] = validated_data['pricing']['day']
+        pricing['week'] = validated_data['pricing']['week']
+        pricing.save()
+
+        instance.name = validated_data['name']
+        instance.pricing = pricing;
+        instance.save()
+        '''
+        return instance
+
     class Meta:
         model = Segments
         fields = ['id', 'name', 'pricing']
@@ -48,11 +68,12 @@ class CarSerializer(serializers.ModelSerializer):
 
 
 class CreateCarSerializer(serializers.Serializer):
+    id = serializers.CharField(required=False, max_length=9)
     brand = serializers.CharField(required=True, max_length=64)
     model = serializers.CharField(required=True, max_length=32)
-    regNumber = serializers.CharField(required=True, max_length=8)
-    img = serializers.FileField(required=False,)
-    description = serializers.CharField(max_length=2048, required=False)
+    reg_number = serializers.CharField(required=True, max_length=8)
+    img = serializers.FileField(required=False)
+    description = serializers.CharField(required=False, max_length=2048)
     segment = serializers.CharField(max_length=8)
 
     def create(self, validated_data):
@@ -65,9 +86,20 @@ class CreateCarSerializer(serializers.Serializer):
         car = Cars.objects.create(
             brand=validated_data['brand'],
             model=validated_data['model'],
-            reg_number=validated_data['regNumber'],
+            reg_number=validated_data['reg_number'],
             segment=segment,
             img=validated_data['img'],
             description=validated_data['description']
         )
         return car
+
+    def update(self, instance, validated_data):
+        segment = Segments.objects.get(id=int(validated_data['segment']))
+        instance.segment = segment
+        del validated_data['segment']
+        for field in validated_data.items():
+            setattr(instance, field[0], field[1])
+        instance.save()
+        return instance
+
+

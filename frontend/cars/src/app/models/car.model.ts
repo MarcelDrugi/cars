@@ -1,7 +1,8 @@
 export class Car {
+  id: number;
   brand: string;
   model: string;
-  regNumber: string;
+  reg_number: string;
   segment: number;
   img: File;
   description: string;

@@ -26,7 +26,7 @@ export class GetPublicDataService {
     };
     return this.http.get<any>(url, httpOptions);
   }
-  /*
+
   public getCars(): Observable<Array<Car>> {
     const url = this.backendInfoService.absolutePath + 'cars';
     const headers = new HttpHeaders({
@@ -37,5 +37,5 @@ export class GetPublicDataService {
     };
     return this.http.get<Array<Car>>(url, httpOptions);
   }
-  */
+
 }

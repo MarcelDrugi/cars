@@ -43,7 +43,7 @@ class Segments(models.Model):
         PriceLists,
         on_delete=models.CASCADE,
         blank=True,
-        null=True
+        null=True,
     )
 
 

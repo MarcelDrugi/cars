@@ -4,8 +4,10 @@ from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import CreateAPIView, GenericAPIView
-from rest_framework.mixins import ListModelMixin, CreateModelMixin
+from rest_framework.mixins import ListModelMixin, CreateModelMixin, \
+    UpdateModelMixin, DestroyModelMixin
 from rest_framework.parsers import FileUploadParser
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -87,9 +89,9 @@ class Test(APIView):
         )
 
 
-class CarsAPI(TokenRefresh, CreateModelMixin, ListModelMixin):
+class CarsAPI(TokenRefresh, CreateModelMixin, ListModelMixin, UpdateModelMixin):
     serializer_class = CarSerializer
-    queryset = Segments.objects.select_related().all()
+    queryset = Cars.objects.select_related().all()
 
     def get(self, request, **kwargs):
         response = self.list(request, **kwargs)
@@ -99,14 +101,57 @@ class CarsAPI(TokenRefresh, CreateModelMixin, ListModelMixin):
         return response
 
     def post(self, request, **kwargs):
+        print(request.data)
         serialized = CreateCarSerializer(data=request.data)
         if serialized.is_valid():
             serialized.save()
+            return Response(
+                {'token': self._take_new_token()},
+                status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(
+                {'token': self._take_new_token()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        return Response(
-            {'token': self._take_new_token()},
-            status=status.HTTP_201_CREATED
-        )
+    def put(self, request, *args, **kwargs):
+        try:
+            instance = Cars.objects.get(id=int(request.data['id']))
+        except Cars.DoesNotExist:
+            return Response(
+                {'token': self._take_new_token()},
+                status=status.HTTP_204_NO_CONTENT
+            )
+
+        serialized = CreateCarSerializer(instance=instance, data=request.data)
+        if serialized.is_valid():
+            serialized.save()
+            return Response(
+                {'token': self._take_new_token()},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'token': self._take_new_token()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class DeleteCarAPI(TokenRefresh, DestroyModelMixin):
+    def delete(self, request, pk):
+        try:
+            car_to_del = Cars.objects.get(pk=pk)
+            car_to_del.delete()
+            return Response(
+                {'token': self._take_new_token()},
+                status=status.HTTP_202_ACCEPTED
+            )
+        except (Cars.DoesNotExist, AttributeError) as exc:
+            return Response(
+                {'token': self._take_new_token()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class SegmentsAPI(TokenRefresh, ListModelMixin, CreateModelMixin):
@@ -125,7 +170,35 @@ class SegmentsAPI(TokenRefresh, ListModelMixin, CreateModelMixin):
         if serialized.is_valid():
             serialized.save()
 
-        return Response(
-            {'token': self._take_new_token()},
-            status=status.HTTP_201_CREATED
-        )
+            return Response(
+                {'token': self._take_new_token()},
+                status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(
+                {'token': self._take_new_token()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class DeleteSegmentAPI(TokenRefresh, DestroyModelMixin, UpdateModelMixin):
+    queryset = Segments.objects.select_related().all()
+    serializer_class = SegmentSerializer
+
+    def delete(self, request, pk):
+        try:
+            segment_to_del = Segments.objects.get(pk=pk)
+            segment_to_del.delete()
+            return Response(
+                {'token': self._take_new_token()},
+                status=status.HTTP_202_ACCEPTED
+            )
+        except (Segments.DoesNotExist, AttributeError) as exc:
+            return Response(
+                {'token': self._take_new_token()},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def put(self, request, *args, **kwargs):
+        print(request.data['pricing'])
+        return self.update(request, *args, **kwargs)

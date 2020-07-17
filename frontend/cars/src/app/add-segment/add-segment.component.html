@@ -1,44 +1,98 @@
-<div class="tabs is-centered">
-  <ul>
-    <li><a [routerLink]="['/addcar']">Dodaj auto</a></li>
-    <li class="is-active"><a [routerLink]="['/addsegment']">Stwórz nowy segment z cennikiem</a></li>
-  </ul>
-</div>
-<h3>Stwórz segment aut</h3>
-<form [formGroup]="form" (ngSubmit)="validData()">
-  <div class="form-group">
-    <label>name: </label>
-    <input type="text" formControlName="name" class="form-control" />
-    <div *ngIf="sent && form.controls.name.errors" class="regFormError">
-        <div *ngIf="form.controls.name.errors.required">Proszę podać nazwę segmentu</div>
+<section class="section">
+  <div class="tabs is-centered">
+    <ul>
+      <li><a [routerLink]="['/addcar']">Dodaj auto</a></li>
+      <li class="is-active"><a [routerLink]="['/addsegment']">Stwórz nowy segment z cennikiem</a></li>
+    </ul>
+  </div>
+  <div class="columns">
+    <div class="column is-6">
+      <h4 class="title is 4">Stwórz segment aut</h4>
+      <form [formGroup]="segmentForm" (ngSubmit)="validData('create')">
+        <div class="form-group">
+          <label>name: </label>
+          <input type="text" formControlName="name" class="form-control" />
+          <div *ngIf="sent && segmentForm.controls.name.errors" class="regFormError">
+              <div *ngIf="segmentForm.controls.name.errors.required">Proszę podać nazwę segmentu</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Stawka godzinowa (PLN): </label>
+          <input type="text" formControlName="hour" class="form-control" />
+          <div *ngIf="sent && segmentForm.controls.hour.errors" class="regFormError">
+              <div *ngIf="segmentForm.controls.hour.errors.required">Stawka godzinowa jest wymagana</div>
+              <div *ngIf="segmentForm.controls.hour.errors.pattern">Stawka w formacie: 45.20 </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Stawka dzienna (PLN): </label>
+          <input type="text" formControlName="day" class="form-control" />
+          <div *ngIf="sent && segmentForm.controls.day.errors" class="regFormError">
+              <div *ngIf="segmentForm.controls.day.errors.required">Stawka dzienna jest wymagana</div>
+              <div *ngIf="segmentForm.controls.day.errors.pattern">Stawka w formacie: 105.30 </div>    </div>
+        </div>
+        <div class="form-group">
+          <label>Stawka tygodniowa (PLN): </label>
+          <input type="text" formControlName="week" class="form-control" />
+          <div *ngIf="sent && segmentForm.controls.week.errors" class="regFormError">
+            <div *ngIf="segmentForm.controls.week.errors.required">Stawka tygodniowa jest wymagana</div>
+            <div *ngIf="segmentForm.controls.week.errors.pattern">Stawka w formacie: 290.00 </div>
+          </div>
+        </div>
+        <button>Stwórz segment</button>
+      </form>
+      <div *ngIf="confirmation">
+        STWORZONO SEGMENT!
+      </div>
+    </div>
+    <div class="column is-6">
+      <h4 class="title is 4">Edytuj istniejący segment</h4>
+      <form>
+        <div class="form-group">
+          <label>Samochód: </label>
+          <select (change)="segmentSelection($event)">
+            <option value="" disabled [defaultSelected]=true>wybierz segment</option>
+            <option *ngFor="let segment of segments" [value]="segment.id">
+              {{segment.name}}
+            </option>
+          </select>
+        </div>
+      </form>
+      <div *ngIf="editSegment">
+        <form [formGroup]="existingSegmentForm" (ngSubmit)="validData('update')">
+          <div class="form-group">
+            <label>name: </label>
+            <input type="text" formControlName="name" class="form-control" />
+            <div *ngIf="editionSent && existingSegmentForm.controls.name.errors" class="regFormError">
+                <div *ngIf="existingSegmentForm.controls.name.errors.required">Proszę podać nazwę segmentu</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Stawka godzinowa (PLN): </label>
+            <input type="text" formControlName="hour" class="form-control" />
+            <div *ngIf="editionSent && existingSegmentForm.controls.hour.errors" class="regFormError">
+                <div *ngIf="existingSegmentForm.controls.hour.errors.required">Stawka godzinowa jest wymagana</div>
+                <div *ngIf="existingSegmentForm.controls.hour.errors.pattern">Stawka w formacie: 45.20 </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Stawka dzienna (PLN): </label>
+            <input type="text" formControlName="day" class="form-control" />
+            <div *ngIf="editionSent && existingSegmentForm.controls.day.errors" class="regFormError">
+                <div *ngIf="existingSegmentForm.controls.day.errors.required">Stawka dzienna jest wymagana</div>
+                <div *ngIf="existingSegmentForm.controls.day.errors.pattern">Stawka w formacie: 105.30 </div>    </div>
+          </div>
+          <div class="form-group">
+            <label>Stawka tygodniowa (PLN): </label>
+            <input type="text" formControlName="week" class="form-control" />
+            <div *ngIf="editionSent && existingSegmentForm.controls.week.errors" class="regFormError">
+              <div *ngIf="existingSegmentForm.controls.week.errors.required">Stawka tygodniowa jest wymagana</div>
+              <div *ngIf="existingSegmentForm.controls.week.errors.pattern">Stawka w formacie: 290.00 </div>
+            </div>
+          </div>
+          <button>Zatwierdź edycję segmentu</button>
+        </form>
+      </div>
     </div>
   </div>
-  <div class="form-group">
-    <label>Stawka godzinowa (PLN): </label>
-    <input type="text" formControlName="hour" class="form-control" />
-    <div *ngIf="sent && form.controls.hour.errors" class="regFormError">
-        <div *ngIf="form.controls.hour.errors.required">Stawka godzinowa jest wymagana</div>
-        <div *ngIf="form.controls.hour.errors.pattern">Stawka w formacie: 45,20 </div>
-    </div>
-  </div>
-  <div class="form-group">
-    <label>Stawka dzienna (PLN): </label>
-    <input type="text" formControlName="day" class="form-control" />
-    <div *ngIf="sent && form.controls.day.errors" class="regFormError">
-        <div *ngIf="form.controls.day.errors.required">Stawka dzienna jest wymagana</div>
-        <div *ngIf="form.controls.day.errors.pattern">Stawka w formacie: 105,30 </div>    </div>
-  </div>
-  <div class="form-group">
-    <label>Stawka tygodniowa (PLN): </label>
-    <input type="text" formControlName="week" class="form-control" />
-    <div *ngIf="sent && form.controls.week.errors" class="regFormError">
-      <div *ngIf="form.controls.week.errors.required">Stawka tygodniowa jest wymagana</div>
-      <div *ngIf="form.controls.week.errors.pattern">Stawka w formacie: 290,00 </div>
-    </div>
-  </div>
-  <button>Stwórz segment</button>
-</form>
-
-<div *ngIf="confirmation">
-  STWORZONO SEGMENT!
-</div>
+</section>
