@@ -21,8 +21,10 @@ export class AddSegmentComponent implements OnInit {
 
   public sent = false;
   public editionSent = false;
-  public confirmation = false;
   public editSegment = false;
+  public createConfirmation = false;
+  public delConfirmation = false;
+  public updateConfirmation = false;
 
   constructor(
     private addEditCarService: AddEditCarService,
@@ -47,7 +49,6 @@ export class AddSegmentComponent implements OnInit {
     const pricingData = new Pricing();
 
     if (data.valid) {
-      pricingData.id = this.selectedSegment.pricing.id;
       pricingData.hour = data.value.hour;
       pricingData.day = data.value.day;
       pricingData.week = data.value.week;
@@ -60,6 +61,7 @@ export class AddSegmentComponent implements OnInit {
       }
       else {
         segmentData.id = this.selectedSegment.id;
+        segmentData.pricing.id = this.selectedSegment.pricing.id;
         this.updateSegment(segmentData);
       }
     }
@@ -70,7 +72,7 @@ export class AddSegmentComponent implements OnInit {
       (resp: Token) => {
         this.accDataService.setToken(resp.token);
         if (resp.token !== '') {
-          this.confirmation = true;
+          this.createConfirmation = true;
           this.segmentForm.reset();
           this.sent = false;
         }
@@ -80,6 +82,9 @@ export class AddSegmentComponent implements OnInit {
         if (error.statusText === 'Unauthorized' && error.status === 401) {
           this.accDataService.setToken('');
         }
+      },
+      () => {
+        this.getSegments();
       }
     );
   }
@@ -89,7 +94,7 @@ export class AddSegmentComponent implements OnInit {
       (resp: Token) => {
         this.accDataService.setToken(resp.token);
         if (resp.token !== '') {
-          this.confirmation = true;
+          this.updateConfirmation = true;
           this.existingSegmentForm.reset();
           this.editionSent = false;
         }
@@ -99,6 +104,9 @@ export class AddSegmentComponent implements OnInit {
         if (error.statusText === 'Unauthorized' && error.status === 401) {
           this.accDataService.setToken('');
         }
+      },
+      () => {
+        this.getSegments();
       }
     );
   }
@@ -114,6 +122,9 @@ export class AddSegmentComponent implements OnInit {
         if (error.statusText === 'Unauthorized' && error.status === 401) {
           this.accDataService.setToken('');
         }
+      },
+      () => {
+
       }
     );
   }
@@ -127,7 +138,6 @@ export class AddSegmentComponent implements OnInit {
         }
       }
     );
-    console.log(this.selectedSegment)
 
     this.existingSegmentForm = this.formBuilder.group({
       name: [this.selectedSegment.name, Validators.required],
@@ -135,7 +145,26 @@ export class AddSegmentComponent implements OnInit {
       day: [this.selectedSegment.pricing.day, [Validators.pattern('[0-9]{1,4}\.[0-9]{2}'), Validators.required]],
       week: [this.selectedSegment.pricing.week, [Validators.pattern('[0-9]{1,5}\.[0-9]{2}'), Validators.required]],
     });
-    //this.addSegment(this.selectedCar.segment['id'])
+  }
+
+  public deleteSegment(): void {
+    this.createConfirmation = false;
+    this.updateConfirmation = false;
+
+    this.addEditCarService.deleteSegment(this.selectedSegment.id).subscribe(
+      (token: Token) => {
+        this.accDataService.setToken(token.token);
+        this.existingSegmentForm.reset();
+        this.delConfirmation = true;
+        this.segments = this.segments.filter((segment: Segment) => segment.id !== this.selectedSegment.id);
+      },
+      error => {
+        console.log(error);
+        if (error.statusText === 'Unauthorized' && error.status === 401) {
+          this.accDataService.setToken('');
+        }
+      }
+    );
   }
 
   ngOnInit(): void {

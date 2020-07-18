@@ -41,7 +41,7 @@
         </div>
         <button>Stwórz segment</button>
       </form>
-      <div *ngIf="confirmation">
+      <div *ngIf="createConfirmation">
         STWORZONO SEGMENT!
       </div>
     </div>
@@ -49,13 +49,15 @@
       <h4 class="title is 4">Edytuj istniejący segment</h4>
       <form>
         <div class="form-group">
-          <label>Samochód: </label>
-          <select (change)="segmentSelection($event)">
-            <option value="" disabled [defaultSelected]=true>wybierz segment</option>
-            <option *ngFor="let segment of segments" [value]="segment.id">
-              {{segment.name}}
-            </option>
-          </select>
+          <form>
+            <label>Segmenty: </label>
+            <select (change)="segmentSelection($event)">
+              <option value="0" disabled [defaultSelected]=true>wybierz segment</option>
+              <option *ngFor="let segment of segments" [value]="segment.id">
+                {{segment.name}}
+              </option>
+            </select>
+          </form>
         </div>
       </form>
       <div *ngIf="editSegment">
@@ -92,6 +94,13 @@
           </div>
           <button>Zatwierdź edycję segmentu</button>
         </form>
+        <button (click)="deleteSegment()">USUŃ TEN SEGMENT</button>
+        <div *ngIf="updateConfirmation">
+          ZMIENIONO SEGMENT!
+        </div>
+        <div *ngIf="delConfirmation">
+          USUNIĘTO SEGMENT
+        </div>
       </div>
     </div>
   </div>

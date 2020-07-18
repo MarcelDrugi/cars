@@ -39,7 +39,7 @@ export class AddEditCarComponent implements OnInit {
   public editCar = false;
 
   // validation form data
-  private imgValidator = false;
+  private imgValidator = true;
   public maxSize = 4096000;
 
   constructor(
@@ -50,7 +50,6 @@ export class AddEditCarComponent implements OnInit {
   ) { }
 
   private postCar(carData: FormData): void {
-    console.log(carData)
     this.addEditCarService.postCar(carData).subscribe(
       (resp: Token) => {
         this.accDataService.setToken(resp.token);
@@ -68,6 +67,9 @@ export class AddEditCarComponent implements OnInit {
         if (error.statusText === 'Unauthorized' && error.status === 401) {
           this.accDataService.setToken('');
         }
+      },
+      () => {
+        this.getCars();
       }
     );
   }
@@ -104,14 +106,15 @@ export class AddEditCarComponent implements OnInit {
       carData.append('img', this.img);
       carData.append('segment', this.segment.toString());
 
+      if (!this.img) {
+        carData.append('img', '');
+      }
+
       if (kind === 'create') {
         this.postCar(carData);
       }
       else {
         carData.append('id', this.selectedCar.id.toString());
-        if (!this.img) {
-          carData.append('img', '');
-        }
         this.updateCar(carData);
       }
     }
@@ -122,6 +125,7 @@ export class AddEditCarComponent implements OnInit {
     this.imgValidator = false;
     this.sizeError = false;
     this.typeError = false;
+    console.log('WSZEDŁEM !!!!!!!!!')
 
     if (img instanceof FileList) {
       this.img = img.item(0);
@@ -154,7 +158,6 @@ export class AddEditCarComponent implements OnInit {
 
   public addSegment(nb: number): void {
     this.segment = nb;
-    console.log('nadaje segment', this.segment)
   }
 
   private getSegments(): void {
@@ -176,7 +179,6 @@ export class AddEditCarComponent implements OnInit {
     this.getPublicDataService.getCars().subscribe(
       (cars: Array<Car>) => {
         this.cars = cars;
-        console.log(cars);
       },
       error => {
         console.log(error);
@@ -189,15 +191,17 @@ export class AddEditCarComponent implements OnInit {
 
   public carSelection(car): void {
     this.editCar = true;
+    this.changeImgSrc = null;
     this.cars.forEach(
       (iteratedCar: Car) => {
         if (iteratedCar.reg_number === car.target.value) {
           this.selectedCar = iteratedCar;
         }
-      }
+      },
     );
-
-    this.changeImgSrc = '' + this.selectedCar.img;
+    if (this.selectedCar.img) {
+      this.changeImgSrc = '' + this.selectedCar.img;
+    }
     this.existingCarForm = this.formBuilder.group({
       brand: [this.selectedCar.brand, Validators.required],
       model: [this.selectedCar.model, Validators.required],
@@ -210,7 +214,6 @@ export class AddEditCarComponent implements OnInit {
   }
 
   private updateCar(carData: FormData): void {
-    console.log(carData)
     this.addEditCarService.updateCar(carData).subscribe(
       (resp: Token) => {
         this.accDataService.setToken(resp.token);
@@ -228,6 +231,9 @@ export class AddEditCarComponent implements OnInit {
         if (error.statusText === 'Unauthorized' && error.status === 401) {
           this.accDataService.setToken('');
         }
+      },
+      () => {
+        this.getCars();
       }
     );
   }

@@ -12,8 +12,8 @@ urlpatterns = [
     path('delcar/<int:pk>', views.DeleteCarAPI.as_view(), name='del_car'),
     path('segments', views.SegmentsAPI.as_view(), name='segments'),
     path(
-        'delsegment/<int:pk>',
-        views.DeleteSegmentAPI.as_view(),
+        'putdelsegment/<int:pk>',
+        views.PutDeleteSegmentAPI.as_view(),
         name='del_segment'
     ),
 ]

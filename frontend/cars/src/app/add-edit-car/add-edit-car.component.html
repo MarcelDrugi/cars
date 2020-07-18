@@ -114,7 +114,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label ><img [hidden]="!changeImgSrc" src={{changeImgSrc}} width="80" height="80"> Zmień zdjęcie</label>
+            <label ><img [hidden]="!changeImgSrc" src={{changeImgSrc}} width="80" height="80">Zmień zdjęcie</label>
             <input type="file" (change)="validImg($event, 'change')" formControlName="img" class="form-control" />
             <div *ngIf="sizeError" class="regFormError">
               Zbyt duży plik. Maksymalny rozmiar to: {{maxSize/1000}}KB

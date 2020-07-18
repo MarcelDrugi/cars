@@ -1,10 +1,24 @@
+from django.db import transaction
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from .models import Segments, Cars, PriceLists
+from .models import Segments, Cars, PriceLists, Clients
 
 
 class UserSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        with transaction.atomic():
+            user = User.objects.create_user(
+                first_name=validated_data['first_name'],
+                last_name=validated_data['last_name'],
+                email=validated_data['email'],
+                username=validated_data['username'],
+                password=validated_data['password'],
+            )
+            Clients.objects.create_client(user=user)
+
+        return user
 
     class Meta:
         model = User
@@ -12,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PriceListSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
 
     class Meta:
         model = PriceLists
@@ -35,23 +50,20 @@ class SegmentSerializer(serializers.ModelSerializer):
         return segment
 
     def update(self, instance, validated_data):
-        print('instancja', instance)
-        print(validated_data['pricing'])
         pricing = get_object_or_404(
             PriceLists,
             id=int(validated_data['pricing']['id'])
         )
-        print(pricing)
-        '''
-        pricing['hour'] = validated_data['pricing']['hour']
-        pricing['day'] = validated_data['pricing']['day']
-        pricing['week'] = validated_data['pricing']['week']
+
+        pricing.hour = validated_data['pricing']['hour']
+        pricing.day = validated_data['pricing']['day']
+        pricing.week = validated_data['pricing']['week']
         pricing.save()
 
         instance.name = validated_data['name']
-        instance.pricing = pricing;
+        instance.pricing = pricing
         instance.save()
-        '''
+
         return instance
 
     class Meta:
@@ -83,6 +95,8 @@ class CreateCarSerializer(serializers.Serializer):
         )
         if 'description' not in validated_data:
             validated_data['description'] = ''
+        if 'img' not in validated_data:
+            validated_data['img'] = ''
         car = Cars.objects.create(
             brand=validated_data['brand'],
             model=validated_data['model'],

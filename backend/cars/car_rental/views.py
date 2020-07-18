@@ -39,15 +39,7 @@ class SignUp(CreateAPIView):
         serialized = UserSerializer(data=request.data)
         if serialized.is_valid():
             try:
-                with transaction.atomic():
-                    user = User.objects.create_user(
-                        first_name=serialized.initial_data['first_name'],
-                        last_name=serialized.initial_data['last_name'],
-                        email=serialized.initial_data['email'],
-                        username=serialized.initial_data['username'],
-                        password=serialized.initial_data['password'],
-                    )
-                    Clients.objects.create_client(user=user)
+                serialized.save()
                 return Response(
                     serialized.data,
                     status=status.HTTP_201_CREATED
@@ -89,7 +81,7 @@ class Test(APIView):
         )
 
 
-class CarsAPI(TokenRefresh, CreateModelMixin, ListModelMixin, UpdateModelMixin):
+class CarsAPI(TokenRefresh, ListModelMixin):
     serializer_class = CarSerializer
     queryset = Cars.objects.select_related().all()
 
@@ -154,7 +146,7 @@ class DeleteCarAPI(TokenRefresh, DestroyModelMixin):
             )
 
 
-class SegmentsAPI(TokenRefresh, ListModelMixin, CreateModelMixin):
+class SegmentsAPI(TokenRefresh, ListModelMixin):
     serializer_class = SegmentSerializer
     queryset = Segments.objects.select_related().all()
 
@@ -175,30 +167,23 @@ class SegmentsAPI(TokenRefresh, ListModelMixin, CreateModelMixin):
                 status=status.HTTP_201_CREATED
             )
         else:
+            print(serialized.validated_data)
             return Response(
                 {'token': self._take_new_token()},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
 
-class DeleteSegmentAPI(TokenRefresh, DestroyModelMixin, UpdateModelMixin):
+class PutDeleteSegmentAPI(TokenRefresh, DestroyModelMixin, UpdateModelMixin):
     queryset = Segments.objects.select_related().all()
     serializer_class = SegmentSerializer
 
-    def delete(self, request, pk):
-        try:
-            segment_to_del = Segments.objects.get(pk=pk)
-            segment_to_del.delete()
-            return Response(
-                {'token': self._take_new_token()},
-                status=status.HTTP_202_ACCEPTED
-            )
-        except (Segments.DoesNotExist, AttributeError) as exc:
-            return Response(
-                {'token': self._take_new_token()},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+    def delete(self, request, *args, **kwargs):
+        response = self.destroy(request, *args, **kwargs)
+        response['token'] = self._take_new_token()
+        return response
 
     def put(self, request, *args, **kwargs):
-        print(request.data['pricing'])
-        return self.update(request, *args, **kwargs)
+        response = self.update(request, *args, **kwargs)
+        response.data['token'] = self._take_new_token()
+        return response

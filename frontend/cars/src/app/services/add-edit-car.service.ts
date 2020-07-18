@@ -65,7 +65,7 @@ export class AddEditCarService {
 
   public updateSegment(segmentData: Segment): Observable<Token> {
     console.log('ID: ', segmentData.id)
-    const url = this.backendInfoService.absolutePath + 'delsegment/' + segmentData.id;
+    const url = this.backendInfoService.absolutePath + 'putdelsegment/' + segmentData.id;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: 'JWT ' + this.accDataService.getToken()
@@ -74,5 +74,16 @@ export class AddEditCarService {
       headers,
     };
     return this.http.put<Token>(url, segmentData, httpOptions);
+  }
+
+  public deleteSegment(deletedSegment: number): Observable<Token> {
+    const url = this.backendInfoService.absolutePath + 'putdelsegment/' + deletedSegment;
+    const headers = new HttpHeaders({
+      Authorization: 'JWT ' + this.accDataService.getToken()
+    });
+    const httpOptions = {
+      headers,
+    };
+    return this.http.delete<Token>(url, httpOptions);
   }
 }
