@@ -179,9 +179,11 @@ class PutDeleteSegmentAPI(TokenRefresh, DestroyModelMixin, UpdateModelMixin):
     serializer_class = SegmentSerializer
 
     def delete(self, request, *args, **kwargs):
-        response = self.destroy(request, *args, **kwargs)
-        response['token'] = self._take_new_token()
-        return response
+        self.destroy(request, *args, **kwargs)
+        return Response(
+            {'token': self._take_new_token()},
+            status=status.HTTP_202_ACCEPTED
+        )
 
     def put(self, request, *args, **kwargs):
         response = self.update(request, *args, **kwargs)

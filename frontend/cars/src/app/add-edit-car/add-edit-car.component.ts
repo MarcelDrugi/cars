@@ -15,11 +15,12 @@ import { Token } from '../models/token.model';
 })
 export class AddEditCarComponent implements OnInit {
 
-  // data containers
-  public segments: Array<Segment>;
+  // forms
   public addCarForm: FormGroup;
   public existingCarForm: FormGroup;
 
+  // data containers
+  public segments: Array<Segment>;
   private uploadedData: Car;
   private img: File;
   private segment: number;
@@ -78,7 +79,6 @@ export class AddEditCarComponent implements OnInit {
     this.createConfirmation = false;
     this.updateConfirmation = false;
     this.delConfirmation = false;
-
     if (kind === 'create') {
       this.sent = true;
     }
@@ -90,7 +90,8 @@ export class AddEditCarComponent implements OnInit {
       this.editionSent = true;
     }
 
-    if ((this.addCarForm.valid  || this.existingCarForm.valid) && this.imgValidator) {
+    if ((this.addCarForm.valid  && kind === 'create' && this.imgValidator)
+    || (this.existingCarForm.valid && kind === 'update' && this.imgValidator)) {
       const carData = new FormData();
       if (kind === 'create') {
         this.uploadedData = this.addCarForm.getRawValue();
@@ -125,7 +126,6 @@ export class AddEditCarComponent implements OnInit {
     this.imgValidator = false;
     this.sizeError = false;
     this.typeError = false;
-    console.log('WSZEDŁEM !!!!!!!!!')
 
     if (img instanceof FileList) {
       this.img = img.item(0);
@@ -268,7 +268,7 @@ export class AddEditCarComponent implements OnInit {
       img: ['', ],
       description: ['', [Validators.maxLength(2048)]]
     });
-
+    this.existingCarForm = this.formBuilder.group({ model: ['', Validators.required], })
     this.getSegments();
     this.getCars();
   }
