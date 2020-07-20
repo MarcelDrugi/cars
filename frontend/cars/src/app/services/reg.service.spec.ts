@@ -34,22 +34,26 @@ describe('RegService', () => {
     };
   });
 
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+
   it('request should be POST with suitable merge url', () => {
     service.postRegData(regData).subscribe();
 
     const url = backendInfoService.absolutePath + 'signup';
     const req = httpMock.expectOne(url);
     expect(req.request.method).toEqual('POST');
-    req.flush(regData);
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  it('request should be contain regData', () => {
+    service.postRegData(regData).subscribe((resp: Register) => {
+      expect(resp).toEqual(regData);
+    }
+    );
+
+    const url = backendInfoService.absolutePath + 'signup';
+    httpMock.expectOne(url).flush(regData);
   });
 
-  it('should return registerd user data after correct registration', () => {
-    service.postRegData(regData).subscribe((returnedData) => {
-      expect(returnedData).toEqual(regData);
-    });
-  });
 });
