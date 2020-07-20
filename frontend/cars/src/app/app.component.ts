@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   constructor(private accDataService: AccDataService) { }
 
   public logOut() {
-    this.accDataService.setToken(null);
+    this.accDataService.setToken('');
     this.accDataService.setUsername('');
   }
   public ngOnInit(): void {

@@ -99,12 +99,6 @@ describe('AddEditCarComponent', () => {
     component.addCarForm.controls.img.setValue('');
     component.addCarForm.controls.description.setValue('example description');
 
-    // validators
-    component.addCarForm.controls.brand.setValidators([Validators.required]);
-    component.addCarForm.controls.model.setValidators([Validators.required]);
-    component.addCarForm.controls.reg_number.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(8)]);
-    component.addCarForm.controls.description.setValidators([Validators.maxLength(2048)]);
-
     component['segment'] = 12;
     component['img'] = new File([], 'someFile.png', { type: 'image/png' });
     component['imgValidator'] = true;
@@ -126,7 +120,7 @@ describe('AddEditCarComponent', () => {
     expect(component.addCarForm.value.description).toEqual('');
   });
 
-  it('Correct addCarForm validation should clear addCarForm', () => {
+  it('Calling validData with correct addCarForm should clear addCarForm', () => {
     prepareAddCarForm();
     component.validData('create');
 
@@ -138,7 +132,7 @@ describe('AddEditCarComponent', () => {
     expect(component.addCarForm.value.description).toBeNull();
   });
 
-  it('Correct existingCarForm validation should clear addCarForm', () => {
+  it('Calling validData with correct existingCarForm should clear addCarForm', () => {
     prepareEditCarForm();
     component.validData('update');
 
@@ -150,7 +144,7 @@ describe('AddEditCarComponent', () => {
     expect(component.existingCarForm.value.description).toBeNull();
   });
 
-  it('Correct addCarForm: segment, img, createImgSrc switches should be null', () => {
+  it('Calling validData with correct addCarForm: segment, img, createImgSrc switches should be null', () => {
     prepareAddCarForm();
     component.validData('create');
 
@@ -160,7 +154,7 @@ describe('AddEditCarComponent', () => {
 
   });
 
-  it('Correct existingCarForm: changeImgSrc switches should be null (img is not in the form)', () => {
+  it('Calling validData with correct existingCarForm: changeImgSrc switches should be null (when img is not in the form)', () => {
     prepareEditCarForm();
     component.validData('update');
 
@@ -168,21 +162,20 @@ describe('AddEditCarComponent', () => {
 
   });
 
-  it('Correct addCarForm: createConfirmation switch should be True', () => {
+  it('Calling validData with correct addCarForm: createConfirmation switch should be True', () => {
     prepareAddCarForm();
     component.validData('create');
 
     expect(component.createConfirmation).toBeTrue();
   });
 
-  it('Correct existingCarForm: updateConfirmation switch should be True', () => {
+  it('Calling validData with correct existingCarForm: updateConfirmation switch should be True', () => {
     prepareEditCarForm();
     component.validData('update');
-    console.log('!!!  ', component.existingCarForm.value.img)
     expect(component.updateConfirmation).toBeTrue();
   });
 
-  it(' Incorrect addCarForm : sent should be true', () => {
+  it('Calling validData with incorrect addCarForm : sent should be true', () => {
     prepareAddCarForm();
     component.addCarForm.controls.reg_number.setValue('abc'); // too short reg_number (should be 6-8)
     component.validData('create');
@@ -190,7 +183,7 @@ describe('AddEditCarComponent', () => {
     expect(component.sent).toBeTrue();
   });
 
-  it(' Incorrect existingCarForm : editionSent should be true', () => {
+  it('Calling validData with incorrect existingCarForm : editionSent should be true', () => {
     prepareEditCarForm();
     component.existingCarForm.controls.reg_number.setValue('abcdefghijkl'); // too long reg_number (should be 6-8)
     component.validData('update');

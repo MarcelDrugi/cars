@@ -14,11 +14,15 @@ import { GetPublicDataService } from '../services/get-public-data.service';
 })
 export class AddSegmentComponent implements OnInit {
 
+  // forms
   public segmentForm: FormGroup;
   public existingSegmentForm: FormGroup;
+
+  // data containers
   public segments: Array<Segment>;
   public selectedSegment: Segment;
 
+  // boolean switches
   public sent = false;
   public editionSent = false;
   public editSegment = false;

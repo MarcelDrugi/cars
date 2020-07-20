@@ -55,7 +55,7 @@ describe('AppComponent', () => {
 
     component.logOut();
 
-    expect(accDataService.getToken()).toBe(null);
+    expect(accDataService.getToken()).toBe('');
   });
 
   it('calling ngOnInit() should set the username such as return getUsername() in AccDataService', () => {
