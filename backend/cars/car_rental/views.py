@@ -49,7 +49,7 @@ class SignUp(CreateAPIView):
                     serialized.errors,
                     status=status.HTTP_507_INSUFFICIENT_STORAGE
                 )
-            except:
+            except Exception as exc:
                 return Response(
                     serialized.errors,
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -67,20 +67,6 @@ class SignUp(CreateAPIView):
                 )
 
 
-class Test(APIView):
-    def get(self, request, **kwargs):
-        refreshed_token = None
-        if 'new_token' in request.META:
-            refreshed_token = request.META['new_token']
-        return Response(
-            {
-                'odpowiedz': 'sukces',
-                'refreshed_token': refreshed_token
-            },
-            status=status.HTTP_200_OK
-        )
-
-
 class CarsAPI(TokenRefresh, ListModelMixin):
     serializer_class = CarSerializer
     queryset = Cars.objects.select_related().all()
@@ -93,7 +79,6 @@ class CarsAPI(TokenRefresh, ListModelMixin):
         return response
 
     def post(self, request, **kwargs):
-        print(request.data)
         serialized = CreateCarSerializer(data=request.data)
         if serialized.is_valid():
             serialized.save()
@@ -167,7 +152,6 @@ class SegmentsAPI(TokenRefresh, ListModelMixin):
                 status=status.HTTP_201_CREATED
             )
         else:
-            print(serialized.validated_data)
             return Response(
                 {'token': self._take_new_token()},
                 status=status.HTTP_400_BAD_REQUEST
