@@ -13,11 +13,18 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class RegComponent implements OnInit {
 
-  public regUser: Register;
   public form: FormGroup;
+  public avatar: string;
+  private clientData: FormData;
+  private img: File;
   public sent = false;
   public takenUsernameError = false;
   public unknownError = false;
+  public typeError = false;
+  public sizeError = false;
+  private imgValidator = true;
+
+  public maxSize = 4096000;
 
   constructor(
     private regService: RegService,
@@ -29,20 +36,22 @@ export class RegComponent implements OnInit {
     this.sent = true;
     this.takenUsernameError = false;
     this.unknownError = false;
-    if (this.form.valid) {
-      this.regUser = {
-        username: this.form.value.username,
-        first_name: this.form.value.firstName,
-        last_name: this.form.value.lastName,
-        email: this.form.value.email,
-        password: this.form.value.password
-      };
+    if (this.form.valid && this.imgValidator) {
+      this.clientData = new FormData();
+
+      this.clientData.append('username', this.form.value.username);
+      this.clientData.append('email', this.form.value.email);
+      this.clientData.append('first_name', this.form.value.firstName);
+      this.clientData.append('last_name', this.form.value.lastName);
+      this.clientData.append('avatar', this.img);
+      this.clientData.append('password', this.form.value.password);
+
       this.postRegData();
     }
   }
 
   private postRegData(): void {
-    this.regService.postRegData(this.regUser).subscribe(
+    this.regService.postRegData(this.clientData).subscribe(
       (post: Register) => {
         console.log(post);
         this.router.navigateByUrl('signin');
@@ -61,13 +70,43 @@ export class RegComponent implements OnInit {
     );
   }
 
+  public validImg(img: Event): void {
+
+    this.imgValidator = false;
+    this.sizeError = false;
+    this.typeError = false;
+
+
+    const reader = new FileReader();
+    reader.readAsDataURL(img.target['files'][0]);
+
+    reader.onload = (event) => {
+      this.avatar = '' + event.target.result;
+    };
+
+    this.img = img.target['files'].item(0);
+    console.log('img: ', this.img)
+
+
+    if (this.img.size > this.maxSize) {
+      this.sizeError = true;
+    }
+    else if (!['image/png', 'image/jpg', 'image/jpeg', 'image/gif'].includes(this.img.type)) {
+      this.typeError = true;
+    }
+    else {
+      this.imgValidator = true;
+    }
+  }
+
   public ngOnInit(): void {
     this.form = this.formBuilder.group({
       username: ['', Validators.required],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      img: ['', ]
     });
   }
 

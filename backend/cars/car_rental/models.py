@@ -20,6 +20,7 @@ class Discounts(models.Model):
 class Clients(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     discount = models.ManyToManyField(Discounts)
+    avatar = models.FileField()
 
     objects = ClientManager()
 

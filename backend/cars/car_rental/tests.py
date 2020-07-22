@@ -20,37 +20,50 @@ class SignUpTestCase(APITestCase):
     Test of API-view used for user registration.
     """
     # correct request
-    def test_ok_request(self):
+    def test_correct_request(self):
         reg_data = {
             'first_name': 'Jan',
             'last_name': 'Kowalski',
             'email': 'jan@kowalski.pl',
             'username': 'some_username',
             'password': 'some_password',
+            'avatar': 'undefined'
         }
 
         response = self.client.post(reverse('car_rental:sign_up'), reg_data)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data['first_name'], reg_data['first_name'])
-        self.assertEqual(response.data['last_name'], reg_data['last_name'])
-        self.assertEqual(response.data['username'], reg_data['username'])
-        self.assertEqual(response.data['email'], reg_data['email'])
+        self.assertEqual(
+            response.data['user']['first_name'],
+            reg_data['first_name']
+        )
+        self.assertEqual(
+            response.data['user']['last_name'],
+            reg_data['last_name']
+        )
+        self.assertEqual(
+            response.data['user']['username'],
+            reg_data['username']
+        )
+        self.assertEqual(response.data['user']['email'], reg_data['email'])
 
     # incorrect request
-    def test_not_ok_request(self):
+    def test_incorrect_request(self):
         reg_data = {
             'first_name': 'Jan',
             'last_name': 'Kowalski',
             'email': 'jan@kowalski,pl',  # invalid email format
             'username': 'some_username',
             'password': 'some_password',
+            'avatar': 'undefined'
         }
 
         response = self.client.post(reverse('car_rental:sign_up'), reg_data)
+        print(response.data)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
-            response.data['email'][0],
-            ErrorDetail(string='Enter a valid email address.', code='invalid'))
+            response.data['user']['email'][0],
+            ErrorDetail(string='Enter a valid email address.', code='invalid')
+        )
 
 
 class MainTestCase(TestCase):
@@ -210,7 +223,7 @@ class DeleteCarAPITestCase(APITestCase):
             'id': 33,
             'brand': 'some brand',
             'model': 'some model',
-            'reg_number': 'abcd123',
+            'reg_number': 'reg1234',
             'segment': self.segment,
             'description': 'description of the example car',
         }
@@ -562,7 +575,7 @@ class ClientManagerTestCase(TestCase):
         )
 
     def test_client_manager(self):
-        client = Clients.objects.create_client(user=self.user)
+        client = Clients.objects.create_client(user=self.user, avatar=None)
         self.assertIsInstance(client, Clients)
         self.assertEqual(self.user, client.user)
         self.assertTrue(client.user.has_perm('car_rental.client'))

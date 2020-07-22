@@ -14,9 +14,9 @@ export class RegService {
     private backendInfoService: BackendInfoService,
     ) { }
 
-  postRegData(regUser: Register): Observable<Register> {
+  postRegData(clientData: FormData): Observable<Register> {
     const url = this.backendInfoService.absolutePath + 'signup';
 
-    return this.http.post<Register>(url, regUser);
+    return this.http.post<Register>(url, clientData);
   }
 }

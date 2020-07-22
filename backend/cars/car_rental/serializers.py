@@ -7,22 +7,33 @@ from .models import Segments, Cars, PriceLists, Clients
 
 class UserSerializer(serializers.ModelSerializer):
 
-    def create(self, validated_data):
-        with transaction.atomic():
-            user = User.objects.create_user(
-                first_name=validated_data['first_name'],
-                last_name=validated_data['last_name'],
-                email=validated_data['email'],
-                username=validated_data['username'],
-                password=validated_data['password'],
-            )
-            Clients.objects.create_client(user=user)
-
-        return user
-
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'password']
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False)
+    avatar = serializers.FileField(required=False)
+
+    def create(self, validated_data):
+        avatar = None
+        if 'avatar' in validated_data:
+            avatar = validated_data['avatar']
+
+        with transaction.atomic():
+            user = User.objects.create_user(**validated_data['user'])
+
+            client = Clients.objects.create_client(
+                user=user,
+                avatar=avatar
+            )
+
+        return client
+
+    class Meta:
+        model = Clients
+        fields = ['user', 'avatar']
 
 
 class PriceListSerializer(serializers.ModelSerializer):

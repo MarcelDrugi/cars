@@ -40,6 +40,7 @@ describe('RegComponent', () => {
     component.form.controls.lastName.setValue('Kowalski');
     component.form.controls.email.setValue('jankowalski@somedomain.ll');
     component.form.controls.password.setValue('somePass');
+    component.form.controls.img.setValue('');
 
     spyOn<any>(component, 'postRegData');
     component.validData();
@@ -56,15 +57,21 @@ describe('RegComponent', () => {
     expect(component.form.value.username).toEqual('');
     expect(component.form.value.password).toEqual('');
     expect(component.form.value.email).toEqual('');
+    expect(component.form.value.img).toEqual('');
   });
 
-  it('if form is correct, after calling validData() regUser fields should be equal form', () => {
+  it('if form is correct, after calling validData() clientData fields should be equal form', () => {
     prepareAndValidRegForm();
-    expect(component.form.value.firstName).toEqual(component.regUser.first_name);
-    expect(component.form.value.lastName).toEqual(component.regUser.last_name);
-    expect(component.form.value.username).toEqual(component.regUser.username);
-    expect(component.form.value.password).toEqual(component.regUser.password);
-    expect(component.form.value.email).toEqual(component.regUser.email);
+    expect(component.form.value.firstName).toEqual(component['clientData'].get('first_name'));
+    expect(component.form.value.lastName).toEqual(component['clientData'].get('last_name'));
+    expect(component.form.value.username).toEqual(component['clientData'].get('username'));
+    expect(component.form.value.password).toEqual(component['clientData'].get('password'));
+    expect(component.form.value.email).toEqual(component['clientData'].get('email'));
+  });
+
+  it('avatar field in clientData should be undefined when empty field in form', () => {
+    prepareAndValidRegForm();
+    expect(component['clientData'].get('avatar')).toEqual('undefined');
   });
 
   it('calling validData() function should change "sent" boolean switch on true', () => {

@@ -179,5 +179,5 @@ DEFAULT_FILE_STORAGE = 'aws_settings.storage_backend.MediaStorage'
 
 
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
+MEDIA_URL = 'https://%s/' % AWS_S3_CUSTOM_DOMAIN
 MEDIA_ROOT = os.path.join(BASE_DIR, 'car_rental/media')

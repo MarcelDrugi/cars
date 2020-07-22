@@ -41,6 +41,13 @@ Podaj dane:
       <div *ngIf="form.controls.password.errors.minlength">Hasło musi mieć min. 6 znaków.</div>
     </div>
   </div>
+  <div class="form-group">
+    <label> <img [hidden]="!avatar" src={{avatar}} width="80" height="80"> Dodaj avatar: </label>
+    <input type="file" (change)="validImg($event)" formControlName="img" class="form-control" />
+    <div *ngIf="sizeError" class="regFormError">
+      Zbyt duży plik. Maksymalny rozmiar to: {{maxSize/1000}}KB
+    </div>
+  </div>
   <button>Stwórz konto</button>
 </form>
 <div *ngIf="sent && unknownError" class="regFormError">Wystąpił nieznany błąd. Prosimy spróbować ponownie.</div>

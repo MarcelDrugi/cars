@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from .models import Clients, PriceLists, Segments, Cars
 from .serializers import UserSerializer, SegmentSerializer, \
-    CreateCarSerializer, CarSerializer
+    CreateCarSerializer, CarSerializer, ClientSerializer
 
 
 class MainView(TemplateView):
@@ -36,7 +36,14 @@ class TokenRefresh(GenericAPIView):
 
 class SignUp(CreateAPIView):
     def create(self, request, **kwargs):
-        serialized = UserSerializer(data=request.data)
+        avatar = request.data['avatar']
+        if avatar == 'undefined':
+            data = {'user': request.data}
+        else:
+            data = {'user': request.data, 'avatar': avatar}
+
+        serialized = ClientSerializer(data=data)
+
         if serialized.is_valid():
             try:
                 serialized.save()
@@ -55,12 +62,14 @@ class SignUp(CreateAPIView):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
         else:
+            print('NIEPOWODZENIE')
             if User.objects.filter(username=request.data['username']).exists():
                 return Response(
                     serialized.errors,
                     status=status.HTTP_409_CONFLICT
                 )
             else:
+                print(serialized.validated_data)
                 return Response(
                     serialized.errors,
                     status=status.HTTP_400_BAD_REQUEST
