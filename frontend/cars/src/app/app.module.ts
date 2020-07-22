@@ -11,6 +11,12 @@ import {BackendInfoService} from './shared/services/backend-info.service';
 import { AddEditCarComponent } from './add-edit-car/add-edit-car.component';
 import { GetPublicDataService } from './services/get-public-data.service';
 import { AddSegmentComponent } from './add-segment/add-segment.component';
+import { HomepageComponent } from './homepage/homepage.component';
+import { FleetComponent } from './fleet/fleet.component';
+import { AboutComponent } from './about/about.component';
+import { LocationComponent } from './location/location.component';
+import { RulesComponent } from './rules/rules.component';
+import { CarDetailsComponent } from './car-details/car-details.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +25,12 @@ import { AddSegmentComponent } from './add-segment/add-segment.component';
     LogComponent,
     AddEditCarComponent,
     AddSegmentComponent,
+    HomepageComponent,
+    FleetComponent,
+    AboutComponent,
+    LocationComponent,
+    RulesComponent,
+    CarDetailsComponent,
   ],
   imports: [
     BrowserModule,
