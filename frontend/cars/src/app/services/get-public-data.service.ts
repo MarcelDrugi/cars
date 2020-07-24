@@ -18,9 +18,16 @@ export class GetPublicDataService {
 
   public getSegment(): Observable<any> {
     const url = this.backendInfoService.absolutePath + 'segments';
-    const headers = new HttpHeaders({
-      Authorization: 'JWT ' + this.accDataService.getToken()
-    });
+    const token = this.accDataService.getToken();
+    let headers: HttpHeaders;
+    if (token !== 'null') {
+      headers = new HttpHeaders({
+        Authorization: 'JWT ' + token
+      });
+    }
+    else {
+      headers = new HttpHeaders({ });
+    }
     const httpOptions = {
       headers,
     };
@@ -29,9 +36,16 @@ export class GetPublicDataService {
 
   public getCars(): Observable<Array<Car>> {
     const url = this.backendInfoService.absolutePath + 'cars';
-    const headers = new HttpHeaders({
-      Authorization: 'JWT ' + this.accDataService.getToken()
-    });
+    const token = this.accDataService.getToken();
+    let headers: HttpHeaders;
+    if (token !== 'null') {
+      headers = new HttpHeaders({
+        Authorization: 'JWT ' + token
+      });
+    }
+    else {
+      headers = new HttpHeaders({ });
+    }
     const httpOptions = {
       headers,
     };

@@ -15,4 +15,5 @@ urlpatterns = [
         views.PutDeleteSegmentAPI.as_view(),
         name='put_del_segment'
     ),
+    path('reservation', views.ReservationAPI.as_view(), name='reservation'),
 ]

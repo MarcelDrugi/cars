@@ -4,9 +4,9 @@ from django.urls import reverse
 
 
 def before_request(sender, environ, **kwargs):
-    method = environ['REQUEST_METHOD']
     if 'HTTP_AUTHORIZATION' in environ:
-        url = 'http://' + environ['HTTP_HOST'] + reverse('refresh_jwt_token')
+        url = environ['wsgi.url_scheme'] + '://' + environ['HTTP_HOST'] + \
+              reverse('refresh_jwt_token')
         current_token = environ['HTTP_AUTHORIZATION'][4:]
         json_data = {
             'token': current_token,

@@ -69,6 +69,7 @@ JWT_AUTH = {
 # Application definition
 
 INSTALLED_APPS = [
+    'drf_yasg',
     'corsheaders',
     'rest_framework',
     'car_rental.apps.CarRentalConfig',

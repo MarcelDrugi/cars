@@ -1,4 +1,5 @@
 import os
+import environ
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.auth.models import Permission
@@ -7,7 +8,9 @@ from .permissions import RightsSupport
 
 
 class ClientManager(models.Manager):
-    empty_avatar = 'media/no-avatar.png'  # default-img location in AWS bucket
+    env = environ.Env()
+    env.read_env('../cars/.env')
+    empty_avatar = env('EMPTY_AVATAR')  # default-img location in AWS bucket
 
     def create_client(self, user, avatar):
         if avatar is None:

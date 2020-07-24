@@ -1,0 +1,45 @@
+@bulma-primary: hsl(171, 100%, 41%);
+@bulma-text: hsl(0, 0%, 21%);
+
+/deep/.calendar-footer-validate {
+  visibility: hidden;
+}
+
+/deep/.calendar-footer-validate:before {
+  content: 'ZATWIERDŹ';
+  visibility: visible;
+  text-align: center;
+  color: @bulma-text;
+  background-color: @bulma-primary;
+  padding: 4px;
+  border-radius: 0.3vw;
+}
+
+/deep/.calendar-footer-clear {
+  visibility: hidden;
+}
+
+/deep/.calendar-footer-clear:before {
+  content: 'WYCZYŚĆ';
+  visibility: visible;
+  text-align: center;
+  color: @bulma-text;
+  background-color: @bulma-primary;
+  padding: 4px;
+  border-radius: 0.3vw;
+}
+
+
+/deep/.calendar-footer-cancel {
+  visibility: hidden;
+}
+
+/deep/.calendar-footer-cancel:before {
+  content: 'ANULUJ';
+  visibility: visible;
+  text-align: center;
+  color: @bulma-text;
+  background-color: @bulma-primary;
+  padding: 4px;
+  border-radius: 0.3vw;
+}
