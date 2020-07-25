@@ -1,8 +1,12 @@
+import datetime
+
 from django.db import transaction
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from .models import Segments, Cars, PriceLists, Clients
+from rest_framework.exceptions import ValidationError
+
+from .models import Segments, Cars, PriceLists, Clients, Reservations
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -127,4 +131,49 @@ class CreateCarSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+
+class CheckReservationSerializer(serializers.Serializer):
+    begin = serializers.CharField(max_length=10)
+    end = serializers.CharField(max_length=10)
+    segment = serializers.IntegerField()
+
+    def validate_begin(self, data):
+        try:
+            begin = datetime.datetime.strptime(data, "%d.%m.%Y").date()
+        except ValueError:
+            raise ValidationError('Incorrect begin date format')
+        return begin
+
+    def validate_end(self, data):
+        try:
+            end = datetime.datetime.strptime(data, "%d.%m.%Y").date()
+        except ValueError:
+            raise ValidationError('Incorrect end date format')
+        return end
+
+    def validate_segment(self, data):
+        try:
+            segment = Segments.objects.get(id=data)
+        except Segments.DoesNotExist:
+            raise ValidationError('Incorrect Segments object id')
+        return segment
+
+    def create(self, validated_data):
+        cars = Cars.objects.select_related().filter(
+            segment=validated_data['segment']
+        )
+        for car in cars:
+            try:
+                reservation = Reservations.objects.create(
+                    begin=validated_data['begin'],
+                    end=validated_data['end'],
+                    car=car
+                )
+                return reservation
+            except ValidationError:
+                pass
+        raise ValidationError('no free car')
+
+    def update(self, instance, validated_data):
+        pass
 

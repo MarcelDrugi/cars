@@ -10,18 +10,22 @@ from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import authentication_classes, \
     permission_classes
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, \
     UpdateModelMixin, DestroyModelMixin
 from rest_framework.parsers import FileUploadParser
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, \
+    IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status, permissions
+from django.core import serializers
 from .models import Clients, PriceLists, Segments, Cars, Reservations
 from .serializers import UserSerializer, SegmentSerializer, \
-    CreateCarSerializer, CarSerializer, ClientSerializer
+    CreateCarSerializer, CarSerializer, ClientSerializer, \
+    CheckReservationSerializer
 
 
 class MainView(TemplateView):
@@ -47,6 +51,8 @@ class SignUp(CreateAPIView):
     Handles :model:`car_rental.Client` and the assigned :model:`auth.User`.
     Contains only one request: POST.
     """
+    permission_classes = ()
+
     def create(self, request, **kwargs):
         print(request.data)
         avatar = request.data['avatar']
@@ -91,8 +97,7 @@ class CarsAPI(TokenRefresh, ListModelMixin):
     """
     Handles :model:`car_rental:Cars` for GET/POST/PUT requests.
     """
-    permission_classes = (IsAuthenticatedOrReadOnly, )
-    authentication_classes = ()
+
     serializer_class = CarSerializer
     queryset = Cars.objects.select_related().all()
 
@@ -104,6 +109,8 @@ class CarsAPI(TokenRefresh, ListModelMixin):
         return response
 
     def post(self, request, **kwargs):
+        print('cars auth : ', self.authentication_classes)
+        print('cars perm : ', self.permission_classes)
         serialized = CreateCarSerializer(data=request.data)
         if serialized.is_valid():
             serialized.save()
@@ -144,6 +151,8 @@ class DeleteCarAPI(TokenRefresh, DestroyModelMixin):
     """
     Handles :model:`car_rental:Cars` for DELETE requests.
     """
+    permission_classes = (IsAuthenticated,)
+
     def delete(self, request, pk):
         try:
             car_to_del = Cars.objects.get(pk=pk)
@@ -164,8 +173,7 @@ class SegmentsAPI(TokenRefresh, ListModelMixin):
     Handles :model:`car_rental:Segments` and the assigned
     :model:`car_rental.PriceLists` for GET/POST requests.
     """
-    permission_classes = (IsAuthenticatedOrReadOnly, )
-    authentication_classes = ()
+
     serializer_class = SegmentSerializer
     queryset = Segments.objects.select_related().all()
 
@@ -198,6 +206,7 @@ class PutDeleteSegmentAPI(TokenRefresh, DestroyModelMixin, UpdateModelMixin):
     :model:`car_rental.PriceLists` for PUT/DELETE requests.
     """
 
+    permission_classes = (IsAuthenticated, )
     queryset = Segments.objects.select_related().all()
     serializer_class = SegmentSerializer
 
@@ -214,18 +223,22 @@ class PutDeleteSegmentAPI(TokenRefresh, DestroyModelMixin, UpdateModelMixin):
         return response
 
 
-class ReservationAPI(TokenRefresh):
+class CheckReservationAPI(TokenRefresh):
+    authentication_classes = ()
+    permission_classes = ()
+
     def post(self, request, *args, **kwargs):
-        print(request.data)
-        begin = datetime.datetime.strptime(request.data['begin'], "%d.%m.%Y").date()
-        end = datetime.datetime.strptime(request.data['begin'], "%d.%m.%Y").date()
-        car = Cars.objects.last()
-        reservation = Reservations.objects.create(
-            car=car,
-            begin=begin,
-            end=end
-        )
+        check_serialized = CheckReservationSerializer(data=request.data)
+        if check_serialized.is_valid():
+            try:
+                check_serialized.save()
+            except ValidationError:
+                return Response(
+                    {'token': self._take_new_token()},
+                    status=status.HTTP_409_CONFLICT
+                )
+
         return Response(
             {'token': self._take_new_token()},
-            status=status.HTTP_202_ACCEPTED
+            status=status.HTTP_201_CREATED
         )

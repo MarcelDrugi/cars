@@ -66,6 +66,7 @@ export class HomepageComponent implements OnInit {
         console.log(error);
         if (error.statusText === 'Unauthorized' && error.status === 401) {
           this.accDataService.setToken('');
+          this.loginError = true;
         }
       },
     );
