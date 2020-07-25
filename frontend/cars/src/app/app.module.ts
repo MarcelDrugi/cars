@@ -17,6 +17,7 @@ import { AboutComponent } from './about/about.component';
 import { LocationComponent } from './location/location.component';
 import { RulesComponent } from './rules/rules.component';
 import { CarDetailsComponent } from './car-details/car-details.component';
+import { OrderComponent } from './order/order.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { CarDetailsComponent } from './car-details/car-details.component';
     LocationComponent,
     RulesComponent,
     CarDetailsComponent,
+    OrderComponent,
   ],
   imports: [
     BrowserModule,

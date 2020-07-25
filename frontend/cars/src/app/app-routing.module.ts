@@ -10,6 +10,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AddEditCarComponent } from './add-edit-car/add-edit-car.component';
 import { AddSegmentComponent } from './add-segment/add-segment.component';
+import { OrderComponent } from './order/order.component';
 
 
 const routes: Routes = [
@@ -24,6 +25,7 @@ const routes: Routes = [
   { path: 'location', component: LocationComponent },
   { path: 'rules', component: RulesComponent },
   { path: 'cardetails', component: CarDetailsComponent },
+  { path: 'order', component: OrderComponent }
 ];
 
 @NgModule({

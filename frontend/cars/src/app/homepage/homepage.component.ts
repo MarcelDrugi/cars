@@ -8,6 +8,7 @@ import { Reservation } from '../models/reservation.model';
 import * as BulmaCalendar from '../../../node_modules/bulma-calendar/dist/js/bulma-calendar.min.js';
 import { relative } from 'path';
 import { Token } from '../models/token.model';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -22,7 +23,7 @@ export class HomepageComponent implements OnInit {
   public segments: Array<Segment>;
   public reservationForm: FormGroup;
   public theDate: Date;
-  public termRange = '';
+  public termRange = 'WYBIERZ PRZEDZIAŁ';
   private selectedSegment: number;
 
   // form switches
@@ -34,7 +35,8 @@ export class HomepageComponent implements OnInit {
   constructor(
     private accDataService: AccDataService,
     private getPublicDataService: GetPublicDataService,
-    private rservService: ReservService
+    private rservService: ReservService,
+    private router: Router,
   ) { }
 
 
@@ -59,7 +61,7 @@ export class HomepageComponent implements OnInit {
       (resp: any) => {
         this.accDataService.setToken(resp.token);
         if (resp.token !== '') {
-          console.log('token jest ok')
+          this.router.navigateByUrl('order');
         }
       },
       error => {
@@ -67,6 +69,9 @@ export class HomepageComponent implements OnInit {
         if (error.statusText === 'Unauthorized' && error.status === 401) {
           this.accDataService.setToken('');
           this.loginError = true;
+        }
+        if (error.statusText === 'Conflict' && error.status === 409) {
+          this.allowError = true;
         }
       },
     );

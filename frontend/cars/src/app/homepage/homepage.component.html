@@ -1,24 +1,17 @@
 <section class="section">
-  SEGMENTY:
-  <div *ngIf="segments">
-    <div *ngFor="let segment of segments"> {{segment.name}}</div>
-  </div>
-  <div class="columns">
-    <div class="is-half">
-      <form (ngSubmit)="validData()">
-        <label>Segment: </label>
-        <select (change)="changeSegment($event.target.value)">
-          <option value="" disabled [defaultSelected]=true>wybierz segment</option>
-          <option *ngFor="let segment of segments" [value]="segment.id">
-            {{segment.name}}
-          </option>
-        </select>
-        <input class="input"  type="date" [value]="termRange" >
-        <button>Stwórz auto</button>
-      </form>
+  <div class="columns is-centered">
+    <div class="column is-half">
+      <label>Segment: </label>
+      <select (change)="changeSegment($event.target.value)">
+        <option value="" disabled [defaultSelected]=true>wybierz segment</option>
+        <option *ngFor="let segment of segments" [value]="segment.id">
+          {{segment.name}}
+        </option>
+      </select>
+      <input class="input"  type="date" [value]="termRange" >
+      <div ><button (click)="validData()">PRZEJDŹ DO ZAMÓWIENIA</button></div>
     </div>
   </div>
-  <div ><button (click)="validData()">ZAREZERWUJ</button></div>
   <div *ngIf="segmentError"> Prosimy wybrać segment aut</div>
   <div *ngIf="rangeError"> Prosimy wybrać przedział czasu </div>
   <div *ngIf="loginError"> Prosimy zalogować się przed dokonaniem rezerwacji</div>

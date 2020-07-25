@@ -13,10 +13,13 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class RegComponent implements OnInit {
 
+  // data containers
   public form: FormGroup;
   public avatar: string;
   private clientData: FormData;
   private img: File;
+
+  // form errors switches
   public sent = false;
   public takenUsernameError = false;
   public unknownError = false;
