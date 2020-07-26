@@ -11,6 +11,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AddEditCarComponent } from './add-edit-car/add-edit-car.component';
 import { AddSegmentComponent } from './add-segment/add-segment.component';
 import { OrderComponent } from './order/order.component';
+import { AddDiscountComponent } from './add-discount/add-discount.component';
 
 
 const routes: Routes = [
@@ -25,7 +26,8 @@ const routes: Routes = [
   { path: 'location', component: LocationComponent },
   { path: 'rules', component: RulesComponent },
   { path: 'cardetails', component: CarDetailsComponent },
-  { path: 'order', component: OrderComponent }
+  { path: 'order', component: OrderComponent },
+  { path: 'adddiscount', component: AddDiscountComponent }
 ];
 
 @NgModule({

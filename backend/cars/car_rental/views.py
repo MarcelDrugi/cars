@@ -93,6 +93,22 @@ class SignUp(CreateAPIView):
                 )
 
 
+class ClientsAPI(TokenRefresh, ListModelMixin):
+    """
+    Handles :model:`car_rental:Clients` for GET/PUT requests.
+    """
+
+    serializer_class = CarSerializer
+    queryset = Cars.objects.select_related().all()
+
+    def get(self, request, **kwargs):
+        response = self.list(request, **kwargs)
+        response.data.append(
+            {'token': self._take_new_token()}
+        )
+        return response
+
+
 class CarsAPI(TokenRefresh, ListModelMixin):
     """
     Handles :model:`car_rental:Cars` for GET/POST/PUT requests.

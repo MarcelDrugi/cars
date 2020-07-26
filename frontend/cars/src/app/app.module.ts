@@ -19,6 +19,7 @@ import { RulesComponent } from './rules/rules.component';
 import { CarDetailsComponent } from './car-details/car-details.component';
 import { OrderComponent } from './order/order.component';
 import { OrderService } from './shared/services/order.service';
+import { AddDiscountComponent } from './add-discount/add-discount.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { OrderService } from './shared/services/order.service';
     RulesComponent,
     CarDetailsComponent,
     OrderComponent,
+    AddDiscountComponent,
   ],
   imports: [
     BrowserModule,
