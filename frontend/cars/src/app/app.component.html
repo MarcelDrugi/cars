@@ -1,4 +1,5 @@
 <h1>Witaj w aplikacji car-rental</h1>
+<div *ngIf="avatar"> <img src={{avatar}} height="75" width="75">{{avatar}} </div>
 <div *ngIf="username">
   <div class="username">Jesteś zalogowany jako <b>{{username}}</b> </div>
   <button (click)="logOut()">WYLOGUJ</button></div>

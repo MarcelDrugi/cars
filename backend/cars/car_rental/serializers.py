@@ -40,6 +40,10 @@ class ClientSerializer(serializers.ModelSerializer):
         fields = ['user', 'avatar']
 
 
+class AvatarSerializer(serializers.Serializer):
+    avatar = serializers.FileField()
+
+
 class PriceListSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
 

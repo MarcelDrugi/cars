@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { threadId } from 'worker_threads';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccDataService {
 
-  //public token: string;
   private username: BehaviorSubject<string>;
+  private avatar: BehaviorSubject<string>;
 
   constructor() {
     this.username = new BehaviorSubject<string>('');
+    this.avatar = new BehaviorSubject<string>('');
   }
 
   public getToken(): string {
@@ -21,6 +23,7 @@ export class AccDataService {
   public setToken(token: string): void {
     if (!token) {
       this.setUsername('');
+      this.setAvatar('');
     }
     localStorage.setItem('token', token);
     console.log(localStorage.getItem('token'))
@@ -34,5 +37,15 @@ export class AccDataService {
   public getUsername(): Observable<string> {
     this.username.next(localStorage.getItem('username'));
     return this.username.asObservable();
+  }
+
+  public setAvatar(username: string): void {
+    localStorage.setItem('avatar', username);
+    this.avatar.next(localStorage.getItem('avatar'));
+  }
+
+  public getAvatar(): Observable<string> {
+    this.avatar.next(localStorage.getItem('avatar'));
+    return this.avatar.asObservable();
   }
 }

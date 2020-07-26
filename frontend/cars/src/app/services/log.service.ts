@@ -27,4 +27,15 @@ export class LogService {
     return this.http.post<Token>(url, logUser, httpOptions);
   }
 
+  public getAvatar(username: string): Observable<any> {
+    const url = this.backendInfoService.absolutePath + 'avatar/' + username;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    const httpOptions = {
+      headers,
+    };
+    return this.http.get<any>(url, httpOptions);
+  }
+
 }

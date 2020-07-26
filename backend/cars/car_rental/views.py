@@ -25,7 +25,7 @@ from django.core import serializers
 from .models import Clients, PriceLists, Segments, Cars, Reservations
 from .serializers import UserSerializer, SegmentSerializer, \
     CreateCarSerializer, CarSerializer, ClientSerializer, \
-    CheckReservationSerializer, ReservationSerializer
+    CheckReservationSerializer, ReservationSerializer, AvatarSerializer
 
 
 class MainView(TemplateView):
@@ -92,6 +92,23 @@ class SignUp(CreateAPIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
+
+class AvatarAPI(TokenRefresh):
+    def get(self, request, **kwargs):
+        try:
+            client = Clients.objects.get(user__username=kwargs['username'])
+            serialized_avatar = AvatarSerializer({'avatar' : client.avatar})
+            return Response(
+                {
+                    'token': self._take_new_token(),
+                    'avatar': serialized_avatar.data
+                },
+                status=status.HTTP_200_OK
+            )
+        except Clients.DoesNotExist:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 class CarsAPI(TokenRefresh, ListModelMixin):
     """

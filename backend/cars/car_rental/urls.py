@@ -7,6 +7,7 @@ app_name = 'car_rental'
 urlpatterns = [
     path('', views.MainView.as_view(), name='main'),
     path('signup', views.SignUp.as_view(), name='sign_up'),
+    path('avatar/<str:username>', views.AvatarAPI.as_view(), name='avatar'),
     path('cars', views.CarsAPI.as_view(), name='cars'),
     path('delcar/<int:pk>', views.DeleteCarAPI.as_view(), name='del_car'),
     path('segments', views.SegmentsAPI.as_view(), name='segments'),

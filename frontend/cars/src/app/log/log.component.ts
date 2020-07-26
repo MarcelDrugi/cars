@@ -50,6 +50,16 @@ export class LogComponent implements OnInit {
         else {
           console.log(error);
         }
+      },
+      () => {
+        this.logService.getAvatar(this.logUser.username).subscribe(
+          resp => {
+            this.accDataService.setAvatar(resp.avatar.avatar);
+          },
+          error => {
+            console.log(error);
+          }
+        );
       }
     );
   }
