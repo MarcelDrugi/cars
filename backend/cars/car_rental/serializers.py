@@ -6,7 +6,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 
-from .models import Segments, Cars, PriceLists, Clients, Reservations
+from .models import Segments, Cars, PriceLists, Clients, Reservations, \
+    Discounts
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,9 +17,16 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'first_name', 'last_name', 'email', 'password']
 
 
+class DiscountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Discounts
+        fields = '__all__'
+
+
 class ClientSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False)
     avatar = serializers.FileField(required=False)
+    discount = DiscountSerializer(many=True, required=False)
 
     def create(self, validated_data):
         avatar = None
@@ -37,7 +45,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Clients
-        fields = ['user', 'avatar']
+        fields = ['user', 'avatar', 'discount']
 
 
 class AvatarSerializer(serializers.Serializer):
