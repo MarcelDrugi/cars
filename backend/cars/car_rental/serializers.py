@@ -141,14 +141,14 @@ class CheckReservationSerializer(serializers.Serializer):
         try:
             begin = datetime.datetime.strptime(data, "%d.%m.%Y").date()
         except ValueError:
-            raise ValidationError('Incorrect begin date format')
+            raise ValidationError('Incorrect begin-date format')
         return begin
 
     def validate_end(self, data):
         try:
             end = datetime.datetime.strptime(data, "%d.%m.%Y").date()
         except ValueError:
-            raise ValidationError('Incorrect end date format')
+            raise ValidationError('Incorrect end-date format')
         return end
 
     def validate_segment(self, data):
@@ -177,3 +177,10 @@ class CheckReservationSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         pass
 
+
+class ReservationSerializer(serializers.ModelSerializer):
+    car = CarSerializer(many=False)
+
+    class Meta:
+        model = Reservations
+        fields = '__all__'

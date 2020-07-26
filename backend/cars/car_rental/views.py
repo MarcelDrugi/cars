@@ -25,7 +25,7 @@ from django.core import serializers
 from .models import Clients, PriceLists, Segments, Cars, Reservations
 from .serializers import UserSerializer, SegmentSerializer, \
     CreateCarSerializer, CarSerializer, ClientSerializer, \
-    CheckReservationSerializer
+    CheckReservationSerializer, ReservationSerializer
 
 
 class MainView(TemplateView):
@@ -223,22 +223,77 @@ class PutDeleteSegmentAPI(TokenRefresh, DestroyModelMixin, UpdateModelMixin):
         return response
 
 
+class SingleSegmentAPI(TokenRefresh):
+    def get(self, request, **kwargs):
+        try:
+            segment = Segments.objects.get(id=kwargs['id'])
+            serialized_segment = SegmentSerializer(segment)
+        except Segments.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(
+                {
+                    'token': self._take_new_token(),
+                    'segment': serialized_segment.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+
 class CheckReservationAPI(TokenRefresh):
-    authentication_classes = ()
-    permission_classes = ()
+    permission_classes = (IsAuthenticated, )
 
     def post(self, request, *args, **kwargs):
         check_serialized = CheckReservationSerializer(data=request.data)
         if check_serialized.is_valid():
             try:
-                check_serialized.save()
+                reservation = check_serialized.save()
             except ValidationError:
                 return Response(
                     {'token': self._take_new_token()},
                     status=status.HTTP_409_CONFLICT
                 )
+            else:
+                try:
+                    client = Clients.objects.get(
+                        user__username=request.user.username
+                    )
+                    serialized_client = ClientSerializer(client)
+                except Clients.DoesNotExist:
+                    # If the user has passed authentication but cannot be found
+                    # in the database, this is an internal server error.
+                    return Response(
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                    )
+                return Response(
+                    {
+                        'token': self._take_new_token(),
+                        'reservation': reservation.id,
+                        'client': serialized_client.data,
+                     },
+                    status=status.HTTP_201_CREATED
+                )
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(
-            {'token': self._take_new_token()},
-            status=status.HTTP_201_CREATED
-        )
+
+class ReservationAPI(TokenRefresh):
+    permission_classes = ()
+
+    def get(self, request, **kwargs):
+        print('jestem')
+        try:
+            reservation = Reservations.objects.get(id=kwargs['id'])
+            print(reservation)
+            serialized_reservation = ReservationSerializer(reservation)
+            print(serialized_reservation.data)
+        except Reservations.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(
+                {
+                    'token': self._take_new_token(),
+                    'reservation': serialized_reservation.data,
+                },
+                status=status.HTTP_200_OK,
+            )

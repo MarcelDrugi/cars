@@ -9,6 +9,7 @@ import * as BulmaCalendar from '../../../node_modules/bulma-calendar/dist/js/bul
 import { relative } from 'path';
 import { Token } from '../models/token.model';
 import { Router } from '@angular/router';
+import { OrderService } from '../shared/services/order.service';
 
 
 @Component({
@@ -37,6 +38,7 @@ export class HomepageComponent implements OnInit {
     private getPublicDataService: GetPublicDataService,
     private rservService: ReservService,
     private router: Router,
+    private orderService: OrderService,
   ) { }
 
 
@@ -56,11 +58,14 @@ export class HomepageComponent implements OnInit {
   }
 
   private postReservation(reservationData: Reservation): void {
-    console.log('postReservation z komponentu')
     this.rservService.postReservation(reservationData).subscribe(
       (resp: any) => {
         this.accDataService.setToken(resp.token);
         if (resp.token !== '') {
+          this.orderService.reservationId = resp.reservation;
+          this.orderService.client = resp.client.user;
+          this.orderService.client.avatar = resp.client.avatar;
+          this.orderService.client.password = null;
           this.router.navigateByUrl('order');
         }
       },

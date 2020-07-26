@@ -1,1 +1,30 @@
 <p>order works!</p>
+<br>
+Order id: <div *ngIf="reservationId"> {{reservationId}} </div>
+Klient:
+<div *ngIf="client">
+  <div> <img src={{client.avatar}} height="100" width="100">{{client.avatar}}</div>
+  <div>Nick: {{client.username}}</div>
+  <div>Imię: {{client.first_name}}</div>
+  <div>Nazwisko: {{client.last_name}}</div>
+  <div>e-mail: {{client.email}}</div>
+</div>
+<input type="checkbox" (change)="haveDiscount()">
+<div *ngIf="discount">
+  TWÓJ KUPON ZNIŻKOWY
+  <div>
+    <form [formGroup]="form" (ngSubmit)="validCode()">
+      <div class="form-group">
+        <label>proszę podać kod:</label>
+        <input type="text" formControlName="code" class="form-control" />
+        <div *ngIf="sent && form.controls.code.errors">
+            <div *ngIf="form.controls.code.errors.required">Proszę podać kod zniżkowy!</div>
+            <div *ngIf="form.controls.code.errors.minlength">Kod jest zbyt krótki!</div>
+            <div *ngIf="form.controls.code.errors.maxlength">Kod jest za długi!</div>
+        </div>
+      </div>
+      <button>Aktualizuj cenę</button>
+    </form>
+  </div>
+</div>
+<div *ngIf="reservation">{{reservation.car.brand}}</div>

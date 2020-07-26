@@ -14,7 +14,7 @@ class ClientManager(models.Manager):
 
     def create_client(self, user, avatar):
         if avatar is None:
-            path = os.path.join(settings.MEDIA_URL, self.empty_avatar)
+            path = self.empty_avatar
             client = self.create(user=user, avatar=path)
         else:
             client = self.create(user=user, avatar=avatar)

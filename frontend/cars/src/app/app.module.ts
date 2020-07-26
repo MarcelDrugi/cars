@@ -18,6 +18,7 @@ import { LocationComponent } from './location/location.component';
 import { RulesComponent } from './rules/rules.component';
 import { CarDetailsComponent } from './car-details/car-details.component';
 import { OrderComponent } from './order/order.component';
+import { OrderService } from './shared/services/order.service';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,7 @@ import { OrderComponent } from './order/order.component';
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [AccDataService, BackendInfoService, GetPublicDataService],
+  providers: [AccDataService, BackendInfoService, GetPublicDataService, OrderService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

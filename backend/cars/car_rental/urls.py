@@ -15,5 +15,11 @@ urlpatterns = [
         views.PutDeleteSegmentAPI.as_view(),
         name='put_del_segment'
     ),
+    path('segment/<int:id>', views.SingleSegmentAPI.as_view(), name='segment'),
     path('checkres', views.CheckReservationAPI.as_view(), name='check_res'),
+    path(
+        'reservation/<int:id>',
+        views.ReservationAPI.as_view(),
+        name='reservation'
+    ),
 ]
