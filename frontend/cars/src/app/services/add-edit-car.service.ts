@@ -41,7 +41,7 @@ export class AddEditCarService {
   }
 
   public deleteCar(deletedCar: number): Observable<Token> {
-    const url = this.backendInfoService.absolutePath + 'delcar/' + deletedCar;
+    const url = this.backendInfoService.absolutePath + 'cars/' + deletedCar;
     const headers = new HttpHeaders({
       Authorization: 'JWT ' + this.accDataService.getToken()
     });
@@ -65,7 +65,7 @@ export class AddEditCarService {
 
   public updateSegment(segmentData: Segment): Observable<Token> {
     console.log('ID: ', segmentData.id)
-    const url = this.backendInfoService.absolutePath + 'putdelsegment/' + segmentData.id;
+    const url = this.backendInfoService.absolutePath + 'segments/' + segmentData.id;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: 'JWT ' + this.accDataService.getToken()
@@ -77,7 +77,7 @@ export class AddEditCarService {
   }
 
   public deleteSegment(deletedSegment: number): Observable<Token> {
-    const url = this.backendInfoService.absolutePath + 'putdelsegment/' + deletedSegment;
+    const url = this.backendInfoService.absolutePath + 'segments/' + deletedSegment;
     const headers = new HttpHeaders({
       Authorization: 'JWT ' + this.accDataService.getToken()
     });

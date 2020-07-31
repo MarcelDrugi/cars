@@ -20,6 +20,8 @@ import { CarDetailsComponent } from './car-details/car-details.component';
 import { OrderComponent } from './order/order.component';
 import { OrderService } from './shared/services/order.service';
 import { AddDiscountComponent } from './add-discount/add-discount.component';
+import { SuccessComponent } from './success/success.component';
+import { FailComponent } from './fail/fail.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,8 @@ import { AddDiscountComponent } from './add-discount/add-discount.component';
     CarDetailsComponent,
     OrderComponent,
     AddDiscountComponent,
+    SuccessComponent,
+    FailComponent,
   ],
   imports: [
     BrowserModule,

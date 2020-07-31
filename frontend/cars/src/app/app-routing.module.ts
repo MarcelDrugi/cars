@@ -12,6 +12,8 @@ import { AddEditCarComponent } from './add-edit-car/add-edit-car.component';
 import { AddSegmentComponent } from './add-segment/add-segment.component';
 import { OrderComponent } from './order/order.component';
 import { AddDiscountComponent } from './add-discount/add-discount.component';
+import { SuccessComponent } from './success/success.component';
+import { FailComponent } from './fail/fail.component';
 
 
 const routes: Routes = [
@@ -27,7 +29,9 @@ const routes: Routes = [
   { path: 'rules', component: RulesComponent },
   { path: 'cardetails', component: CarDetailsComponent },
   { path: 'order', component: OrderComponent },
-  { path: 'adddiscount', component: AddDiscountComponent }
+  { path: 'adddiscount', component: AddDiscountComponent },
+  { path: 'success', component: SuccessComponent },
+  { path: 'fail', component: FailComponent },
 ];
 
 @NgModule({

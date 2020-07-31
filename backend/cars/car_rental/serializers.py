@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 
 from .models import Segments, Cars, PriceLists, Clients, Reservations, \
-    Discounts
+    Discounts, Orders
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -18,6 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class DiscountSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Discounts
         fields = '__all__'
@@ -27,6 +28,17 @@ class ClientSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False)
     avatar = serializers.FileField(required=False)
     discount = DiscountSerializer(many=True, required=False)
+
+    def __init__(self, *args, **kwargs):
+        if 'context' in kwargs:
+            if 'skip_fields' in kwargs['context']:
+                skip_fields = kwargs['context']['skip_fields']
+                kwargs['context'].pop('skip_fields')
+
+                for field in skip_fields:
+                    self.fields.pop(field)
+
+        super(ClientSerializer, self).__init__(*args, **kwargs)
 
     def create(self, validated_data):
         avatar = None
@@ -149,6 +161,10 @@ class CheckReservationSerializer(serializers.Serializer):
     end = serializers.CharField(max_length=10)
     segment = serializers.IntegerField()
 
+    def __init__(self, permanent,  *args, **kwargs):
+        self.permanent = permanent
+        super(CheckReservationSerializer, self).__init__(*args, **kwargs)
+
     def validate_begin(self, data):
         try:
             begin = datetime.datetime.strptime(data, "%d.%m.%Y").date()
@@ -176,23 +192,114 @@ class CheckReservationSerializer(serializers.Serializer):
         )
         for car in cars:
             try:
-                reservation = Reservations.objects.create(
+                reservation = Reservations(
                     begin=validated_data['begin'],
                     end=validated_data['end'],
                     car=car
                 )
-                return reservation
+                reservation.save()
             except ValidationError:
                 pass
+            else:
+                if self.permanent is False:
+                    reservation.delete()
+                return reservation
         raise ValidationError('no free car')
 
     def update(self, instance, validated_data):
         pass
 
 
+class ReservationRelatedSerializer(serializers.RelatedField):
+    def to_representation(self, data):
+        try:
+            data['begin'] = datetime.datetime.strptime(data['begin'], "%Y-%m-%d").date()
+        except ValueError:
+            raise ValidationError('Incorrect begin-date format')
+        try:
+            data['end'] = datetime.datetime.strptime(data['end'],
+                                                     "%Y-%m-%d").date()
+        except ValueError:
+            raise ValidationError('Incorrect end-date format')
+        return data
+
+    def to_internal_value(self, data):
+        pass
+
+
 class ReservationSerializer(serializers.ModelSerializer):
     car = CarSerializer(many=False)
 
+    """def to_internal_value(self, data):
+        try:
+            data['begin'] = datetime.datetime.strptime(data['begin'],
+                                                       "%Y-%m-%d").date()
+        except ValueError:
+            raise ValidationError('Incorrect begin-date format')
+        try:
+            data['end'] = datetime.datetime.strptime(data['end'],
+                                                     "%Y-%m-%d").date()
+        except ValueError:
+            raise ValidationError('Incorrect end-date format')
+
+        print('DATA:  ', data)
+        return super(ReservationSerializer, self).to_internal_value(data)"""
+
     class Meta:
         model = Reservations
-        fields = '__all__'
+        fields = ['begin', 'end', 'car']
+
+
+class MajorOrderDataSerializer(serializers.Serializer):
+
+    reserved_car = serializers.IntegerField()
+    begin = serializers.DateField()
+    end = serializers.DateField()
+    client = serializers.CharField(max_length=128)
+    cost = serializers.FloatField()
+    comments = serializers.CharField(max_length=2048, required=False)
+    discount = serializers.IntegerField(required=False)
+
+    def to_internal_value(self, data):
+        if data.get('comments') == '' or data.get('comments') is None:
+            data['comments'] = ' - no comments - '
+        return super(MajorOrderDataSerializer, self).to_internal_value(data)
+
+    def create(self, validated_data):
+        discount = None
+        try:
+            client = Clients.objects.get(
+                user__username=validated_data['client']
+            )
+        except Clients.DoesNotExist:
+            raise ValidationError('Wrong client id')
+        if 'discount' in validated_data:
+            try:
+                discount = Discounts.objects.get(
+                    discount_code=validated_data['discount']
+                )
+            except Discounts.DoesNotExist:
+                raise ValidationError('Discount does not exist')
+
+            discounts = client.discount.all()
+            if discount not in discounts:
+                raise ValidationError('Discount is not assigned to the user')
+        try:
+            car = Cars.objects.get(id=validated_data['reserved_car'])
+        except Cars.DoesNotExist:
+            raise ValidationError('Car does not exist')
+        with transaction.atomic():
+            order = Orders.objects.create(
+                client=client,
+                cost=validated_data['cost'],
+                comments=validated_data['comments']
+            )
+            reservation = Reservations.objects.create(
+                car=car,
+                begin=validated_data['begin'],
+                end=validated_data['end'],
+                order=order,
+            )
+            if discount:
+                client.discount.remove(discount)
+        return reservation

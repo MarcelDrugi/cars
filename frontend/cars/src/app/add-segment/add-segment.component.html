@@ -53,7 +53,7 @@
           <form>
             <label>Segmenty: </label>
             <select (change)="segmentSelection($event)">
-              <option value="0" disabled [defaultSelected]=true>wybierz segment</option>
+              <option value="" [defaultSelected]=true>wybierz segment</option>
               <option *ngFor="let segment of segments" [value]="segment.id">
                 {{segment.name}}
               </option>

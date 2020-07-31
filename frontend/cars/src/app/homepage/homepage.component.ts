@@ -10,6 +10,8 @@ import { relative } from 'path';
 import { Token } from '../models/token.model';
 import { Router } from '@angular/router';
 import { OrderService } from '../shared/services/order.service';
+import { Register } from '../models/register.model';
+import { Client } from '../models/client.model';
 
 
 @Component({
@@ -24,7 +26,8 @@ export class HomepageComponent implements OnInit {
   public segments: Array<Segment>;
   public reservationForm: FormGroup;
   public theDate: Date;
-  public termRange = 'WYBIERZ PRZEDZIAŁ';
+  private termPlaceHolder = 'WYBIERZ PRZEDZIAŁ';
+  public termRange: string;
   private selectedSegment: number;
 
   // form switches
@@ -62,10 +65,11 @@ export class HomepageComponent implements OnInit {
       (resp: any) => {
         this.accDataService.setToken(resp.token);
         if (resp.token !== '') {
-          this.orderService.reservationId = resp.reservation;
-          this.orderService.client = resp.client.user;
-          this.orderService.client.avatar = resp.client.avatar;
-          this.orderService.client.password = null;
+          this.orderService.setReservation(resp.reservation);
+          const client: Client = resp.client;
+          client.user.avatar = resp.client.avatar;
+          client.user.password = null;
+          this.orderService.setClient(client);
           this.router.navigateByUrl('order');
         }
       },
@@ -90,7 +94,7 @@ export class HomepageComponent implements OnInit {
     this.loginError = false;
     this.allowError = false;
 
-    if (this.termRange !== '' && this.selectedSegment) {
+    if (this.termRange !== this.termPlaceHolder && this.termRange !== '' && this.selectedSegment) {
       const terms = this.termRange.split(' - ');
       const reservationData = {
         begin: terms[0],
@@ -99,7 +103,7 @@ export class HomepageComponent implements OnInit {
       };
       this.postReservation(reservationData);
     }
-    else if (this.termRange === '') {
+    else if (this.termRange === '' || this.termRange === this.termPlaceHolder) {
       this.rangeError = true;
     }
     else {
@@ -112,6 +116,7 @@ export class HomepageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.termRange = this.termPlaceHolder;
     this.getSegments();
 
     const options = {

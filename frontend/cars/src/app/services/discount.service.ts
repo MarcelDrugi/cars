@@ -1,18 +1,16 @@
-import { Segment } from './../models/segment.model';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BackendInfoService } from '../shared/services/backend-info.service';
-import { Reservation } from '../models/reservation.model';
 import { Observable } from 'rxjs';
-import { Token } from '@angular/compiler/src/ml_parser/lexer';
+import { BackendInfoService } from '../shared/services/backend-info.service';
 import { AccDataService } from '../shared/services/acc-data.service';
-import { SavedReservation } from '../models/saved-reservation';
-
+import { Register } from '../models/register.model';
+import { Client } from '../models/client.model';
+import { Token } from '../models/token.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ReservService {
+export class DiscountService {
 
   constructor(
     private http: HttpClient,
@@ -20,8 +18,8 @@ export class ReservService {
     private accDataService: AccDataService
   ) { }
 
-  public postReservation(reservationData: Reservation): Observable<any> {
-    const url = this.backendInfoService.absolutePath + 'checkres';
+  public getClients(): Observable<Array<Client>> {
+    const url = this.backendInfoService.absolutePath + 'clients';
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: 'JWT ' + this.accDataService.getToken()
@@ -29,11 +27,11 @@ export class ReservService {
     const httpOptions = {
       headers,
     };
-    return this.http.post<any>(url, reservationData, httpOptions);
+    return this.http.get<Array<Client>>(url, httpOptions);
   }
 
-  public getSegment(id: string): Observable<Segment> {
-    const url = this.backendInfoService.absolutePath + 'segment/' + id;
+  public getDiscounts(): Observable<any> {
+    const url = this.backendInfoService.absolutePath + 'discounts';
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: 'JWT ' + this.accDataService.getToken()
@@ -41,11 +39,11 @@ export class ReservService {
     const httpOptions = {
       headers,
     };
-    return this.http.get<Segment>(url, httpOptions);
+    return this.http.get<Array<Client>>(url, httpOptions);
   }
 
-  public getReservation(id: number): Observable<any> {
-    const url = this.backendInfoService.absolutePath + 'reservation/' + id;
+  public assignDiscounts(discountData: any): Observable<Token> {
+    const url = this.backendInfoService.absolutePath + 'discounts';
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: 'JWT ' + this.accDataService.getToken()
@@ -53,11 +51,11 @@ export class ReservService {
     const httpOptions = {
       headers,
     };
-    return this.http.get<any>(url, httpOptions);
+    return this.http.put<Token>(url, discountData, httpOptions);
   }
 
-  public delReservation(id: number): Observable<any> {
-    const url = this.backendInfoService.absolutePath + 'reservation/' + id;
+  public postNewDiscount(discountData: any): Observable<Token> {
+    const url = this.backendInfoService.absolutePath + 'discounts';
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: 'JWT ' + this.accDataService.getToken()
@@ -65,11 +63,11 @@ export class ReservService {
     const httpOptions = {
       headers,
     };
-    return this.http.delete<any>(url, httpOptions);
+    return this.http.post<Token>(url, discountData, httpOptions);
   }
 
-  public postOrder(fullData: any): Observable<any> {
-    const url = this.backendInfoService.absolutePath + 'order' ;
+  public delDiscount(id: number): Observable<Token> {
+    const url = this.backendInfoService.absolutePath + 'discounts/' + id;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: 'JWT ' + this.accDataService.getToken()
@@ -77,7 +75,7 @@ export class ReservService {
     const httpOptions = {
       headers,
     };
-    return this.http.post<any>(url, fullData, httpOptions);
+    return this.http.delete<Token>(url, httpOptions);
   }
 
 }

@@ -66,7 +66,7 @@ REST_FRAMEWORK = {
 
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=600),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=7600),
 }
 
 # Application definition

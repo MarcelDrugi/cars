@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.core.validators import MinLengthValidator, MaxValueValidator, \
     MinValueValidator, MaxLengthValidator
@@ -13,7 +15,7 @@ class Discounts(models.Model):
     MIN_CODE = 1000
 
     discount_code = models.IntegerField(
-        validators=[MinValueValidator(MIN_CODE), MinValueValidator(MAX_CODE)],
+        validators=[MinValueValidator(MIN_CODE), MaxValueValidator(MAX_CODE)],
         unique=True,
     )
     discount_value = models.FloatField(
@@ -64,7 +66,6 @@ class PriceLists(models.Model):
 class Segments(models.Model):
     name = models.CharField(
         max_length=16,
-        validators=[MinLengthValidator(1)],
         help_text='Select type of car'
     )
     pricing = models.ForeignKey(
@@ -93,14 +94,52 @@ class Cars(models.Model):
         return self.brand + ' ' + self.model + ' (' + self.reg_number + ')'
 
 
+class Orders(models.Model):
+    client = models.ForeignKey(Clients, on_delete=models.CASCADE)
+    cost = models.FloatField(validators=[MinValueValidator(0.01)])
+    paid = models.BooleanField(default=False)
+    canceled = models.BooleanField(default=False)
+    payment_id = models.CharField(max_length=32, blank=True, null=True)
+    comments = models.CharField(max_length=512, blank=True, null=True)
+
+    def cancel_order(self):
+        self.canceled = True
+        self.comments += '  - CANCELED!'
+        try:
+            reservation = Reservations.objects.get(order=self)
+            reservation.delete()
+        except Reservations.DoesNotExist:
+            self.comments += ' (Order without reservation)'
+
+    def clean(self):
+        if self.payment_id is False and self.paid:
+            raise ValidationError(
+                'Object has ID for unrealized payment'
+            )
+        super(Orders, self).clean()
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super(Orders, self).save(*args, **kwargs)
+
+
 class Reservations(models.Model):
     car = models.ForeignKey(Cars, on_delete=models.CASCADE)
     begin = models.DateField()
     end = models.DateField()
+    created_time = models.DateTimeField(auto_now_add=True)
+    order = models.OneToOneField(
+        Orders,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
+    )
 
     def _term_checking(self):
         occupied = Reservations.objects.select_related().filter(car=self.car)
         for term in occupied:
+            if self.begin >= datetime.date.today()-datetime.timedelta(days=1):
+                pass
             if self.begin > term.end:
                 pass
             elif self.end < term.begin:
@@ -118,16 +157,9 @@ class Reservations(models.Model):
             raise ValidationError(
                 'Term is not free'
             )
-
         super(Reservations, self).clean()
 
     def save(self, *args, **kwargs):
         self.full_clean()
         super(Reservations, self).save(*args, **kwargs)
 
-
-class Orders(models.Model):
-    client = models.OneToOneField(Clients, on_delete=models.CASCADE)
-    cost = models.FloatField(validators=[MinValueValidator(0.01)])
-    paid = models.BooleanField(default=False)
-    canceled = models.BooleanField(default=False)

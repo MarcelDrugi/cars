@@ -1,30 +1,70 @@
-<p>order works!</p>
-<br>
-Order id: <div *ngIf="reservationId"> {{reservationId}} </div>
-Klient:
-<div *ngIf="client">
-  <div> <img src={{client.avatar}} height="100" width="100">{{client.avatar}}</div>
-  <div>Nick: {{client.username}}</div>
-  <div>Imię: {{client.first_name}}</div>
-  <div>Nazwisko: {{client.last_name}}</div>
-  <div>e-mail: {{client.email}}</div>
-</div>
-<input type="checkbox" (change)="haveDiscount()">
-<div *ngIf="discount">
-  TWÓJ KUPON ZNIŻKOWY
-  <div>
-    <form [formGroup]="form" (ngSubmit)="validCode()">
-      <div class="form-group">
-        <label>proszę podać kod:</label>
-        <input type="text" formControlName="code" class="form-control" />
-        <div *ngIf="sent && form.controls.code.errors">
-            <div *ngIf="form.controls.code.errors.required">Proszę podać kod zniżkowy!</div>
-            <div *ngIf="form.controls.code.errors.minlength">Kod jest zbyt krótki!</div>
-            <div *ngIf="form.controls.code.errors.maxlength">Kod jest za długi!</div>
-        </div>
-      </div>
-      <button>Aktualizuj cenę</button>
-    </form>
+<section *ngIf="reservation" class="section">
+  Order id: <div *ngIf="reservationId"> {{reservationId}} </div>
+  Klient:
+  <div *ngIf="client">
+    <div> <img src={{client.user.avatar}} height="100" width="100">{{client.user.avatar}}</div>
+    <div>Nick: {{client.user.username}}</div>
+    <div>Imię: {{client.user.first_name}}</div>
+    <div>Nazwisko: {{client.user.last_name}}</div>
+    <div>e-mail: {{client.user.email}}</div>
   </div>
-</div>
-<div *ngIf="reservation">{{reservation.car.brand}}</div>
+  <label>posiadam kupon zniżkowy</label>
+  <input type="checkbox" (change)="haveDiscount()">
+  <div *ngIf="discount">
+    TWÓJ KUPON ZNIŻKOWY
+    <div>
+      <form [formGroup]="form" (ngSubmit)="validCode()">
+        <div class="form-group">
+          <label>proszę podać kod:</label>
+          <input type="text" formControlName="code" class="form-control" />
+          <div *ngIf="sent && form.controls.code.errors">
+              <div *ngIf="form.controls.code.errors.required">Proszę podać kod zniżkowy!</div>
+              <div *ngIf="form.controls.code.errors.minlength">Kod jest zbyt krótki!</div>
+              <div *ngIf="form.controls.code.errors.maxlength">Kod jest za długi!</div>
+          </div>
+        </div>
+        <button *ngIf="!discountUsed">aktualizuj cenę</button>
+        <div *ngIf="wrongDiscountCode"> Podano błędny kod</div>
+      </form>
+      <button *ngIf="discountUsed" (click)="calculateCost()">wycofaj zniżkę</button>
+    </div>
+  </div>
+  <div *ngIf="reservation">
+    <div>rezerwacja od: <b>{{reservation.begin}}</b> do <b>{{reservation.end}}</b> </div>
+    TWÓJ SAMOCHÓD:
+    <div>segment: {{reservation.car.segment.name}}</div>
+    <div>marka: {{reservation.car.brand}}</div>
+    <div>model: {{reservation.car.model}}</div>
+    <div> nr rejestracyjny: {{reservation.car.reg_number}}</div>
+    <div> <img src={{reservation.car.img}} height="150" width="150"> </div>
+    <div>
+      CENNIK:
+    </div>
+    <div>day: {{reservation.car.segment.pricing.day}}</div>
+    <div>week: {{reservation.car.segment.pricing.week}}</div>
+  </div>
+  <div *ngIf="totalCost">
+    <h4 class="subtitle is-4">całkowity koszt: {{totalCost}} PLN</h4>
+  </div>
+  <form *ngIf="reservation">
+    samochód należy zwrócić dnia {{reservation.end}} do godziny 12:00
+    <br>
+    Spóźnienie powyżej godziny wiąże się z karą umowną wysokości {{reservation.car.segment.pricing.hour}} PLN za każdą godzinę spóźnienia
+  </form>
+  <form *ngIf="orderComments" (ngSubmit)="acceptComments($event)">
+    <input type="text" [value]="comments">
+    <button (click)="addComments()" *ngIf="orderComments"> anuluj edycję</button>
+    <button>zatwierdź</button>
+  </form>
+  <div *ngIf="comments && !orderComments">
+    <div>TOJE UWAGI:</div>
+     {{comments}}
+  </div>
+  <button (click)="addComments()" *ngIf="!orderComments && !comments"> Chcę dodać komentarz do mojego zamówienia</button><br>
+  <button (click)="addComments()" *ngIf="!orderComments && comments"> edytuj uwagi</button><br><br>
+  <button (click)="return()">WRÓĆ</button> <button (click)="accept()">AKCEPTUJĘ WARUNKI I PŁACĘ</button>
+
+  <div *ngIf="badData">
+    PROBLEM Z PRZESŁANIEM DANYCH. ZLECENIE ZOSTAŁO ANULOWANE. SPRÓBUJ PONOWNIE PÓŹNIEJ, BĄDŹ SKONTAKTUJ SIĘ Z OBSŁUGĄ.
+  </div>
+</section>
