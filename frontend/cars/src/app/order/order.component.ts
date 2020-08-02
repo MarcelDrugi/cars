@@ -141,7 +141,6 @@ export class OrderComponent implements OnInit {
     if (this.finallyDiscount) {
       fullData['discount'] = this.finallyDiscount.discount_code;
     }
-    console.log(fullData)
     this.postOrder(fullData);
   }
 
@@ -157,7 +156,10 @@ export class OrderComponent implements OnInit {
         }
         if (error.statusText === 'Bad Request' && error.status === 400) {
           this.badData = true;
-          //setTimeout(() => this.router.navigateByUrl('homepage'), 5200);
+          setTimeout(() => this.router.navigateByUrl('homepage'), 5200);
+        }
+        if (error.status === 406) {
+          this.router.navigateByUrl('fail');
         }
       },
     );

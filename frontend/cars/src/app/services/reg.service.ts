@@ -1,6 +1,7 @@
+import { AccDataService } from './../shared/services/acc-data.service';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Register } from '../models/register.model';
 import { BackendInfoService } from '../shared/services/backend-info.service';
 
@@ -12,6 +13,7 @@ export class RegService {
   constructor(
     private http: HttpClient,
     private backendInfoService: BackendInfoService,
+    private accDataService: AccDataService,
     ) { }
 
   postRegData(clientData: FormData): Observable<Register> {
@@ -19,4 +21,28 @@ export class RegService {
 
     return this.http.post<Register>(url, clientData);
   }
+
+  public patchPassword(username: string, pass: any): Observable<any> {
+    const url = this.backendInfoService.absolutePath + 'client/' + username ;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + this.accDataService.getToken()
+    });
+    const httpOptions = {
+      headers,
+    };
+    return this.http.patch<any>(url, pass, httpOptions);
+  }
+
+  public patchData(username: string, data: any): Observable<any> {
+    const url = this.backendInfoService.absolutePath + 'client/' + username ;
+    const headers = new HttpHeaders({
+      Authorization: 'JWT ' + this.accDataService.getToken()
+    });
+    const httpOptions = {
+      headers,
+    };
+    return this.http.patch<any>(url, data, httpOptions);
+  }
+
 }

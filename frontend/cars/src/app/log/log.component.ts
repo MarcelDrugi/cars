@@ -4,6 +4,7 @@ import { LogService } from '../services/log.service';
 import { LogIn } from '../models/login.model';
 import {Token } from '../models/token.model';
 import { AccDataService } from '../shared/services/acc-data.service';
+import { Register } from '../models/register.model';
 
 @Component({
   selector: 'rental-log',
@@ -17,6 +18,7 @@ export class LogComponent implements OnInit {
   public logUser: LogIn;
   public sent = false;
   public usernamePasswordError = false;
+  public user: Register;
 
   constructor(
     private logService: LogService,
@@ -52,9 +54,10 @@ export class LogComponent implements OnInit {
         }
       },
       () => {
-        this.logService.getAvatar(this.logUser.username).subscribe(
+        this.logService.getClient(this.logUser.username).subscribe(
           resp => {
-            this.accDataService.setAvatar(resp.avatar.avatar);
+            this.accDataService.setClient(resp.client);
+            this.user = resp.client;
           },
           error => {
             console.log(error);

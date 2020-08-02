@@ -1,0 +1,102 @@
+<section class="section">
+  <h3 class="title is-3">DANE KONTA</h3>
+  <div *ngIf="client && !dataEdition">
+    <div> <img src={{avatar}} width="200" height="200"> </div>
+    <div> Imię: {{client.first_name}}</div>
+    <div> Nazwisko: {{client.last_name}}</div>
+    <div> email: {{client.email}}</div>
+    <button (click)="editData()" >edytuj dane</button>
+  </div>
+  <div *ngIf="dataEdition">
+    <form [formGroup]="dataForm" (ngSubmit)="validData()">
+      <div class="form-group">
+        <label>Imię</label>
+        <input type="text" formControlName="firstName" class="form-control" />
+        <div *ngIf="sentData && dataForm.controls.firstName.errors" class="regFormError">
+            <div *ngIf="dataForm.controls.firstName.errors.required">Proszę podać imię.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Nazwisko</label>
+        <input type="text" formControlName="lastName" class="form-control" />
+        <div *ngIf="sentData && dataForm.controls.lastName.errors" class="regFormError">
+            <div *ngIf="dataForm.controls.lastName.errors.required">Proszę podać nazwisko.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="text" formControlName="email" class="form-control" />
+        <div *ngIf="sentData && dataForm.controls.email.errors" class="regFormError">
+            <div *ngIf="dataForm.controls.email.errors.required">Proszę podać adres e-mail</div>
+            <div *ngIf="dataForm.controls.email.errors.email">Niepoprawny format adresu e-mail</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Nick</label>
+        <input type="text" formControlName="username" class="form-control" />
+        <div *ngIf="sentData && dataForm.controls.username.errors" class="regFormError">
+            <div *ngIf="dataForm.controls.username.errors.required">Proszę wybrać swój nick.</div>
+        </div>
+        <div *ngIf="sentData && takenUsernameError" class="regFormError">Ten nick jest zajęty.</div>
+      </div>
+      <div class="form-group">
+        <label> <img [hidden]="!avatar" src={{avatar}} width="80" height="80"> Dodaj avatar: </label>
+        <input type="file" (change)="validImg($event)" formControlName="img" class="form-control" />
+        <div *ngIf="sizeError" class="regFormError">
+          Zbyt duży plik. Maksymalny rozmiar to: {{maxSize/1000}}KB
+        </div>
+      </div>
+      <button>zatwierdź edycję</button>
+      <button (click)="dataEditionCancel()">anuluj</button>
+    </form>
+  </div>
+  <div *ngIf="newData">POMYŚLNIE ZMIENIONO DANE</div>
+
+  <button *ngIf="!passwordEdition" (click)="editPassword()">zmień hasło</button>
+  <div *ngIf="passwordEdition">
+    <form [formGroup]="passwordForm" (ngSubmit)="validPassword()">
+      <div class="form-group">
+        <label>Stare hasło: </label>
+        <input type="text" formControlName="oldPassword" class="form-control" />
+        <div *ngIf="sentPassword && passwordForm.controls.oldPassword.errors" class="regFormError">
+            <div *ngIf="passwordForm.controls.oldPassword.errors.required">Proszę podać stare hasło</div>
+            <div *ngIf="passwordForm.controls.oldPassword.errors.minlength">Hasło musi mieć min. 6 znaków.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Nowe hasło: </label>
+        <input type="text" formControlName="newPassword" class="form-control" />
+        <div *ngIf="sentPassword && passwordForm.controls.newPassword.errors" class="regFormError">
+            <div *ngIf="passwordForm.controls.newPassword.errors.required">Proszę podać nazwisko.</div>
+            <div *ngIf="passwordForm.controls.newPassword.errors.minlength">Hasło musi mieć min. 6 znaków.</div>
+        </div>
+      </div>
+      <button>zatwierdź edycję</button>
+      <button (click)="passwordEditionCancel()">anuluj</button>
+    </form>
+  </div>
+  <div *ngIf="newPassword">POMYŚLNIE ZMIENIONO HASŁO</div>
+  <div *ngIf="wrongPass">PODANO BŁĘDNIE STARE HASŁO</div>
+
+  <h3 class="title is-3">REZERWACJE</h3>
+  <div *ngIf="badData">
+    PROBLEM Z PRZESŁANIEM DANYCH. ZLECENIE ZOSTAŁO ANULOWANE. SPRÓBUJ PONOWNIE PÓŹNIEJ, BĄDŹ SKONTAKTUJ SIĘ Z OBSŁUGĄ.
+  </div>
+  <div *ngIf="reservations">
+    <div *ngFor="let reservation of reservations let i = index">
+      <div>termin rezerwacji: <b>{{reservation.begin | date:"dd.MM.yyyy"}} - {{reservation.end | date:"dd.MM.yyyy"}}</b></div>
+      <div>rezerwacji dokonano: {{reservation.created_time | date:"dd.MM.yyyy hh:mm"}}</div>
+      <div *ngIf="reservation.car">samochód: {{reservation.car.brand}} {{reservation.car.model}} ({{reservation.car.reg_number}})</div>
+      <div *ngIf="reservation.order">
+        <div>komentarze do zamówienia: {{reservation.order.comments}}</div>
+        <div>koszt wypożyczenia: {{reservation.order.cost}}</div>
+        <div *ngIf="reservation.order.paid" style="color: green"><b>ZAMÓWIENIE OPŁACONE</b></div>
+        <div *ngIf="!reservation.order.paid" style="color: red"><b>ZAMÓWIENIE NIEOPŁACONE</b> <button (click)="pay(i)">opłać</button></div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!reservations">
+    Nie posiadasz rezerwacji.
+  </div>
+  <div *ngIf="unknownError">NIEZNANY BŁĄÐ. SPRÓBUJ PONOWNIE PÓŹNIEJ</div>
+</section>

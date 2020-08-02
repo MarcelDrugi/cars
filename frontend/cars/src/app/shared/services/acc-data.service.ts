@@ -23,7 +23,7 @@ export class AccDataService {
   public setToken(token: string): void {
     if (!token) {
       this.setUsername('');
-      this.setAvatar('');
+      this.setClient('');
     }
     localStorage.setItem('token', token);
     console.log(localStorage.getItem('token'))
@@ -39,13 +39,14 @@ export class AccDataService {
     return this.username.asObservable();
   }
 
-  public setAvatar(username: string): void {
-    localStorage.setItem('avatar', username);
-    this.avatar.next(localStorage.getItem('avatar'));
+  public setClient(client: any): void {
+    //localStorage.setItem('client', client);
+    localStorage.setItem('client', JSON.stringify(client));
+    this.avatar.next(localStorage.getItem('client'));
   }
 
-  public getAvatar(): Observable<string> {
-    this.avatar.next(localStorage.getItem('avatar'));
+  public getClient(): Observable<string> {
+    this.avatar.next(localStorage.getItem('client'));
     return this.avatar.asObservable();
   }
 }

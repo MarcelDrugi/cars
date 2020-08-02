@@ -22,6 +22,7 @@ import { OrderService } from './shared/services/order.service';
 import { AddDiscountComponent } from './add-discount/add-discount.component';
 import { SuccessComponent } from './success/success.component';
 import { FailComponent } from './fail/fail.component';
+import { ClientProfileComponent } from './client-profile/client-profile.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { FailComponent } from './fail/fail.component';
     AddDiscountComponent,
     SuccessComponent,
     FailComponent,
+    ClientProfileComponent,
   ],
   imports: [
     BrowserModule,

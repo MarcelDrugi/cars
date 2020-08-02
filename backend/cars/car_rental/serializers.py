@@ -5,7 +5,6 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
-
 from .models import Segments, Cars, PriceLists, Clients, Reservations, \
     Discounts, Orders
 
@@ -37,7 +36,6 @@ class ClientSerializer(serializers.ModelSerializer):
 
                 for field in skip_fields:
                     self.fields.pop(field)
-
         super(ClientSerializer, self).__init__(*args, **kwargs)
 
     def create(self, validated_data):
@@ -213,7 +211,8 @@ class CheckReservationSerializer(serializers.Serializer):
 class ReservationRelatedSerializer(serializers.RelatedField):
     def to_representation(self, data):
         try:
-            data['begin'] = datetime.datetime.strptime(data['begin'], "%Y-%m-%d").date()
+            data['begin'] = datetime.datetime.strptime(data['begin'],
+                                                       "%Y-%m-%d").date()
         except ValueError:
             raise ValidationError('Incorrect begin-date format')
         try:
@@ -227,31 +226,24 @@ class ReservationRelatedSerializer(serializers.RelatedField):
         pass
 
 
+class OrderSerializer(serializers.ModelSerializer):
+    client = ClientSerializer(many=False)
+
+    class Meta:
+        model = Orders
+        fields = '__all__'
+
+
 class ReservationSerializer(serializers.ModelSerializer):
     car = CarSerializer(many=False)
-
-    """def to_internal_value(self, data):
-        try:
-            data['begin'] = datetime.datetime.strptime(data['begin'],
-                                                       "%Y-%m-%d").date()
-        except ValueError:
-            raise ValidationError('Incorrect begin-date format')
-        try:
-            data['end'] = datetime.datetime.strptime(data['end'],
-                                                     "%Y-%m-%d").date()
-        except ValueError:
-            raise ValidationError('Incorrect end-date format')
-
-        print('DATA:  ', data)
-        return super(ReservationSerializer, self).to_internal_value(data)"""
+    order = OrderSerializer(many=False, required=False)
 
     class Meta:
         model = Reservations
-        fields = ['begin', 'end', 'car']
+        fields = ['id', 'begin', 'end', 'car', 'created_time', 'order']
 
 
 class MajorOrderDataSerializer(serializers.Serializer):
-
     reserved_car = serializers.IntegerField()
     begin = serializers.DateField()
     end = serializers.DateField()

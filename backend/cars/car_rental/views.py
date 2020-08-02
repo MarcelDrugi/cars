@@ -70,47 +70,55 @@ class SignUp(CreateAPIView):
         else:
             data = {'user': request.data, 'avatar': avatar}
 
-        serialized = ClientSerializer(data=data)
+        serializer = ClientSerializer(data=data)
 
-        if serialized.is_valid():
+        if serializer.is_valid():
             try:
-                serialized.save()
+                serializer.save()
                 return Response(
-                    serialized.data,
+                    serializer.data,
                     status=status.HTTP_201_CREATED
                 )
             except User.DoesNotExist:
                 return Response(
-                    serialized.errors,
+                    serializer.errors,
                     status=status.HTTP_507_INSUFFICIENT_STORAGE
                 )
             except Exception:
                 return Response(
-                    serialized.errors,
+                    serializer.errors,
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
         else:
             if User.objects.filter(username=request.data['username']).exists():
                 return Response(
-                    serialized.errors,
+                    serializer.errors,
                     status=status.HTTP_409_CONFLICT
                 )
             else:
                 return Response(
-                    serialized.errors,
+                    serializer.errors,
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
 
-class AvatarAPI(TokenRefresh):
+class ClientDataAPI(TokenRefresh):
+    """
+    Handles :model:`car_rental:Clients` GET/PATCH requests.
+    Serializes and sends the client-acc data after login.
+    Patch client-acc data after profile edition.
+    """
+
     def get(self, request, **kwargs):
         try:
             client = Clients.objects.get(user__username=kwargs['username'])
-            serialized_avatar = AvatarSerializer({'avatar' : client.avatar})
+            avatar_serializer = AvatarSerializer({'avatar': client.avatar})
+            serialized_client = ClientSerializer(client)
             return Response(
                 {
                     'token': self._take_new_token(),
-                    'avatar': serialized_avatar.data
+                    'avatar': avatar_serializer.data,
+                    'client': serialized_client.data,
                 },
                 status=status.HTTP_200_OK
             )
@@ -119,12 +127,54 @@ class AvatarAPI(TokenRefresh):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+    def patch(self, request, **kwargs):
+        try:
+            client = Clients.objects.get(user__username=kwargs['username'])
+        except Clients.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        user = client.user
+
+        if 'new_password' in request.data and 'old_password' in request.data:
+            if user.check_password(request.data['old_password']):
+                try:
+                    user.set_password(request.data['new_password'])
+                    user.save()
+                except (AttributeError, TypeError):
+                    # no new password in request data (or wrong type/format)
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response(
+                        {'token': self._take_new_token()},
+                        status=status.HTTP_200_OK
+                    )
+            else:
+                return Response(status=status.HTTP_409_CONFLICT)
+        else:
+            try:
+                with transaction.atomic():
+                    user.username = request.data['username']
+                    user.first_name = request.data['first_name']
+                    user.last_name = request.data['last_name']
+                    user.email = request.data['email']
+                    user.save()
+                    if request.data['avatar'] and \
+                            request.data['avatar'] != 'undefined':
+                        client.avatar = request.data['avatar']
+                        client.save()
+            except AttributeError:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(
+                    {'token': self._take_new_token()},
+                    status=status.HTTP_200_OK
+                )
+
 
 class ClientsAPI(TokenRefresh, ListModelMixin):
     """
-    Handles :model:`car_rental:Clients` for GET/PUT requests.
+    Handles :model:`car_rental:Clients` for GET requests.
     """
-
+    permission_classes = (IsAuthenticated, )
     serializer_class = ClientSerializer
     queryset = Clients.objects.select_related().all().order_by(
         'user__username'
@@ -144,13 +194,15 @@ class ClientsAPI(TokenRefresh, ListModelMixin):
         return response
 
 
-class DiscountsAPI(TokenRefresh, ListModelMixin, CreateModelMixin, DestroyModelMixin):
+class DiscountsAPI(TokenRefresh, ListModelMixin, CreateModelMixin,
+                   DestroyModelMixin):
     """
     Handles :model:`car_rental:Discounts` for GET/PUT/POST requests.
     GET and POST work os standard.
     For PUT request, view doesnt serialize data, but only checks if objects
     exists and merge them (many-to-many relation)
     """
+    permission_classes = (IsAuthenticated, )
     serializer_class = DiscountSerializer
     queryset = Discounts.objects.all().order_by('discount_code')
 
@@ -212,9 +264,9 @@ class CarsAPI(TokenRefresh, ListModelMixin, DestroyModelMixin):
         return response
 
     def post(self, request, **kwargs):
-        serialized = CreateCarSerializer(data=request.data)
-        if serialized.is_valid():
-            serialized.save()
+        serializer = CreateCarSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
             return Response(
                 {'token': self._take_new_token()},
                 status=status.HTTP_201_CREATED
@@ -234,9 +286,9 @@ class CarsAPI(TokenRefresh, ListModelMixin, DestroyModelMixin):
                 status=status.HTTP_204_NO_CONTENT
             )
 
-        serialized = CreateCarSerializer(instance=instance, data=request.data)
-        if serialized.is_valid():
-            serialized.save()
+        serializer = CreateCarSerializer(instance=instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
             return Response(
                 {'token': self._take_new_token()},
                 status=status.HTTP_200_OK
@@ -255,7 +307,8 @@ class CarsAPI(TokenRefresh, ListModelMixin, DestroyModelMixin):
         )
 
 
-class SegmentsAPI(TokenRefresh, ListModelMixin, DestroyModelMixin, UpdateModelMixin):
+class SegmentsAPI(TokenRefresh, ListModelMixin, DestroyModelMixin,
+                  UpdateModelMixin):
     """
     Handles :model:`car_rental:Segments` and the assigned
     :model:`car_rental.PriceLists` for GET/POST/PUT/DELETE requests.
@@ -272,9 +325,9 @@ class SegmentsAPI(TokenRefresh, ListModelMixin, DestroyModelMixin, UpdateModelMi
         return response
 
     def post(self, request, **kwargs):
-        serialized = SegmentSerializer(data=request.data)
-        if serialized.is_valid():
-            serialized.save()
+        serializer = SegmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
 
             return Response(
                 {'token': self._take_new_token()},
@@ -306,14 +359,14 @@ class SingleSegmentAPI(TokenRefresh):
     def get(self, request, **kwargs):
         try:
             segment = Segments.objects.get(id=kwargs['id'])
-            serialized_segment = SegmentSerializer(segment)
+            segment_serializer = SegmentSerializer(segment)
         except Segments.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(
                 {
                     'token': self._take_new_token(),
-                    'segment': serialized_segment.data,
+                    'segment': segment_serializer.data,
                 },
                 status=status.HTTP_200_OK,
             )
@@ -329,13 +382,13 @@ class CheckReservationAPI(TokenRefresh):
     permission_classes = (IsAuthenticated, )
 
     def post(self, request, *args, **kwargs):
-        check_serialized = CheckReservationSerializer(
+        serializer_check = CheckReservationSerializer(
             data=request.data,
             permanent=False
         )
-        if check_serialized.is_valid():
+        if serializer_check.is_valid():
             try:
-                reservation = check_serialized.save()
+                reservation = serializer_check.save()
                 serialized_reservation = ReservationSerializer(reservation)
             except ValidationError:
                 return Response(
@@ -402,37 +455,58 @@ class ReservationAPI(TokenRefresh, DestroyModelMixin, ):
         )
 
 
-class Order(TokenRefresh):
-    def post(self, request, *args, **kwargs):
+class ClientReservationAPI(TokenRefresh, ListModelMixin):
+    serializer_class = ReservationSerializer
+
+    def get_queryset(self):
+        return Reservations.objects.select_related().filter(
+            order__client__user=self.request.user,
+        )
+
+    def get(self, request, **kwargs):
+        response = self.list(request, **kwargs)
+        response.data.append(
+            {'token': self._take_new_token()}
+        )
+        return response
+
+
+class OrderAPI(TokenRefresh):
+    permission_classes = (IsAuthenticated, )
+
+    def _get_payment_link(self, reservation):
         env = environ.Env()
         env.read_env('../cars/.env')
 
-        print(self.request.data)
-        serialized_major_data = MajorOrderDataSerializer(data=request.data)
-
-        if serialized_major_data.is_valid():
-            try:
-                reservation = serialized_major_data.save()
-            except (ValidationError, TypeError, AttributeError):
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        success_url = request.build_absolute_uri(reverse('success'))
-        cancel_url = request.build_absolute_uri(reverse('success'))
+        success_url = self.request.build_absolute_uri(reverse('paid'))
+        cancel_url = self.request.build_absolute_uri(reverse('cancel'))
         paypal = PaymentLinkGenerator(
             client_id=env('CLIENT_ID'),
             client_secret=env('CLIENT_SECRET'),
             success_url=success_url,
             cancel_url=cancel_url
         )
+
         data = {
             'name': reservation.car.brand,
             'reg_number': reservation.car.reg_number,
             'value': reservation.order.cost,
         }
-        paypal_response = paypal.payment(data)
-        print(paypal_response)
+        return paypal.payment(data)
+
+    def post(self, request, *args, **kwargs):
+        print(self.request.data)
+        major_data_serializer = MajorOrderDataSerializer(data=request.data)
+
+        if major_data_serializer.is_valid():
+            try:
+                reservation = major_data_serializer.save()
+            except (ValidationError, TypeError, AttributeError):
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        paypal_response = self._get_payment_link(reservation)
         if 'id' in paypal_response:
             payment_link = paypal_response['links'][1]['href']
             order = reservation.order
@@ -445,7 +519,29 @@ class Order(TokenRefresh):
                  },
                 status=status.HTTP_200_OK,
             )
-
         return Response(
-            status=status.HTTP_200_OK,
+            status=status.HTTP_406_NOT_ACCEPTABLE,
         )
+
+    def get(self, *args, **kwargs):
+        try:
+            reservation = Reservations.objects.get(id=kwargs['pk'])
+        except (AttributeError, Reservations.DoesNotExist):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        paypal_response = self._get_payment_link(reservation)
+        if 'id' in paypal_response:
+            payment_link = paypal_response['links'][1]['href']
+            order = reservation.order
+            order.payment_id = paypal_response['id']
+            order.save()
+            return Response(
+                {
+                    'token': self._take_new_token(),
+                    'payment_link': payment_link,
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                status=status.HTTP_406_NOT_ACCEPTABLE,
+            )

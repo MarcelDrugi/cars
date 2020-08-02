@@ -24,7 +24,7 @@ urlpatterns = [
     path(r'api-token-auth/', obtain_jwt_token),
     path(r'api-token-refresh/', refresh_jwt_token, name='refresh_jwt_token'),
 
-    path('success',  paypal_views.PayPalSuccessView.as_view(), name='success'),
+    path('paid',  paypal_views.PayPalSuccessView.as_view(), name='paid'),
     path('cancel', paypal_views.PayPalCancelView.as_view(), name='cancel'),
 
     url(

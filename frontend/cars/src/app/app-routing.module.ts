@@ -14,6 +14,7 @@ import { OrderComponent } from './order/order.component';
 import { AddDiscountComponent } from './add-discount/add-discount.component';
 import { SuccessComponent } from './success/success.component';
 import { FailComponent } from './fail/fail.component';
+import { ClientProfileComponent } from './client-profile/client-profile.component';
 
 
 const routes: Routes = [
@@ -32,6 +33,7 @@ const routes: Routes = [
   { path: 'adddiscount', component: AddDiscountComponent },
   { path: 'success', component: SuccessComponent },
   { path: 'fail', component: FailComponent },
+  { path: 'profile', component: ClientProfileComponent }
 ];
 
 @NgModule({

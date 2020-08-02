@@ -56,6 +56,18 @@ export class ReservService {
     return this.http.get<any>(url, httpOptions);
   }
 
+  public getReservations(): Observable<any> {
+    const url = this.backendInfoService.absolutePath + 'reservation';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + this.accDataService.getToken()
+    });
+    const httpOptions = {
+      headers,
+    };
+    return this.http.get<any>(url, httpOptions);
+  }
+
   public delReservation(id: number): Observable<any> {
     const url = this.backendInfoService.absolutePath + 'reservation/' + id;
     const headers = new HttpHeaders({
@@ -78,6 +90,18 @@ export class ReservService {
       headers,
     };
     return this.http.post<any>(url, fullData, httpOptions);
+  }
+
+  public existingOrder(id: number): Observable<any> {
+    const url = this.backendInfoService.absolutePath + 'order/' + id;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: 'JWT ' + this.accDataService.getToken()
+    });
+    const httpOptions = {
+      headers,
+    };
+    return this.http.get<any>(url, httpOptions);
   }
 
 }

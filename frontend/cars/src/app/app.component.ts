@@ -17,16 +17,16 @@ export class AppComponent implements OnInit {
   public logOut() {
     this.accDataService.setToken('');
     this.accDataService.setUsername('');
-    this.accDataService.setAvatar('');
+    this.accDataService.setClient('');
   }
   public ngOnInit(): void {
     this.accDataService.getUsername().subscribe((username: string) => {
       this.username = username;
     });
 
-    this.accDataService.getAvatar().subscribe((avatar: string) => {
-      this.avatar = avatar;
-      console.log('avatar:  ', avatar)
+    this.accDataService.getClient().subscribe((client: any) => {
+      const parsedClient = JSON.parse(client);
+      this.avatar = parsedClient.avatar;
     });
 
     console.log(this.accDataService.getToken());
