@@ -20,7 +20,7 @@ export class OrderComponent implements OnInit {
 
   // data containers
   public reservationId: number;
-  public client: Client;
+  public client: any;
   public segment: Segment;
   public reservation: SavedReservation;
   public totalCost: number;
@@ -96,17 +96,14 @@ export class OrderComponent implements OnInit {
     const end = new Date(this.reservation.end);
     let days = end.getTime() - begin.getTime();
     days /= (1000 * 3600 * 24);
-    console.log(days);
     if (days < 7) {
       this.totalCost = this.reservation.car.segment.pricing.day * days;
       this.totalCost = parseFloat(this.totalCost.toFixed(2));
-      console.log('day cost: ', this.totalCost);
     }
     else {
       const weeks = days / 7;
       this.totalCost = this.reservation.car.segment.pricing.week * weeks;
-      this.totalCost = parseFloat(this.totalCost.toFixed(2));
-      console.log('week cost: ', this.totalCost);
+      this.totalCost = parseFloat(this.totalCost.toFixed(2));;
     }
   }
 

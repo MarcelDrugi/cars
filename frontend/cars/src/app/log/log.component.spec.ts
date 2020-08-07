@@ -28,6 +28,12 @@ describe('LogComponent', () => {
       .compileComponents();
   }));
 
+  beforeEach(() => {
+    fixture = TestBed.createComponent(LogComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
   it('should create', () => {
     fixture = TestBed.createComponent(LogComponent);
     component = fixture.componentInstance;
@@ -65,6 +71,11 @@ describe('LogComponent', () => {
   it('correct form -> validData() function should change "usernamePasswordError" on false', () => {
     prepareAndValidLoginForm();
     expect(component.usernamePasswordError).toEqual(false);
+  });
+
+  it('ngOnInit() shoud create form and insert empty strings to fields', () => {
+    component.ngOnInit();
+    expect(component.form.value.username).toEqual('');
   });
 
 });

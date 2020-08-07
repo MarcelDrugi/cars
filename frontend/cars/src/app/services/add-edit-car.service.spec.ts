@@ -83,7 +83,7 @@ describe('AddEditCarService', () => {
     });
 
     const url = backendInfoService.absolutePath + 'cars';
-    httpMock.expectOne(url).flush({ token: token });
+    httpMock.expectOne(url).flush({ token });
   });
 
   it('request of udpateCar() should be PUT with suitable merge url', () => {
@@ -110,7 +110,7 @@ describe('AddEditCarService', () => {
     const carNb = 22;
     service.deleteCar(carNb).subscribe();
 
-    const url = backendInfoService.absolutePath + 'delcar/' + carNb;
+    const url = backendInfoService.absolutePath + 'cars/' + carNb;
     const req = httpMock.expectOne(url);
 
     expect(req.request.method).toEqual('DELETE');
@@ -124,7 +124,7 @@ describe('AddEditCarService', () => {
       expect(returnedToken.token).toEqual(token);
     });
 
-    const url = backendInfoService.absolutePath + 'delcar/' + carNb;
+    const url = backendInfoService.absolutePath + 'cars/' + carNb;
     httpMock.expectOne(url).flush({ token: token });
   });
 
@@ -151,7 +151,7 @@ describe('AddEditCarService', () => {
   it('request of udpateSegment() should be PUT with suitable merge url', () => {
     service.updateSegment(segmentData).subscribe();
 
-    const url = backendInfoService.absolutePath + 'putdelsegment/' + segmentData.id;
+    const url = backendInfoService.absolutePath + 'segments/' + segmentData.id;
     const req = httpMock.expectOne(url);
 
     expect(req.request.method).toEqual('PUT');
@@ -164,7 +164,7 @@ describe('AddEditCarService', () => {
       expect(returnedToken.token).toEqual(token);
     });
 
-    const url = backendInfoService.absolutePath + 'putdelsegment/' + segmentData.id;
+    const url = backendInfoService.absolutePath + 'segments/' + segmentData.id;
     httpMock.expectOne(url).flush({ token: token });
   });
 
@@ -172,7 +172,7 @@ describe('AddEditCarService', () => {
     const segmentNb = 13;
     service.deleteSegment(segmentNb).subscribe();
 
-    const url = backendInfoService.absolutePath + 'putdelsegment/' + segmentNb;
+    const url = backendInfoService.absolutePath + 'segments/' + segmentNb;
     const req = httpMock.expectOne(url);
 
     expect(req.request.method).toEqual('DELETE');
@@ -186,7 +186,7 @@ describe('AddEditCarService', () => {
       expect(returnedToken.token).toEqual(token);
     });
 
-    const url = backendInfoService.absolutePath + 'putdelsegment/' + segmentNb;
+    const url = backendInfoService.absolutePath + 'segments/' + segmentNb;
     httpMock.expectOne(url).flush({ token: token });
   });
 

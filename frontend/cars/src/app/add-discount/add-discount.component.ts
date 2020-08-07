@@ -150,7 +150,6 @@ export class AddDiscountComponent implements OnInit {
         discount_code: parseInt(this.addDiscount.value.discount_code, 10),
         discount_value: parseFloat(this.addDiscount.value.discount_value) / 100
       };
-      console.log('val:  ', discountData.discount_value)
       this.postNewDiscount(discountData);
     }
   }

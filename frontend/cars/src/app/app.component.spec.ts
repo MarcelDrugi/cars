@@ -4,13 +4,16 @@ import { AppComponent } from './app.component';
 import { AccDataService } from './shared/services/acc-data.service';
 import { RegComponent } from './reg/reg.component';
 import { By } from '@angular/platform-browser';
-import { of } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 describe('AppComponent', () => {
 
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let accDataService: AccDataService;
+  const returnedClient = { avatar: '', user: {username: 'someUsername', first_name: 'someName', last_name: 'someLastName', email: 'some@email.com'} };
+  const token = '12345abcde';
+  const username = 'exampleUsername';
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -20,7 +23,19 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
-      providers: [AccDataService],
+      providers: [
+        {
+          provide: AccDataService,
+          useValue: {
+            getClient: () => of(JSON.stringify(returnedClient)),
+            setClient: () => of(),
+            getToken: () => of(token),
+            setToken: () => of(),
+            getUsername: () => of(username),
+            setUsername: () => of(''),
+          }
+        },
+      ],
     }).compileComponents();
   }));
 
@@ -42,20 +57,23 @@ describe('AppComponent', () => {
     expect(component.login).toEqual(false);
   });
 
-  it('username should be null before logging in', () => {
+  it('username should be equal username-variable ', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.username')).toBe(null);
+    expect(compiled.querySelector('.username').textContent).toEqual('Jesteś zalogowany jako ' + username);
   });
 
-  it('calling logOut() should set the token variable to null', () => {
+  it('calling logOut() should call 3 AccDataService methods: setUsername, setToken, setClient', () => {
     accDataService = TestBed.get(AccDataService);
-    accDataService.setToken('123456789');
-    spyOn(accDataService, 'setUsername');
+    const setUsername = spyOn(accDataService, 'setUsername');
+    const setToken = spyOn(accDataService, 'setToken');
+    const setClient = spyOn(accDataService, 'setClient');
 
     component.logOut();
 
-    expect(accDataService.getToken()).toBe('');
+    expect(setUsername).toHaveBeenCalled();
+    expect(setToken).toHaveBeenCalled();
+    expect(setClient).toHaveBeenCalled();
   });
 
   it('calling ngOnInit() should set the username such as return getUsername() in AccDataService', () => {
