@@ -28,7 +28,7 @@ export class LogService {
   }
 
   public getClient(username: string): Observable<any> {
-    const url = this.backendInfoService.absolutePath + 'client/' + username;
+    const url = this.backendInfoService.absolutePath + 'client/single/' + username;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });

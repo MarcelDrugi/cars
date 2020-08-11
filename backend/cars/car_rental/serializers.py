@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import transaction
 from rest_framework import serializers
 from django.contrib.auth.models import User
@@ -14,6 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'password']
+        extra_kwargs = {'username': {'validators': [UnicodeUsernameValidator]}}
 
 
 class DiscountSerializer(serializers.ModelSerializer):
@@ -50,12 +52,41 @@ class ClientSerializer(serializers.ModelSerializer):
                 user=user,
                 avatar=avatar
             )
-
         return client
 
     class Meta:
         model = Clients
-        fields = ['user', 'avatar', 'discount']
+        fields = ['id', 'user', 'avatar', 'discount']
+
+
+class UpdateClientDataSerializer(serializers.Serializer):
+    avatar = serializers.FileField(required=False)
+    user = UserSerializer(many=False)
+
+    def to_internal_value(self, data):
+        data._mutable = True
+        try:
+            avatar = data.get('avatar')
+            data = {'user': data}
+            if avatar is not None and avatar != 'undefined':
+                data['avatar'] = avatar
+        except KeyError:
+            raise ValidationError('Wrong data format')
+        return super(UpdateClientDataSerializer, self).to_internal_value(data)
+
+    def update(self, instance, validated_data):
+        user = instance.user
+
+        with transaction.atomic():
+            user.username = validated_data['user']['username']
+            user.first_name = validated_data['user']['first_name']
+            user.last_name = validated_data['user']['last_name']
+            user.email = validated_data['user']['email']
+            user.save()
+            if 'avatar' in validated_data:
+                instance.avatar = validated_data['avatar']
+                instance.save()
+        return instance
 
 
 class AvatarSerializer(serializers.Serializer):
@@ -74,32 +105,33 @@ class SegmentSerializer(serializers.ModelSerializer):
     pricing = PriceListSerializer(many=False)
 
     def create(self, validated_data):
-        pricing = PriceLists.objects.create(
-            hour=validated_data['pricing']['hour'],
-            day=validated_data['pricing']['day'],
-            week=validated_data['pricing']['week'],
-        )
+        with transaction.atomic():
+            pricing = PriceLists.objects.create(
+                hour=validated_data['pricing']['hour'],
+                day=validated_data['pricing']['day'],
+                week=validated_data['pricing']['week'],
+            )
 
-        segment = Segments.objects.create(
-            name=validated_data['name'],
-            pricing=pricing
-        )
-        return segment
+            segment = Segments.objects.create(
+                name=validated_data['name'],
+                pricing=pricing
+            )
+            return segment
 
     def update(self, instance, validated_data):
         pricing = get_object_or_404(
             PriceLists,
             id=int(validated_data['pricing']['id'])
         )
+        with transaction.atomic():
+            pricing.hour = validated_data['pricing']['hour']
+            pricing.day = validated_data['pricing']['day']
+            pricing.week = validated_data['pricing']['week']
+            pricing.save()
 
-        pricing.hour = validated_data['pricing']['hour']
-        pricing.day = validated_data['pricing']['day']
-        pricing.week = validated_data['pricing']['week']
-        pricing.save()
-
-        instance.name = validated_data['name']
-        instance.pricing = pricing
-        instance.save()
+            instance.name = validated_data['name']
+            instance.pricing = pricing
+            instance.save()
 
         return instance
 

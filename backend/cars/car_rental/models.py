@@ -5,7 +5,7 @@ from django.core.validators import MinLengthValidator, MaxValueValidator, \
     MinValueValidator, MaxLengthValidator
 
 from django.contrib.auth.models import User
-from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 
 from .managers import ClientManager
 
@@ -112,7 +112,7 @@ class Orders(models.Model):
             self.comments += ' (Order without reservation)'
 
     def clean(self):
-        if self.payment_id is False and self.paid:
+        if self.payment_id is None and self.paid:
             raise ValidationError(
                 'Object has ID for unrealized payment'
             )
@@ -138,8 +138,6 @@ class Reservations(models.Model):
     def _term_checking(self):
         occupied = Reservations.objects.select_related().filter(car=self.car)
         for term in occupied:
-            if self.begin >= datetime.date.today()-datetime.timedelta(days=1):
-                pass
             if self.begin > term.end:
                 pass
             elif self.end < term.begin:
@@ -153,9 +151,13 @@ class Reservations(models.Model):
             raise ValidationError(
                 'Wrong dates! End-date must be later than begin-date.'
             )
+        if self.begin <= datetime.date.today() + datetime.timedelta(days=-1):
+            raise ValidationError(
+                'Past booking.'
+            )
         if not self._term_checking():
             raise ValidationError(
-                'Term is not free'
+                'Term is not free.'
             )
         super(Reservations, self).clean()
 

@@ -22,8 +22,8 @@ export class RegService {
     return this.http.post<Register>(url, clientData);
   }
 
-  public patchPassword(username: string, pass: any): Observable<any> {
-    const url = this.backendInfoService.absolutePath + 'client/' + username ;
+  public patchPassword(clientId: number, pass: any): Observable<any> {
+    const url = this.backendInfoService.absolutePath + 'client/' + clientId ;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: 'JWT ' + this.accDataService.getToken()
@@ -34,8 +34,8 @@ export class RegService {
     return this.http.patch<any>(url, pass, httpOptions);
   }
 
-  public patchData(username: string, data: any): Observable<any> {
-    const url = this.backendInfoService.absolutePath + 'client/' + username ;
+  public patchData(clientId: number, data: any): Observable<any> {
+    const url = this.backendInfoService.absolutePath + 'client/' + clientId ;
     const headers = new HttpHeaders({
       Authorization: 'JWT ' + this.accDataService.getToken()
     });

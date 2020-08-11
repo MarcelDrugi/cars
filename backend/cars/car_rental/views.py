@@ -17,7 +17,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import authentication_classes, \
     permission_classes
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import CreateAPIView, GenericAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView, \
+    UpdateAPIView
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, \
     UpdateModelMixin, DestroyModelMixin
 from rest_framework.parsers import FileUploadParser
@@ -34,7 +35,7 @@ from .models import Clients, PriceLists, Segments, Cars, Reservations, \
 from .serializers import UserSerializer, SegmentSerializer, \
     CreateCarSerializer, CarSerializer, ClientSerializer, \
     CheckReservationSerializer, ReservationSerializer, AvatarSerializer, \
-    DiscountSerializer, MajorOrderDataSerializer
+    DiscountSerializer, MajorOrderDataSerializer, UpdateClientDataSerializer
 
 
 class MainView(TemplateView):
@@ -63,13 +64,11 @@ class SignUp(CreateAPIView):
     permission_classes = ()
 
     def create(self, request, **kwargs):
-        print(request.data)
         avatar = request.data['avatar']
         if avatar == 'undefined':
             data = {'user': request.data}
         else:
             data = {'user': request.data, 'avatar': avatar}
-
         serializer = ClientSerializer(data=data)
 
         if serializer.is_valid():
@@ -102,16 +101,19 @@ class SignUp(CreateAPIView):
                 )
 
 
-class ClientDataAPI(TokenRefresh):
+class ClientDataAPI(TokenRefresh, UpdateModelMixin):
     """
     Handles :model:`car_rental:Clients` GET/PATCH requests.
     Serializes and sends the client-acc data after login.
     Patch client-acc data after profile edition.
     """
 
+    queryset = Clients.objects.prefetch_related().all()
+    serializer_class = UpdateClientDataSerializer
+
     def get(self, request, **kwargs):
         try:
-            client = Clients.objects.get(user__username=kwargs['username'])
+            client = self.queryset.get(user__username=kwargs['username'])
             avatar_serializer = AvatarSerializer({'avatar': client.avatar})
             serialized_client = ClientSerializer(client)
             return Response(
@@ -123,18 +125,12 @@ class ClientDataAPI(TokenRefresh):
                 status=status.HTTP_200_OK
             )
         except Clients.DoesNotExist:
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-    def patch(self, request, **kwargs):
-        try:
-            client = Clients.objects.get(user__username=kwargs['username'])
-        except Clients.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        user = client.user
 
+    def patch(self, request, *args, **kwargs):
         if 'new_password' in request.data and 'old_password' in request.data:
+            client = self.queryset.get(id=kwargs['pk'])
+            user = client.user
             if user.check_password(request.data['old_password']):
                 try:
                     user.set_password(request.data['new_password'])
@@ -150,24 +146,9 @@ class ClientDataAPI(TokenRefresh):
             else:
                 return Response(status=status.HTTP_409_CONFLICT)
         else:
-            try:
-                with transaction.atomic():
-                    user.username = request.data['username']
-                    user.first_name = request.data['first_name']
-                    user.last_name = request.data['last_name']
-                    user.email = request.data['email']
-                    user.save()
-                    if request.data['avatar'] and \
-                            request.data['avatar'] != 'undefined':
-                        client.avatar = request.data['avatar']
-                        client.save()
-            except AttributeError:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response(
-                    {'token': self._take_new_token()},
-                    status=status.HTTP_200_OK
-                )
+            response = self.update(request, *args, **kwargs)
+            response.data['token'] = self._take_new_token()
+            return response
 
 
 class ClientsAPI(TokenRefresh, ListModelMixin):
@@ -495,7 +476,6 @@ class OrderAPI(TokenRefresh):
         return paypal.payment(data)
 
     def post(self, request, *args, **kwargs):
-        print(self.request.data)
         major_data_serializer = MajorOrderDataSerializer(data=request.data)
 
         if major_data_serializer.is_valid():

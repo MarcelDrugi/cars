@@ -40,7 +40,6 @@ export class AccDataService {
   }
 
   public setClient(client: any): void {
-    //localStorage.setItem('client', client);
     localStorage.setItem('client', JSON.stringify(client));
     this.avatar.next(localStorage.getItem('client'));
   }

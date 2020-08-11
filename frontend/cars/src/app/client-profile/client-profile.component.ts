@@ -19,6 +19,7 @@ export class ClientProfileComponent implements OnInit {
   // data contatiners
   public reservations: Array<any>;
   public client: Register;
+  private clientId: number;
   public avatar: string;
   private basicAvatar: string;
   private clientData: FormData;
@@ -77,6 +78,7 @@ export class ClientProfileComponent implements OnInit {
       this.basicAvatar = parsedClient.avatar;
       this.avatar = this.basicAvatar;
       this.client = parsedClient.user;
+      this.clientId = parsedClient.id;
     });
   }
 
@@ -108,7 +110,7 @@ export class ClientProfileComponent implements OnInit {
   }
 
   private patchData(): void {
-    this.regService.patchData(this.client.username, this.clientData).subscribe(
+    this.regService.patchData(this.clientId, this.clientData).subscribe(
       (resp: any) => {
         this.refreshData(this.dataForm.value.username);
         this.newData = true;
@@ -142,7 +144,7 @@ export class ClientProfileComponent implements OnInit {
       this.clientData.append('last_name', this.dataForm.value.lastName);
       this.clientData.append('avatar', this.img);
       this.clientData.append('password', this.dataForm.value.password);
-
+      this.clientData.append('id', this.clientId.toString());
       this.patchData();
     }
   }
@@ -162,7 +164,6 @@ export class ClientProfileComponent implements OnInit {
     };
 
     this.img = img.target['files'].item(0);
-    console.log('img: ', this.img)
 
 
     if (this.img.size > this.maxSize) {
@@ -203,11 +204,12 @@ export class ClientProfileComponent implements OnInit {
   }
 
   private patchPassword(pass: any): void {
-    this.regService.patchPassword(this.client.username, pass).subscribe(
+    this.regService.patchPassword(this.clientId, pass).subscribe(
       (resp: any) => {
         this.newPassword = true;
         this.passwordForm.reset();
         this.passwordEdition = false;
+        this.sentPassword = false;
       },
       error => {
         if (error.statusText === 'Unauthorized' && error.status === 401) {
