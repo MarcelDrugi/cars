@@ -10,6 +10,7 @@ from datetime import date
 import django
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
 from django.test import TestCase, Client
 from django.urls import reverse, resolve
 import json
@@ -117,7 +118,13 @@ class ClientDataAPITestCase(AuthorizedAPITestCase):
     def setUp(self):
         super(ClientDataAPITestCase, self).setUp()
         # client-user (necessary to receive a token)
-        self.user_data = {'username': 'Username', 'password': 'some_pass'}
+        self.user_data = {
+            'username': 'Username',
+            'first_name': 'First',
+            'last_name': 'Last',
+            'email': 'some@email.com',
+            'password': 'some_pass'
+        }
         user = User.objects.create_user(**self.user_data)
         Clients.objects.create_client(user=user, avatar=None)
 
@@ -144,6 +151,44 @@ class ClientDataAPITestCase(AuthorizedAPITestCase):
 
     def test_patch_client(self):
         initial_client = Clients.objects.last()
+        # get token:
+        token = self.get_token(self.user_data)
+
+        # patch user's data:
+        data_to_patch = self.user_data.copy()
+        data_to_patch['username'] = 'Other username'
+
+        response = self.client.patch(
+            reverse('car_rental:client_pk', kwargs={
+                'pk': initial_client.id
+            }),
+            data_to_patch,
+            HTTP_AUTHORIZATION=token,
+        )
+        patched_client = get_object_or_404(Clients, id=initial_client.id)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(initial_client.user.username, self.user_data['username'])
+        self.assertEqual(initial_client.user.username, data_to_patch['username'])
+
+    def test_patch_password(self):
+        pass_to_patch = {
+            'old_password': self.user_data['password'],
+            'new_password': 'some_new_pass'
+        }
+        initial_client = Clients.objects.last()
+        # get token:
+        token = self.get_token(self.user_data)
+
+        response = self.client.patch(
+            reverse('car_rental:client_pk', kwargs={
+                'pk': initial_client.id
+            }),
+            pass_to_patch,
+            HTTP_AUTHORIZATION=token,
+        )
+        patched_client = get_object_or_404(Clients, id=initial_client.id)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(patched_client.user.check_password(pass_to_patch['new_password']))
 
 
 class CarsAPITestCase(AuthorizedAPITestCase, TestWithCar):
@@ -494,28 +539,93 @@ class URLTestCase(TestCase):
         name = resolve('/signup').view_name
         self.assertEqual(name, 'car_rental:sign_up')
 
+    def test_client_with_id(self):
+        pk = '3'
+        url = '/client/' + pk
+        name = resolve(url).view_name
+        self.assertEqual(name, 'car_rental:client_pk')
+        self.assertEqual(reverse('car_rental:client_pk', kwargs={'pk': pk}), url)
+
+    def test_client_with_username(self):
+        username = 'some_username'
+        url = '/client/single/' + username
+        name = resolve(url).view_name
+        self.assertEqual(name, 'car_rental:client')
+        self.assertEqual(reverse('car_rental:client', kwargs={'username': username}), url)
+
     def test_cars(self):
         name = resolve('/cars').view_name
         self.assertEqual(name, 'car_rental:cars')
 
     def test_del_car(self):
-        url = '/cars/10'
+        pk = '10'
+        url = '/cars/' + pk
         name = resolve(url).view_name
         self.assertEqual(name, 'car_rental:cars')
-        self.assertEqual(reverse('car_rental:cars', kwargs={'pk': 10}), url)
+        self.assertEqual(reverse('car_rental:cars', kwargs={'pk': pk}), url)
 
     def test_segments(self):
         name = resolve('/segments').view_name
         self.assertEqual(name, 'car_rental:segments')
 
     def test_del_segment(self):
-        url = '/segments/9'
+        pk = '9'
+        url = '/segments/' + pk
         name = resolve(url).view_name
         self.assertEqual(name, 'car_rental:segments_pk')
         self.assertEqual(reverse(
             'car_rental:segments_pk',
-            kwargs={'pk': 9}), url
+            kwargs={'pk': pk}), url
         )
+
+    def test_single_segment(self):
+        id = '5'
+        url = '/segment/' + id
+        name = resolve(url).view_name
+        self.assertEqual(name, 'car_rental:segment')
+        self.assertEqual(reverse('car_rental:segment', kwargs={'id': id}), url)
+
+    def test_check_reservation(self):
+        url = '/checkres'
+        name = resolve(url).view_name
+        self.assertEqual(name, 'car_rental:check_res')
+
+    def test_reservation(self):
+        pk = '2275'
+        url = '/reservation/' + pk
+        name = resolve(url).view_name
+        self.assertEqual(name, 'car_rental:reservation')
+        self.assertEqual(reverse('car_rental:reservation', kwargs={'pk': pk}), url)
+
+    def test_client_reservation(self):
+        name = resolve('/reservation').view_name
+        self.assertEqual(name, 'car_rental:client_reservation')
+
+    def test_clients(self):
+        name = resolve('/clients').view_name
+        self.assertEqual(name, 'car_rental:clients')
+
+    def test_discounts(self):
+        name = resolve('/discounts').view_name
+        self.assertEqual(name, 'car_rental:discounts')
+
+    def test_discounts_pk(self):
+        pk = '29'
+        url = '/discounts/' + pk
+        name = resolve(url).view_name
+        self.assertEqual(name, 'car_rental:discounts_pk')
+        self.assertEqual(reverse('car_rental:discounts_pk', kwargs={'pk': pk}), url)
+
+    def test_new_order(self):
+        name = resolve('/order').view_name
+        self.assertEqual(name, 'car_rental:new_order')
+
+    def test_existing_order(self):
+        pk = '1088'
+        url = '/order/' + pk
+        name = resolve(url).view_name
+        self.assertEqual(name, 'car_rental:existing_order')
+        self.assertEqual(reverse('car_rental:existing_order', kwargs={'pk': pk}), url)
 
 
 # MODELS
