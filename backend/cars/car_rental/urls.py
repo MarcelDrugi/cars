@@ -8,7 +8,7 @@ urlpatterns = [
     path('', views.MainView.as_view(), name='main'),
     path('signup', views.SignUp.as_view(), name='sign_up'),
     path('client/<int:pk>', views.ClientDataAPI.as_view(),
-         name='client'),
+         name='client_pk'),
     path('client/single/<str:username>', views.ClientDataAPI.as_view(),
          name='client'),
     path('cars', views.CarsAPI.as_view(), name='cars'),
@@ -24,7 +24,7 @@ urlpatterns = [
          name='client_reservation'),
     path('clients', views.ClientsAPI.as_view(), name='clients'),
     path('discounts', views.DiscountsAPI.as_view(), name='discounts'),
-    path('discounts/<int:pk>', views.DiscountsAPI.as_view(), name='discounts'),
+    path('discounts/<int:pk>', views.DiscountsAPI.as_view(), name='discounts_pk'),
     path('order', views.OrderAPI.as_view(), name='new_order'),
     path('order/<int:pk>', views.OrderAPI.as_view(), name='existing_order'),
 
