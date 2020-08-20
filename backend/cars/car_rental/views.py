@@ -1,38 +1,22 @@
 """
 Backend API documentation on '/swagger.json' or '/swagger.yaml'
 """
-import base64
-import datetime
-import json
 
 import environ
-import requests
-from django.core.files.storage import FileSystemStorage
-from django.db import transaction
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.views import View
 from django.views.generic import TemplateView
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import authentication_classes, \
-    permission_classes
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import CreateAPIView, GenericAPIView, \
-    UpdateAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, \
     UpdateModelMixin, DestroyModelMixin
-from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, \
     IsAuthenticated
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import status, permissions
-from django.core import serializers
+from rest_framework import status
 from paypal.payment_prepare import PaymentLinkGenerator
-from .models import Clients, PriceLists, Segments, Cars, Reservations, \
-    Discounts, Orders
-from .serializers import UserSerializer, SegmentSerializer, \
+from .models import Clients, Segments, Cars, Reservations, Discounts
+from .serializers import SegmentSerializer, \
     CreateCarSerializer, CarSerializer, ClientSerializer, \
     CheckReservationSerializer, ReservationSerializer, AvatarSerializer, \
     DiscountSerializer, MajorOrderDataSerializer, UpdateClientDataSerializer

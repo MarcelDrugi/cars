@@ -17,7 +17,6 @@ import json
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.test import APITestCase
 from .models import *
-from .serializers import UserSerializer
 
 
 class TestWithCar(TestCase):
@@ -116,7 +115,6 @@ class SignUpTestCase(APITestCase):
 
 class ClientDataAPITestCase(AuthorizedAPITestCase):
     def setUp(self):
-        super(ClientDataAPITestCase, self).setUp()
         # client-user (necessary to receive a token)
         self.user_data = {
             'username': 'Username',
@@ -167,8 +165,13 @@ class ClientDataAPITestCase(AuthorizedAPITestCase):
         )
         patched_client = get_object_or_404(Clients, id=initial_client.id)
         self.assertEqual(response.status_code, 200)
-        self.assertNotEqual(initial_client.user.username, self.user_data['username'])
-        self.assertEqual(initial_client.user.username, data_to_patch['username'])
+        self.assertNotEqual(
+            initial_client.user.username, self.user_data['username']
+        )
+        self.assertIn('token', response.data)
+        self.assertEqual(
+            initial_client.user.username, data_to_patch['username']
+        )
 
     def test_patch_password(self):
         pass_to_patch = {
@@ -188,7 +191,146 @@ class ClientDataAPITestCase(AuthorizedAPITestCase):
         )
         patched_client = get_object_or_404(Clients, id=initial_client.id)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(patched_client.user.check_password(pass_to_patch['new_password']))
+        self.assertTrue(
+            patched_client.user.check_password(pass_to_patch['new_password'])
+        )
+        self.assertIn('token', response.data)
+
+
+class ClientsAPITestCase(AuthorizedAPITestCase):
+    def setUp(self):
+        self.workers_data = {
+            'username': 'some_username',
+            'password': 'some_pass'
+        }
+        User.objects.create_user(**self.workers_data)
+        user = User.objects.create_user(
+            username='username_1',
+            password='some_pass'
+        )
+        Clients.objects.create_client(user=user, avatar=None)
+
+    def test_get_clients(self):
+        # get token:
+        token = self.get_token(self.workers_data)
+
+        response = self.client.get(
+            reverse('car_rental:clients'),
+            HTTP_AUTHORIZATION=token,
+        )
+        clients = Clients.objects.all()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(clients.count(), 1)
+        self.assertTrue(clients.last().user.has_perm('car_rental.client'))
+
+
+class DiscountsAPITestCase(AuthorizedAPITestCase):
+    def setUp(self):
+        self.workers_data = {
+            'username': 'some_username',
+            'password': 'some_pass'
+        }
+        User.objects.create_user(**self.workers_data)
+        self.discount = Discounts.objects.create(
+            discount_code=35792468,
+            discount_value=0.4
+        )
+        clients_user = User.objects.create_user(
+            username='clients_username',
+            password='some_pass'
+        )
+        self.client_ = Clients.objects.create_client(
+            user=clients_user,
+            avatar=None
+        )
+        #self.client_.discount.add(self.discount)
+
+    def test_post_discount(self):
+        new_discount_data = {
+            'discount_code': 555917,
+            'discount_value': 0.1
+        }
+        token = self.get_token(self.workers_data)
+
+        response = self.client.post(
+            reverse('car_rental:discounts'),
+            new_discount_data,
+            HTTP_AUTHORIZATION=token,
+        )
+        added_discount = Discounts.objects.last()
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Discounts.objects.all().count(), 2)
+        self.assertEqual(
+            added_discount.discount_code,
+            new_discount_data['discount_code']
+        )
+        self.assertEqual(
+            added_discount.discount_value,
+            new_discount_data['discount_value']
+        )
+        self.assertIn('token', response.data)
+
+    def test_get_discount(self):
+        token = self.get_token(self.workers_data)
+        response = self.client.get(
+            reverse('car_rental:discounts'),
+            HTTP_AUTHORIZATION=token,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('token', response.data[1])
+        self.assertEqual(Discounts.objects.all().count(), 1)
+
+    def test_add_discount_to_client(self):
+        token = self.get_token(self.workers_data)
+        data = {
+            'client': self.client_.user.username,
+            'discount': self.discount.id,
+            'acction': 'add',
+        }
+        response = self.client.put(
+            reverse('car_rental:discounts'),
+            data,
+            HTTP_AUTHORIZATION=token,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('token', response.data)
+        self.assertGreater(self.client_.discount.all().count(), 0)
+        self.assertEqual(
+            self.client_.discount.last().discount_code,
+            self.discount.discount_code
+        )
+
+    def test_separate_discount_from_the_client(self):
+        # adding a discount to the client
+        self.client_.discount.add(self.discount)
+
+        token = self.get_token(self.workers_data)
+        data = {
+            'client': self.client_.user.username,
+            'discount': self.discount.id,
+            'acction': 'remove',
+        }
+        response = self.client.put(
+            reverse('car_rental:discounts'),
+            data,
+            HTTP_AUTHORIZATION=token,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('token', response.data)
+        self.assertEqual(self.client_.discount.all().count(), 0)
+
+    def test_delete_discount(self):
+        token = self.get_token(self.workers_data)
+        response = self.client.delete(
+            reverse(
+                'car_rental:discounts_pk',
+                kwargs={'pk': self.discount.id}
+            ),
+            HTTP_AUTHORIZATION=token,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('token', response.data)
+        self.assertEqual(Discounts.objects.all().count(), 0)
 
 
 class CarsAPITestCase(AuthorizedAPITestCase, TestWithCar):
@@ -198,7 +340,7 @@ class CarsAPITestCase(AuthorizedAPITestCase, TestWithCar):
     """
     def setUp(self):
         super(CarsAPITestCase, self).setUp()
-        # client-user (necessary to receive a token)
+        # client-user -> necessary to receive a token
         self.user_data = {'username': 'Username', 'password': 'some_pass'}
         user = User.objects.create_user(**self.user_data)
         Clients.objects.create_client(user=user, avatar=None)
@@ -311,15 +453,6 @@ class CarsAPITestCase(AuthorizedAPITestCase, TestWithCar):
         self.assertEqual(response.status_code, 400)
         self.assertIn('token', response.data)  # refresh token even when 400
 
-
-class DeleteCarAPITestCase(AuthorizedAPITestCase, TestWithCar):
-    def setUp(self):
-        super(DeleteCarAPITestCase, self).setUp()
-        # client-user (necessary to receive a token)
-        self.user_data = {'username': 'Username', 'password': 'some_pass'}
-        user = User.objects.create_user(**self.user_data)
-        Clients.objects.create_client(user=user, avatar=None)
-
     def test_del_car(self):
         # get token:
         token = self.get_token(self.user_data)
@@ -430,31 +563,6 @@ class SegmentsAPITestCase(AuthorizedAPITestCase):
         self.assertEqual(len(segments), 1)
         self.assertIn('token', response.data)
 
-
-class PutDeleteSegmentAPITestCase(AuthorizedAPITestCase):
-    def setUp(self):
-        # pricing
-        self.pricing_data = {
-            'id': 22,
-            'hour': 29.50,
-            'day': 95.00,
-            'week': 449.99
-        }
-        self.pricing = PriceLists.objects.create(**self.pricing_data)
-
-        # segment
-        self.segment_data = {
-            'id': 25,
-            'name': 'example_name',
-            'pricing': self.pricing
-        }
-        self.segment = Segments.objects.create(**self.segment_data)
-
-        # client-user (necessary to receive a token)
-        self.user_data = {'username': 'Username', 'password': 'some_pass'}
-        user = User.objects.create_user(**self.user_data)
-        Clients.objects.create_client(user=user, avatar=None)
-
     def test_correct_put(self):
         updated_segment_data = self.segment_data
         updated_segment_data['pricing'] = self.pricing_data
@@ -517,6 +625,99 @@ class PutDeleteSegmentAPITestCase(AuthorizedAPITestCase):
         self.assertIn('token', response.data)
 
 
+class SingleSegmentAPITestCase(APITestCase):
+    def setUp(self):
+        self.pricing_data = {
+            'id': 4,
+            'hour': 29.50,
+            'day': 145.99,
+            'week': 480.00
+        }
+        self.pricing = PriceLists.objects.create(**self.pricing_data)
+        self.segment_id = 1
+        Segments.objects.create(
+            id=self.segment_id,
+            name='name',
+            pricing=self.pricing
+        )
+
+    def test_get_single_segment(self):
+        response = self.client.get(
+            reverse('car_rental:segment', kwargs={'id': self.segment_id})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('token', response.data)
+        self.assertEqual(
+            response.data['segment']['pricing'],
+            self.pricing_data
+        )
+        self.assertEqual(response.data['segment']['id'], self.segment_id)
+
+
+class CheckReservationAPITestCase(AuthorizedAPITestCase, TestWithCar):
+    def setUp(self):
+        super(CheckReservationAPITestCase, self).setUp()
+
+        # client-user -> necessary to receive a token
+        self.user_data = {'username': 'tester', 'password': 'secret_pass'}
+        user = User.objects.create_user(**self.user_data)
+        Clients.objects.create_client(user=user, avatar=None)
+
+        # creating reservation with a car, inherited from TestWithCar class
+        self.reservation_data = {
+            'car': self.car,
+            'begin': date.today() + datetime.timedelta(days=5),
+            'end': date.today() + datetime.timedelta(days=12),
+        }
+        Reservations.objects.create(**self.reservation_data)
+
+    def test_free_reservation_term(self):
+        begin_date = (self.reservation_data['end'] +
+                      datetime.timedelta(days=1)).strftime('%d.%m.%Y')
+        end_date = (self.reservation_data['end'] +
+                    datetime.timedelta(days=3)).strftime('%d.%m.%Y')
+        checking_reservation_data = {
+            'begin': begin_date,
+            'end': end_date,
+            'segment': self.car.segment.id
+        }
+
+        token = self.get_token(self.user_data)
+        response = self.client.post(
+            reverse('car_rental:check_res', ),
+            data=checking_reservation_data,
+            HTTP_AUTHORIZATION=token,
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(
+            response.data['client']['user']['username'],
+            self.user_data['username']
+        )
+        self.assertEqual(
+            response.data['reservation']['car']['id'],
+            self.car.id
+        )
+        self.assertIn('token', response.data)
+
+    def test_not_available_reservation_term(self):
+        checking_reservation_data = {
+            'begin': self.reservation_data['end'].strftime('%d.%m.%Y'),
+            'end': self.reservation_data['end'].strftime('%d.%m.%Y'),
+            'segment': self.car.segment.id
+        }
+
+        token = self.get_token(self.user_data)
+        try:
+            self.client.post(
+                reverse('car_rental:check_res', ),
+                data=checking_reservation_data,
+                HTTP_AUTHORIZATION=token,
+            )
+        except ValidationError as exception:
+            self.assertEqual(len(exception.messages), 1)
+            self.assertEqual(exception.messages[0], 'Term is not free.')
+
+
 # VIEWS
 class MainTestCase(TestCase):
     """
@@ -544,14 +745,20 @@ class URLTestCase(TestCase):
         url = '/client/' + pk
         name = resolve(url).view_name
         self.assertEqual(name, 'car_rental:client_pk')
-        self.assertEqual(reverse('car_rental:client_pk', kwargs={'pk': pk}), url)
+        self.assertEqual(
+            reverse('car_rental:client_pk', kwargs={'pk': pk}),
+            url
+        )
 
     def test_client_with_username(self):
         username = 'some_username'
         url = '/client/single/' + username
         name = resolve(url).view_name
         self.assertEqual(name, 'car_rental:client')
-        self.assertEqual(reverse('car_rental:client', kwargs={'username': username}), url)
+        self.assertEqual(
+            reverse('car_rental:client', kwargs={'username': username}),
+            url
+        )
 
     def test_cars(self):
         name = resolve('/cars').view_name
@@ -614,7 +821,10 @@ class URLTestCase(TestCase):
         url = '/discounts/' + pk
         name = resolve(url).view_name
         self.assertEqual(name, 'car_rental:discounts_pk')
-        self.assertEqual(reverse('car_rental:discounts_pk', kwargs={'pk': pk}), url)
+        self.assertEqual(
+            reverse('car_rental:discounts_pk', kwargs={'pk': pk}),
+            url
+        )
 
     def test_new_order(self):
         name = resolve('/order').view_name
@@ -625,7 +835,10 @@ class URLTestCase(TestCase):
         url = '/order/' + pk
         name = resolve(url).view_name
         self.assertEqual(name, 'car_rental:existing_order')
-        self.assertEqual(reverse('car_rental:existing_order', kwargs={'pk': pk}), url)
+        self.assertEqual(
+            reverse('car_rental:existing_order', kwargs={'pk': pk}),
+            url
+        )
 
 
 # MODELS

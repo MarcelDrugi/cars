@@ -24,8 +24,8 @@ urlpatterns = [
          name='client_reservation'),
     path('clients', views.ClientsAPI.as_view(), name='clients'),
     path('discounts', views.DiscountsAPI.as_view(), name='discounts'),
-    path('discounts/<int:pk>', views.DiscountsAPI.as_view(), name='discounts_pk'),
+    path('discounts/<int:pk>', views.DiscountsAPI.as_view(),
+         name='discounts_pk'),
     path('order', views.OrderAPI.as_view(), name='new_order'),
     path('order/<int:pk>', views.OrderAPI.as_view(), name='existing_order'),
-
 ]

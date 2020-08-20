@@ -1,6 +1,7 @@
 #BACKEND
 
 backend/venv
+backend/cars/venv
 backend/cars/cars/.env
 backend/.idea/shelf/
 backend/.idea/*.iws
@@ -10,6 +11,8 @@ backend/cars/car_rental/__pycache__
 backend/cars/cars/__pycache__
 */__pycache__
 **/__pycache__
+**/.idea
+*/.idea
 
 #FRONTEND
 
