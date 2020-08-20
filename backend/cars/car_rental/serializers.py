@@ -1,5 +1,4 @@
 import datetime
-
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import transaction
 from rest_framework import serializers
