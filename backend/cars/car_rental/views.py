@@ -422,6 +422,7 @@ class ReservationAPI(TokenRefresh, DestroyModelMixin, ):
 
 class ClientReservationAPI(TokenRefresh, ListModelMixin):
     serializer_class = ReservationSerializer
+    permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
         return Reservations.objects.select_related().filter(
@@ -469,8 +470,8 @@ class OrderAPI(TokenRefresh):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
         paypal_response = self._get_payment_link(reservation)
+
         if 'id' in paypal_response:
             payment_link = paypal_response['links'][1]['href']
             order = reservation.order

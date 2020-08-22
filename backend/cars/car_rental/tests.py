@@ -8,6 +8,7 @@ help to control the application operation.
 """
 from datetime import date
 import django
+from django.contrib.auth import login
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
@@ -16,6 +17,9 @@ from django.urls import reverse, resolve
 import json
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.test import APITestCase
+from mock import Mock
+
+from . import views
 from .models import *
 
 
@@ -718,6 +722,157 @@ class CheckReservationAPITestCase(AuthorizedAPITestCase, TestWithCar):
             self.assertEqual(exception.messages[0], 'Term is not free.')
 
 
+class ReservationAPITestCase(AuthorizedAPITestCase, TestWithCar):
+    def setUp(self):
+        super(ReservationAPITestCase, self).setUp()
+
+        # client-user -> necessary to receive a token
+        self.user_data = {'username': 'tester', 'password': 'secret_pass'}
+        user = User.objects.create_user(**self.user_data)
+        Clients.objects.create_client(user=user, avatar=None)
+
+        # creating reservation with a car, inherited from TestWithCar class
+        self.reservation_data = {
+            'car': self.car,
+            'begin': date.today() + datetime.timedelta(days=5),
+            'end': date.today() + datetime.timedelta(days=12),
+        }
+        Reservations.objects.create(**self.reservation_data)
+
+    def test_get_reservation(self):
+        reservation = Reservations.objects.last()
+        token = self.get_token(self.user_data)
+        response = self.client.get(
+            reverse('car_rental:reservation', kwargs={'pk': reservation.id}),
+            HTTP_AUTHORIZATION=token,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('token', response.data)
+        self.assertEqual(reservation.id, response.data['reservation']['id'])
+
+    def test_delete_reservation(self):
+        reservation = Reservations.objects.last()
+        token = self.get_token(self.user_data)
+        response = self.client.delete(
+            reverse('car_rental:reservation', kwargs={'pk': reservation.id}),
+            HTTP_AUTHORIZATION=token,
+        )
+        self.assertEqual(response.status_code, 202)
+        self.assertIn('token', response.data)
+        self.assertEqual(Reservations.objects.count(), 0)
+
+
+class ClientReservationAPITestCase(AuthorizedAPITestCase, TestWithCar):
+    def setUp(self):
+        super(ClientReservationAPITestCase, self).setUp()
+        self.user_data = {'username': 'tester', 'password': 'secret_pass'}
+        self.user = User.objects.create_user(**self.user_data)
+        client = Clients.objects.create_client(user=self.user, avatar=None)
+
+        self.order = Orders.objects.create(
+            client=client,
+            cost=250.00,
+            paid=False,
+            payment_id='12x5de3r342',
+        )
+
+        self.reservation_data = {
+            'car': self.car,
+            'begin': date.today() + datetime.timedelta(days=5),
+            'end': date.today() + datetime.timedelta(days=12),
+            'order': self.order
+        }
+        self.reservation = Reservations.objects.create(**self.reservation_data)
+
+    def test_get_clients_reservation(self):
+        self.client.login(**self.user_data)
+        token = self.get_token(self.user_data)
+
+        response = self.client.get(
+            reverse('car_rental:client_reservation', ),
+            HTTP_AUTHORIZATION=token,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data[0]['id'], self.reservation.id)
+        self.assertEqual(response.data[0]['car']['id'], self.car.id)
+        self.assertEqual(response.data[0]['order']['cost'], self.order.cost)
+        self.assertIn('token', response.data[-1])
+
+
+class OrderAPITestCase(AuthorizedAPITestCase, TestWithCar):
+    def setUp(self):
+        super(OrderAPITestCase, self).setUp()
+        self.user_data = {'username': 'tester', 'password': 'secret_pass'}
+        user = User.objects.create_user(**self.user_data)
+        self.client_ = Clients.objects.create_client(user=user, avatar=None)
+
+        self.paypal_response = {
+            'id': 'as23fs3ds35',
+            'links': [{}, {'href': 'my_link'}],
+        }
+
+        self.major_data = {
+            'reserved_car': self.car.id,
+            'begin': date.today(),
+            'end': date.today() + datetime.timedelta(days=5),
+            'client': self.user_data['username'],
+            'cost': 310.50,
+            'comments': 'some_comment'
+        }
+
+    def test_correct_post_new_order(self):
+        token = self.get_token(self.user_data)
+        views.OrderAPI._get_payment_link = Mock(
+            return_value=self.paypal_response
+        )
+        response = self.client.post(
+            reverse('car_rental:new_order', ),
+            self.major_data,
+            HTTP_AUTHORIZATION=token,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data['payment_link'],
+            self.paypal_response['links'][1]['href']
+        )
+
+    def test_incorrect_post_new_order(self):
+        self.major_data['reserved_car'] = self.car.id + 1
+        token = self.get_token(self.user_data)
+        response = self.client.post(
+            reverse('car_rental:new_order', ),
+            self.major_data,
+            HTTP_AUTHORIZATION=token,
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_pay_existing_reservation(self):
+        order = Orders.objects.create(
+            client=self.client_,
+            cost=120.00,
+            paid=False,
+            payment_id='g42xas3df72ao',
+        )
+        reservation_data = {
+            'car': self.car,
+            'begin': date.today(),
+            'end': date.today() + datetime.timedelta(days=1),
+            'order': order
+        }
+        reservation = Reservations.objects.create(**reservation_data)
+
+        token = self.get_token(self.user_data)
+        response = self.client.get(
+            reverse('car_rental:existing_order', kwargs={'pk': reservation.id}),
+            HTTP_AUTHORIZATION=token,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data['payment_link'],
+            self.paypal_response['links'][1]['href']
+        )
+
+
 # VIEWS
 class MainTestCase(TestCase):
     """
@@ -850,7 +1005,6 @@ class ClientTestCase(TestCase):
 
     def test_client_creation(self):
         client = Clients.objects.last()
-        print(Clients.objects.all())
         self.assertIsNotNone(client)
         self.assertIsInstance(client, Clients)
         self.assertTrue(client.user.has_perm('car_rental.client'))
