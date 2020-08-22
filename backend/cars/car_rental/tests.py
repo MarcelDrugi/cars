@@ -9,6 +9,8 @@ help to control the application operation.
 from datetime import date
 import django
 from django.contrib.auth import login
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
@@ -21,6 +23,7 @@ from mock import Mock
 
 from . import views
 from .models import *
+from .permissions import RightsSupport
 
 
 class TestWithCar(TestCase):
@@ -234,7 +237,14 @@ class DiscountsAPITestCase(AuthorizedAPITestCase):
             'username': 'some_username',
             'password': 'some_pass'
         }
-        User.objects.create_user(**self.workers_data)
+        user = User.objects.create_user(**self.workers_data)
+        content_type = ContentType.objects.get_for_model(RightsSupport)
+        client_perm = Permission.objects.get(
+            content_type=content_type,
+            codename='employee'
+        )
+        user.user_permissions.add(client_perm)
+
         self.discount = Discounts.objects.create(
             discount_code=35792468,
             discount_value=0.4
@@ -247,7 +257,6 @@ class DiscountsAPITestCase(AuthorizedAPITestCase):
             user=clients_user,
             avatar=None
         )
-        #self.client_.discount.add(self.discount)
 
     def test_post_discount(self):
         new_discount_data = {
@@ -347,7 +356,12 @@ class CarsAPITestCase(AuthorizedAPITestCase, TestWithCar):
         # client-user -> necessary to receive a token
         self.user_data = {'username': 'Username', 'password': 'some_pass'}
         user = User.objects.create_user(**self.user_data)
-        Clients.objects.create_client(user=user, avatar=None)
+        content_type = ContentType.objects.get_for_model(RightsSupport)
+        client_perm = Permission.objects.get(
+            content_type=content_type,
+            codename='employee'
+        )
+        user.user_permissions.add(client_perm)
 
     def test_get(self):
         response = self.client.get(reverse('car_rental:cars'))
@@ -491,7 +505,12 @@ class SegmentsAPITestCase(AuthorizedAPITestCase):
         # client-user (necessary to receive a token)
         self.user_data = {'username': 'Username', 'password': 'some_pass'}
         user = User.objects.create_user(**self.user_data)
-        Clients.objects.create_client(user=user, avatar=None)
+        content_type = ContentType.objects.get_for_model(RightsSupport)
+        client_perm = Permission.objects.get(
+            content_type=content_type,
+            codename='employee'
+        )
+        user.user_permissions.add(client_perm)
 
     def test_get(self):
         response = self.client.get(reverse('car_rental:segments'))

@@ -3,7 +3,7 @@ Backend API documentation on '/swagger.json' or '/swagger.yaml'
 """
 
 import environ
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.urls import reverse
 from django.views.generic import TemplateView
 from rest_framework.exceptions import ValidationError
@@ -16,6 +16,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from paypal.payment_prepare import PaymentLinkGenerator
 from .models import Clients, Segments, Cars, Reservations, Discounts
+from .permissions import ClientFullPermissions, ClientGetPermissions, \
+    EmployeeGetPermissions
 from .serializers import SegmentSerializer, \
     CreateCarSerializer, CarSerializer, ClientSerializer, \
     CheckReservationSerializer, ReservationSerializer, AvatarSerializer, \
@@ -167,7 +169,7 @@ class DiscountsAPI(TokenRefresh, ListModelMixin, CreateModelMixin,
     For PUT request, view doesnt serialize data, but only checks if objects
     exists and merge them (many-to-many relation)
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (EmployeeGetPermissions, IsAuthenticated, )
     serializer_class = DiscountSerializer
     queryset = Discounts.objects.all().order_by('discount_code')
 
@@ -220,6 +222,7 @@ class CarsAPI(TokenRefresh, ListModelMixin, DestroyModelMixin):
 
     serializer_class = CarSerializer
     queryset = Cars.objects.select_related().all()
+    permission_classes = (EmployeeGetPermissions, )
 
     def get(self, request, **kwargs):
         response = self.list(request, **kwargs)
@@ -281,6 +284,7 @@ class SegmentsAPI(TokenRefresh, ListModelMixin, DestroyModelMixin,
 
     serializer_class = SegmentSerializer
     queryset = Segments.objects.select_related().all()
+    permission_classes = (EmployeeGetPermissions, )
 
     def get(self, request, **kwargs):
         response = self.list(request, **kwargs)
@@ -344,7 +348,7 @@ class CheckReservationAPI(TokenRefresh):
     doesnt create object. Check availability only.
     View only for authenticated users.
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (ClientFullPermissions, IsAuthenticated, )
 
     def post(self, request, *args, **kwargs):
         serializer_check = CheckReservationSerializer(
@@ -393,7 +397,7 @@ class ReservationAPI(TokenRefresh, DestroyModelMixin, ):
     Handles :model:`car_rental:Reservations` for GET/DELETE requests.
     View only for authenticated users.
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (ClientFullPermissions, IsAuthenticated, )
 
     queryset = Reservations.objects.select_related().all()
 
@@ -422,7 +426,7 @@ class ReservationAPI(TokenRefresh, DestroyModelMixin, ):
 
 class ClientReservationAPI(TokenRefresh, ListModelMixin):
     serializer_class = ReservationSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (ClientFullPermissions, IsAuthenticated, )
 
     def get_queryset(self):
         return Reservations.objects.select_related().filter(
@@ -438,7 +442,7 @@ class ClientReservationAPI(TokenRefresh, ListModelMixin):
 
 
 class OrderAPI(TokenRefresh):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (ClientFullPermissions, IsAuthenticated, )
 
     def _get_payment_link(self, reservation):
         env = environ.Env()
