@@ -818,6 +818,28 @@ class ClientReservationAPITestCase(AuthorizedAPITestCase, TestWithCar):
         self.assertIn('token', response.data[-1])
 
 
+class TermsAPITestCase(APITestCase, TestWithCar):
+    def setUp(self):
+        super(TermsAPITestCase, self).setUp()
+        self.reservation_data = {
+            'car': self.car,
+            'begin': date.today(),
+            'end': date.today() + datetime.timedelta(days=3),
+        }
+        Reservations.objects.create(**self.reservation_data)
+
+    def test_reservations_list(self):
+        response = self.client.get(
+            reverse('car_rental:terms', kwargs={'car_id': self.car.id}),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Reservations.objects.count(), 1)
+        reservation = Reservations.objects.last()
+        self.assertEqual(reservation.begin, self.reservation_data['begin'])
+        self.assertEqual(reservation.end, self.reservation_data['end'])
+        self.assertEqual(reservation.car, self.car)
+
+
 class OrderAPITestCase(AuthorizedAPITestCase, TestWithCar):
     def setUp(self):
         super(OrderAPITestCase, self).setUp()
@@ -985,6 +1007,16 @@ class URLTestCase(TestCase):
     def test_clients(self):
         name = resolve('/clients').view_name
         self.assertEqual(name, 'car_rental:clients')
+
+    def test_terms(self):
+        car_id = '19'
+        url = '/terms/' + car_id
+        name = resolve(url).view_name
+        self.assertEqual(name, 'car_rental:terms')
+        self.assertEqual(
+            reverse('car_rental:terms', kwargs={'car_id': car_id}),
+            url
+        )
 
     def test_discounts(self):
         name = resolve('/discounts').view_name

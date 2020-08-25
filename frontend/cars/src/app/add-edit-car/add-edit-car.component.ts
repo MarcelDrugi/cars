@@ -272,5 +272,6 @@ export class AddEditCarComponent implements OnInit {
     this.getSegments();
     this.getCars();
   }
+  
 
 }

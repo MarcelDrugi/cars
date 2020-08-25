@@ -1,1 +1,8 @@
 <p>car-details works!</p>
+<input class="input"  type="date" [value]="termRange" >
+<div ><button (click)="validData()">PRZEJDŹ DO ZAMÓWIENIA</button></div>
+<div *ngIf="rangeError"> Prosimy wybrać przedział czasu </div>
+<div *ngIf="loginError"> Prosimy zalogować się przed dokonaniem rezerwacji</div>
+<div *ngIf="allowError"> We wskazanym terminie ten samochód jest niedostępny. Prosimy wybrać inny samochód lub skontaktować się z obsługą wypożyczalni.</div>
+
+<div *ngIf="termRange"> {{termRange}} </div>

@@ -28,7 +28,7 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'location', component: LocationComponent },
   { path: 'rules', component: RulesComponent },
-  { path: 'cardetails', component: CarDetailsComponent },
+  { path: 'details', component: CarDetailsComponent },
   { path: 'order', component: OrderComponent },
   { path: 'adddiscount', component: AddDiscountComponent },
   { path: 'success', component: SuccessComponent },

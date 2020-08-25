@@ -343,7 +343,7 @@ class SingleSegmentAPI(TokenRefresh):
 
 class CheckReservationAPI(TokenRefresh):
     """
-    Handles :model:`car_rental:Reservations` for POST request.
+    Handles :model:`car_rental:Reservations` for GET/POST request.
     If serializer has parameter `permanent` equal to False, the view
     doesnt create object. Check availability only.
     View only for authenticated users.
@@ -392,13 +392,30 @@ class CheckReservationAPI(TokenRefresh):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+class TermsAPI(TokenRefresh, ListModelMixin):
+    permission_classes = ()
+    serializer_class = CheckReservationSerializer
+
+    def get_queryset(self):
+        if 'car_id' in self.kwargs:
+            return Reservations.objects.select_related().filter(
+                car__id=self.kwargs['car_id']
+            )
+
+    def get(self, request, **kwargs):
+        response = self.list(request, **kwargs)
+        response.data.append(
+            {'token': self._take_new_token()}
+        )
+        return response
+
+
 class ReservationAPI(TokenRefresh, DestroyModelMixin, ):
     """
     Handles :model:`car_rental:Reservations` for GET/DELETE requests.
     View only for authenticated users.
     """
     permission_classes = (ClientFullPermissions, IsAuthenticated, )
-
     queryset = Reservations.objects.select_related().all()
 
     def get(self, request, **kwargs):

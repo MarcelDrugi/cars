@@ -95,7 +95,8 @@ describe('ClientProfileComponent', () => {
   it('validData() should insert to clientData values from validated dataForm', () => {
     prepareDataForm();
     component['imgValidator'] = true;
-    component['img'] = new File([], 'someFile.png', { type: 'image/png' })
+    component['img'] = new File([], 'someFile.png', { type: 'image/png' });
+    component['clientId'] = 0;  // not inportant
 
     component.validData();
 

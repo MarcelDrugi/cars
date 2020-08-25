@@ -4,6 +4,7 @@ import { BackendInfoService } from '../shared/services/backend-info.service';
 import { AccDataService } from '../shared/services/acc-data.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Car } from '../models/car.model';
+import { Reservation } from '../models/reservation.model';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +51,17 @@ export class GetPublicDataService {
       headers,
     };
     return this.http.get<Array<Car>>(url, httpOptions);
+  }
+
+  public getTerms(carId: number): Observable<Array<Reservation>> {
+    const url = this.backendInfoService.absolutePath + 'terms/' + carId;
+    const headers = new HttpHeaders({
+      Authorization: 'JWT ' + this.accDataService.getToken()
+    });
+    const httpOptions = {
+      headers,
+    };
+    return this.http.get<Array<Reservation>>(url, httpOptions);
   }
 
 }

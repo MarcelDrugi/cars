@@ -188,9 +188,10 @@ class CreateCarSerializer(serializers.Serializer):
 class CheckReservationSerializer(serializers.Serializer):
     begin = serializers.CharField(max_length=10)
     end = serializers.CharField(max_length=10)
-    segment = serializers.IntegerField()
+    segment = serializers.IntegerField(required=False)
+    car_id = serializers.IntegerField(required=False)
 
-    def __init__(self, permanent,  *args, **kwargs):
+    def __init__(self, permanent, *args, **kwargs):
         self.permanent = permanent
         super(CheckReservationSerializer, self).__init__(*args, **kwargs)
 
@@ -216,10 +217,30 @@ class CheckReservationSerializer(serializers.Serializer):
         return segment
 
     def create(self, validated_data):
-        cars = Cars.objects.select_related().filter(
-            segment=validated_data['segment']
-        )
-        for car in cars:
+        if 'segment' in validated_data:
+            cars = Cars.objects.select_related().filter(
+                segment=validated_data['segment']
+            )
+            for car in cars:
+                try:
+                    reservation = Reservations(
+                        begin=validated_data['begin'],
+                        end=validated_data['end'],
+                        car=car
+                    )
+                    reservation.save()
+                except ValidationError:
+                    pass
+                else:
+                    if self.permanent is False:
+                        reservation.delete()
+                    return reservation
+            raise ValidationError('no free car')
+
+        elif 'car_id' in validated_data:
+            car = Cars.objects.select_related().get(
+                id=validated_data['car_id']
+            )
             try:
                 reservation = Reservations(
                     begin=validated_data['begin'],
@@ -227,13 +248,13 @@ class CheckReservationSerializer(serializers.Serializer):
                     car=car
                 )
                 reservation.save()
-            except ValidationError:
-                pass
-            else:
                 if self.permanent is False:
                     reservation.delete()
                 return reservation
-        raise ValidationError('no free car')
+            except ValidationError:
+                ValidationError('car is not free in this term')
+        else:
+            ValidationError('car or segment is required')
 
     def update(self, instance, validated_data):
         pass

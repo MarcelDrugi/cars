@@ -20,7 +20,7 @@ export class ReservService {
     private accDataService: AccDataService
   ) { }
 
-  public postReservation(reservationData: Reservation): Observable<any> {
+  public postReservation(reservationData: Reservation | any): Observable<any> {
     const url = this.backendInfoService.absolutePath + 'checkres';
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',

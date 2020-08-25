@@ -18,6 +18,7 @@ urlpatterns = [
          name='segments_pk'),
     path('segment/<int:id>', views.SingleSegmentAPI.as_view(), name='segment'),
     path('checkres', views.CheckReservationAPI.as_view(), name='check_res'),
+    path('terms/<int:car_id>', views.TermsAPI.as_view(), name='terms'),
     path('reservation/<int:pk>', views.ReservationAPI.as_view(),
          name='reservation'),
     path('reservation', views.ClientReservationAPI.as_view(),

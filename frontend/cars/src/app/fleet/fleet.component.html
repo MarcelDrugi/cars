@@ -1,1 +1,21 @@
 <p>fleet works!</p>
+
+<select (change)="checkSegment($event)">
+    <option *ngFor="let segment of segments" [value]="segment.id">
+        {{segment.name}}
+    </option>
+</select>
+
+<div>lista aut:</div>
+<div *ngIf="cars">
+    <div *ngIf="selectedSegment">
+        <div *ngFor="let car of cars"> 
+            <div *ngIf="car.segment">
+                <div *ngIf="car.segment.id == selectedSegment">
+                    <a routerLink="/details" [state]="{ carId: car.id }">{{car.model}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
