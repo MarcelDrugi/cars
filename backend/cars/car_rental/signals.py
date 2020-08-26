@@ -1,12 +1,14 @@
-from django.core.signals import request_started
 import requests
+from django.core.signals import request_started
 from django.urls import reverse
 
 
 def before_request(sender, environ, **kwargs):
     if 'HTTP_AUTHORIZATION' in environ and 'HTTP_HOST' in environ:
-        url = environ['wsgi.url_scheme'] + '://' + environ['HTTP_HOST'] + \
-              reverse('refresh_jwt_token')
+        url = (
+            f"{environ['wsgi.url_scheme']}://{environ['HTTP_HOST']}"
+            f"{reverse('refresh_jwt_token')}"
+        )
         current_token = environ['HTTP_AUTHORIZATION'][4:]
 
         json_data = {

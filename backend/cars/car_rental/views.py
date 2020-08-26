@@ -1,27 +1,31 @@
 """
-Backend API documentation on '/swagger.json' or '/swagger.yaml'
+Backend API documentation on '/swagger or '/redoc'
 """
+from os.path import abspath, dirname, join
 
 import environ
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import Permission, User
 from django.urls import reverse
 from django.views.generic import TemplateView
+from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView, GenericAPIView
-from rest_framework.mixins import ListModelMixin, CreateModelMixin, \
-    UpdateModelMixin, DestroyModelMixin
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, \
-    IsAuthenticated
+from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
+                                   ListModelMixin, UpdateModelMixin)
+from rest_framework.permissions import (AllowAny, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-from rest_framework import status
+
 from paypal.payment_prepare import PaymentLinkGenerator
-from .models import Clients, Segments, Cars, Reservations, Discounts
-from .permissions import ClientFullPermissions, ClientGetPermissions, \
-    EmployeeGetPermissions
-from .serializers import SegmentSerializer, \
-    CreateCarSerializer, CarSerializer, ClientSerializer, \
-    CheckReservationSerializer, ReservationSerializer, AvatarSerializer, \
-    DiscountSerializer, MajorOrderDataSerializer, UpdateClientDataSerializer
+
+from .models import Cars, Clients, Discounts, Reservations, Segments
+from .permissions import (ClientFullPermissions, ClientGetPermissions,
+                          EmployeeGetPermissions)
+from .serializers import (AvatarSerializer, CarSerializer,
+                          CheckReservationSerializer, ClientSerializer,
+                          CreateCarSerializer, DiscountSerializer,
+                          MajorOrderDataSerializer, ReservationSerializer,
+                          SegmentSerializer, UpdateClientDataSerializer)
 
 
 class MainView(TemplateView):
@@ -100,6 +104,12 @@ class ClientDataAPI(TokenRefresh, UpdateModelMixin):
     def get(self, request, **kwargs):
         try:
             client = self.queryset.get(user__username=kwargs['username'])
+        except Clients.DoesNotExist:
+            return Response(
+                {'error': 'User does not exist'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        else:
             avatar_serializer = AvatarSerializer({'avatar': client.avatar})
             serialized_client = ClientSerializer(client)
             return Response(
@@ -110,8 +120,6 @@ class ClientDataAPI(TokenRefresh, UpdateModelMixin):
                 },
                 status=status.HTTP_200_OK
             )
-        except Clients.DoesNotExist:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, *args, **kwargs):
         if 'new_password' in request.data and 'old_password' in request.data:
@@ -130,7 +138,10 @@ class ClientDataAPI(TokenRefresh, UpdateModelMixin):
                         status=status.HTTP_200_OK
                     )
             else:
-                return Response(status=status.HTTP_409_CONFLICT)
+                return Response(
+                    {'error': 'Old password is incorrect'},
+                    status=status.HTTP_409_CONFLICT
+                )
         else:
             response = self.update(request, *args, **kwargs)
             response.data['token'] = self._take_new_token()
@@ -184,17 +195,20 @@ class DiscountsAPI(TokenRefresh, ListModelMixin, CreateModelMixin,
         try:
             client = Clients.objects.get(user__username=request.data['client'])
             discount = Discounts.objects.get(id=request.data['discount'])
+        except (Clients.DoesNotExist, Discounts.DoesNotExist):
+            return Response(
+                {
+                    'token': self._take_new_token(),
+                    'error': 'Wrong client/discount id'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        else:
             if request.data['acction'] == 'add':
                 client.discount.add(discount)
                 client.save()
             else:
                 client.discount.remove(discount)
-        except (Clients.DoesNotExist, Discounts.DoesNotExist):
-            return Response(
-                {'token': self._take_new_token()},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        else:
             return Response(
                 {'token': self._take_new_token()},
                 status=status.HTTP_200_OK
@@ -234,14 +248,14 @@ class CarsAPI(TokenRefresh, ListModelMixin, DestroyModelMixin):
     def post(self, request, **kwargs):
         serializer = CreateCarSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(raise_exception=True)
             return Response(
                 {'token': self._take_new_token()},
                 status=status.HTTP_201_CREATED
             )
         else:
             return Response(
-                {'token': self._take_new_token()},
+                {**serializer.errors, **{'token': self._take_new_token()}},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -263,7 +277,7 @@ class CarsAPI(TokenRefresh, ListModelMixin, DestroyModelMixin):
             )
         else:
             return Response(
-                {'token': self._take_new_token()},
+                {**serializer.errors, **{'token': self._take_new_token()}},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -304,7 +318,7 @@ class SegmentsAPI(TokenRefresh, ListModelMixin, DestroyModelMixin,
             )
         else:
             return Response(
-                {'token': self._take_new_token()},
+                {**serializer.errors, **{'token': self._take_new_token()}},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -328,10 +342,13 @@ class SingleSegmentAPI(TokenRefresh):
     def get(self, request, **kwargs):
         try:
             segment = Segments.objects.get(id=kwargs['id'])
-            segment_serializer = SegmentSerializer(segment)
         except Segments.DoesNotExist:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'error': 'Segment does not exist'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         else:
+            segment_serializer = SegmentSerializer(segment)
             return Response(
                 {
                     'token': self._take_new_token(),
@@ -360,14 +377,9 @@ class CheckReservationAPI(TokenRefresh):
                 reservation = serializer_check.save()
                 serialized_reservation = ReservationSerializer(reservation)
             except ValidationError:
-                return Response(
-                    {'token': self._take_new_token()},
-                    status=status.HTTP_409_CONFLICT
-                )
+                return Response(status=status.HTTP_409_CONFLICT)
             except AttributeError:
-                return Response(
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
+                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 try:
                     client = Clients.objects.get(
@@ -376,10 +388,8 @@ class CheckReservationAPI(TokenRefresh):
                     serialized_client = ClientSerializer(client)
                 except Clients.DoesNotExist:
                     # If the user has passed authentication but cannot be found
-                    # in the database, this is an internal server error.
-                    return Response(
-                        status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                    )
+                    # in the database, this is a dependency error.
+                    return Response(status=status.HTTP_424_FAILED_DEPENDENCY)
                 return Response(
                     {
                         'token': self._take_new_token(),
@@ -389,7 +399,10 @@ class CheckReservationAPI(TokenRefresh):
                     status=status.HTTP_201_CREATED
                 )
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer_check.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class TermsAPI(TokenRefresh, ListModelMixin):
@@ -463,7 +476,9 @@ class OrderAPI(TokenRefresh):
 
     def _get_payment_link(self, reservation):
         env = environ.Env()
-        env.read_env('../cars/.env')
+        env.read_env(
+            join(dirname(dirname(abspath(__file__))), '/config/setting/.env')
+        )
 
         success_url = self.request.build_absolute_uri(reverse('paid'))
         cancel_url = self.request.build_absolute_uri(reverse('cancel'))
@@ -487,10 +502,21 @@ class OrderAPI(TokenRefresh):
         if major_data_serializer.is_valid():
             try:
                 reservation = major_data_serializer.save()
-            except (ValidationError, TypeError, AttributeError):
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+            except ValidationError:
+                return Response(
+                    {'error': 'Car or discount not exist'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            except (TypeError, AttributeError):
+                return Response(
+                    {'error': 'Wrong data type/format'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                major_data_serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
         paypal_response = self._get_payment_link(reservation)
 
         if 'id' in paypal_response:

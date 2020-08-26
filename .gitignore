@@ -2,7 +2,8 @@
 
 backend/venv
 backend/cars/venv
-backend/cars/cars/.env
+backend/cars/config/setting/.env
+*/.env
 backend/.idea/shelf/
 backend/.idea/*.iws
 backend/.idea/workspace.xml

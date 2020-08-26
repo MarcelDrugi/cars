@@ -1,12 +1,14 @@
 import datetime
+
+from django.contrib.auth.models import User
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import transaction
-from rest_framework import serializers
-from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from .models import Segments, Cars, PriceLists, Clients, Reservations, \
-    Discounts, Orders
+
+from .models import (Cars, Clients, Discounts, Orders, PriceLists,
+                     Reservations, Segments)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,7 +23,7 @@ class DiscountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Discounts
-        fields = '__all__'
+        fields = ['id', 'discount_code', 'discount_value']
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -97,7 +99,7 @@ class PriceListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PriceLists
-        fields = '__all__'
+        fields = ['id', 'hour', 'day', 'week']
 
 
 class SegmentSerializer(serializers.ModelSerializer):
@@ -144,7 +146,8 @@ class CarSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cars
-        fields = '__all__'
+        fields = ['id', 'brand', 'model', 'reg_number', 'segment', 'img',
+                  'description']
 
 
 class CreateCarSerializer(serializers.Serializer):
@@ -154,12 +157,12 @@ class CreateCarSerializer(serializers.Serializer):
     reg_number = serializers.CharField(required=True, max_length=8)
     img = serializers.FileField(required=False)
     description = serializers.CharField(required=False, max_length=2048)
-    segment = serializers.CharField(max_length=8)
+    segment = serializers.IntegerField()
 
     def create(self, validated_data):
         segment = get_object_or_404(
             Segments,
-            id=int(validated_data['segment'])
+            id=validated_data['segment']
         )
         if 'description' not in validated_data:
             validated_data['description'] = ''
@@ -248,11 +251,12 @@ class CheckReservationSerializer(serializers.Serializer):
                     car=car
                 )
                 reservation.save()
+            except ValidationError:
+                ValidationError('car is not free in this term')
+            else:
                 if self.permanent is False:
                     reservation.delete()
                 return reservation
-            except ValidationError:
-                ValidationError('car is not free in this term')
         else:
             ValidationError('car or segment is required')
 
@@ -283,7 +287,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Orders
-        fields = '__all__'
+        fields = ['id', 'client', 'cost', 'paid', 'canceled', 'payment_id',
+                  'comments', ]
 
 
 class ReservationSerializer(serializers.ModelSerializer):

@@ -11,14 +11,16 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 import datetime
 import os
+from os.path import dirname, abspath, join
+
 import environ
 
 env = environ.Env()
 # reading .env file
-env.read_env()
+env.read_env(join(dirname(abspath(__file__)), '.env'))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,18 +28,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
-CORS_ORIGIN_WHITELIST = (
-    'http://127.0.0.1:4200',
-    'http://localhost:4200',
-    'http://127.0.0.1:8000',
-    'http://localhost:8000'
-)
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -165,23 +155,3 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = env('BUCKET_NAME')
-AWS_S3_CUSTOM_DOMAIN = '%s.s3-eu-west-1.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
-
-AWS_DEFAULT_ACL = None
-DEFAULT_FILE_STORAGE = 'aws_settings.storage_backend.MediaStorage'
-
-
-STATIC_URL = '/static/'
-MEDIA_URL = 'https://%s/' % AWS_S3_CUSTOM_DOMAIN
-MEDIA_ROOT = os.path.join(BASE_DIR, 'car_rental/media')

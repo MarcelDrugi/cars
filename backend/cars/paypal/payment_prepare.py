@@ -38,11 +38,10 @@ class PaymentLinkGenerator:
 
         response = requests.post(url, data, headers=headers)
         token = json.loads(response.content)['access_token']
-        print(token)
         return token
 
     def _tax_calculate(self, amount, rate):
-        if type(amount) != float or type(rate) != float:
+        if not isinstance(amount, float) or not isinstance(rate, float):
             raise TypeError('amount and rate must to be FLOAT')
         tax = round(amount * rate, 2)
         return amount - tax, tax

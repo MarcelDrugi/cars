@@ -1,8 +1,10 @@
 import datetime
-from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+
 from .managers import ClientManager
 
 
@@ -18,12 +20,12 @@ class Discounts(models.Model):
         validators=[MinValueValidator(0.01), MaxValueValidator(0.99)],
     )
 
+    def __str__(self):
+        return f'discount nr: {self.discount_code}'
+
     def save(self, *args, **kwargs):
         self.full_clean()
         super(Discounts, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return 'discount nr: ' + str(self.discount_code)
 
 
 class Clients(models.Model):
@@ -34,7 +36,7 @@ class Clients(models.Model):
     objects = ClientManager()
 
     def __str__(self):
-        return 'client: ' + self.user.username
+        return f'client: {self.user.username}'
 
 
 class PriceLists(models.Model):
@@ -71,11 +73,14 @@ class Segments(models.Model):
         null=True,
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Cars(models.Model):
     brand = models.CharField(max_length=64)
     model = models.CharField(max_length=32)
-    reg_number = models.CharField(max_length=8)
+    reg_number = models.CharField(max_length=8, unique=True)
     segment = models.ForeignKey(
         Segments,
         blank=True,
@@ -87,7 +92,7 @@ class Cars(models.Model):
     description = models.CharField(max_length=2048, blank=True, null=True)
 
     def __str__(self):
-        return self.brand + ' ' + self.model + ' (' + self.reg_number + ')'
+        return f'{self.brand}  {self.model}  ( {self.reg_number} )'
 
 
 class Orders(models.Model):
@@ -97,15 +102,6 @@ class Orders(models.Model):
     canceled = models.BooleanField(default=False)
     payment_id = models.CharField(max_length=32, blank=True, null=True)
     comments = models.CharField(max_length=512, blank=True, null=True)
-
-    def cancel_order(self):
-        self.canceled = True
-        self.comments += '  - CANCELED!'
-        try:
-            reservation = Reservations.objects.get(order=self)
-            reservation.delete()
-        except Reservations.DoesNotExist:
-            self.comments += ' (Order without reservation)'
 
     def clean(self):
         if self.payment_id is None and self.paid:
@@ -117,6 +113,15 @@ class Orders(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super(Orders, self).save(*args, **kwargs)
+
+    def cancel_order(self):
+        self.canceled = True
+        self.comments += '  - CANCELED!'
+        try:
+            reservation = Reservations.objects.get(order=self)
+            reservation.delete()
+        except Reservations.DoesNotExist:
+            self.comments += ' (Order without reservation)'
 
 
 class Reservations(models.Model):
@@ -160,4 +165,3 @@ class Reservations(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super(Reservations, self).save(*args, **kwargs)
-

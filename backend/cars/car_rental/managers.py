@@ -1,15 +1,18 @@
-import os
+from os.path import abspath, dirname, join
+
 import environ
+from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.contrib.auth.models import Permission
-from cars import settings
+
 from .permissions import RightsSupport
 
 
 class ClientManager(models.Manager):
     env = environ.Env()
-    env.read_env('../cars/.env')
+    env.read_env(
+        join(dirname(dirname(abspath(__file__))), '/config/setting/.env')
+    )
     EMPTY_AVATAR = env('EMPTY_AVATAR')  # default-img location in AWS bucket
 
     def create_client(self, user, avatar):

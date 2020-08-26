@@ -1,9 +1,12 @@
 import json
+from os.path import join, dirname, abspath
 import boto3
 import environ
 
 env = environ.Env()
-env.read_env('../cars/.env')
+env.read_env(
+    join(dirname(dirname(abspath(__file__))), '/config/setting/.env')
+)
 
 # bucket policy
 bucket_name = env('BUCKET_NAME')

@@ -14,22 +14,27 @@ schema_view = get_schema_view(
       contact=openapi.Contact(email='piotr.a.mazur@wp.pl'),
       license=openapi.License(name='BSD License'),
    ),
-   public=False,
+   public=True,
    permission_classes=(permissions.AllowAny, ),
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('car_rental.urls')),
-    path(r'api-token-auth/', obtain_jwt_token),
-    path(r'api-token-refresh/', refresh_jwt_token, name='refresh_jwt_token'),
+    path('api-token-auth/', obtain_jwt_token),
+    path('api-token-refresh/', refresh_jwt_token, name='refresh_jwt_token'),
 
     path('paid',  paypal_views.PayPalSuccessView.as_view(), name='paid'),
     path('cancel', paypal_views.PayPalCancelView.as_view(), name='cancel'),
 
     url(
-        r'^swagger(?P<format>\.json|\.yaml)$',
-        schema_view.without_ui(cache_timeout=0),
-        name='schema-json'
+        'swagger',
+        schema_view.with_ui('swagger', cache_timeout=0),
+        name='schema-swagger-ui'
+    ),
+    url(
+        'redoc',
+        schema_view.with_ui('redoc', cache_timeout=0),
+        name='schema-redoc'
     ),
 ]
