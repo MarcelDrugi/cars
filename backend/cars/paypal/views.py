@@ -8,7 +8,7 @@ from car_rental.models import Orders
 def local_env():
     env = environ.Env()
     env.read_env(
-        join(dirname(dirname(abspath(__file__))), '/config/setting/.env')
+        join(dirname(dirname(abspath(__file__))), 'config/setting/.env')
     )
     return env
 

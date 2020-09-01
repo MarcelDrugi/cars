@@ -26,7 +26,7 @@ export class HomepageComponent implements OnInit {
   public segments: Array<Segment>;
   public reservationForm: FormGroup;
   public theDate: Date;
-  private termPlaceHolder = 'WYBIERZ PRZEDZIAŁ';
+  private termPlaceHolder = 'PRZEDZIAŁ CZASU';
   public termRange: string;
   private selectedSegment: number;
 
@@ -129,6 +129,7 @@ export class HomepageComponent implements OnInit {
       labelFrom: 'początek',
       labelTo: 'koniec',
       dateFormat: 'DD.MM.YYYY',
+      displayMode: 'dialog',
 
     };
 

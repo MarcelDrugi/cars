@@ -63,3 +63,5 @@ frontend/cars/typings
 frontend/cars/.DS_Store
 frontend/cars/Thumbs.db
 
+# imgs
+frontend/cars/src/assets/static

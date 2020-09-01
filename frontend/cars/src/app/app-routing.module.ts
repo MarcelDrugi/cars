@@ -23,7 +23,7 @@ const routes: Routes = [
   { path: 'addcar', component: AddEditCarComponent },
   { path: 'addsegment', component: AddSegmentComponent },
 
-  { path: 'homepage', component: HomepageComponent },
+  { path: '', component: HomepageComponent },
   { path: 'fleet', component: FleetComponent },
   { path: 'about', component: AboutComponent },
   { path: 'location', component: LocationComponent },

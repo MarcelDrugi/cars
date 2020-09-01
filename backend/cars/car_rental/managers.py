@@ -10,12 +10,10 @@ from .permissions import RightsSupport
 
 class ClientManager(models.Manager):
     env = environ.Env()
-    env.read_env(
-        join(dirname(dirname(abspath(__file__))), '/config/setting/.env')
-    )
     EMPTY_AVATAR = env('EMPTY_AVATAR')  # default-img location in AWS bucket
 
     def create_client(self, user, avatar):
+        print(self.EMPTY_AVATAR)
         if avatar is None:
             path = self.EMPTY_AVATAR
             client = self.create(user=user, avatar=path)

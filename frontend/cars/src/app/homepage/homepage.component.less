@@ -1,4 +1,6 @@
 @bulma-primary: hsl(171, 100%, 41%);
+@widgets-color_1: hsl(171, 100%, 87%);;
+@widgets-color_2: hsl(171, 94%, 67%);
 @bulma-text: hsl(0, 0%, 21%);
 
 /deep/.calendar-footer-validate {
@@ -45,4 +47,141 @@
   background-color: @bulma-primary;
   padding: 4px;
   border-radius: 0.3vw;
+}
+
+::ng-deep body {
+  @media (orientation: landscape) and (max-width: 1922px) {
+    background-image: url(/assets/static/homepageI.jpg);
+  }
+  @media (orientation: landscape) and (min-width: 1921px) and (max-width: 2600px) {
+    background-image: url(/assets/static/homepageJ.jpg);
+  }
+  @media (orientation: landscape) and (min-width: 2601px) {
+    background-image: url(/assets/static/homepageK.jpg);
+  }
+  @media (orientation:portrait) and (max-height: 1922px) {
+    background-image: url(/assets/static/homepageL.jpg);
+  }
+  @media (orientation:portrait) and (min-height: 1922px)  and (max-height: 2600px) {
+    background-image: url(/assets/static/homepageM.jpg);
+  }
+  @media (orientation:portrait) and (min-height: 2601px) {
+    background-image: url(/assets/static/homepageN.jpg);
+  }
+}
+
+.confirmation-button {
+  width: 30%;
+  margin-left: 50%;
+  @media (pointer:coarse) and (orientation:landscape) {
+    width: 40%;
+    margin-left: 50%;
+  }
+  @media (pointer:coarse) and (orientation:portrait) {
+    width: 70%;
+    margin-left: 25%;
+    //margin-bottom: 2vh;
+  }
+}
+
+.widget-size {
+  height: 2.5vw;
+  font-size: 1.2vw;
+  @media (pointer:coarse) and (orientation:landscape) {
+    height: 6.5vh;
+    font-size: 1.8vw;
+  }
+  @media (pointer:coarse) and (orientation:portrait) {
+    height: 5.5vh;
+    font-size: 2.2vh;
+  }
+}
+
+.confirmation-button .button {
+  .widget-size;
+  width: 100%;
+}
+
+.select {
+  width: 30%;
+  margin-left: 20%;
+  @media (pointer:coarse) and (orientation:landscape) {
+    width: 40%;
+    margin-left: 10%;
+  }
+  @media (pointer:coarse) and (orientation:portrait) {
+    width: 70%;
+    margin-left: 5%;
+    margin-bottom: 2vh;
+  }
+  .widget-size;
+  text-align-last:center;
+}
+
+.select select {
+  width: 100%;
+  height: 100%;
+  padding-top: 5px;
+  background-color: @widgets-color_1;
+  @media (pointer:coarse) and (orientation:landscape) {
+    padding-top: 2px;
+  }
+  @media (pointer:coarse) and (orientation:landscape) and (min-width: 1910px) and (max-width: 1930px) {
+    padding-top: 6px;
+  }
+  @media (pointer:coarse) and (orientation:portrait) {
+    padding-bottom: 3px;
+  }
+}
+
+.input-date .input {
+  width: 30%;
+  margin-left: 35%;
+  background-color: @widgets-color_2;
+  @media (pointer:coarse) and (orientation: landscape) {
+    width: 40%;
+    margin-left: 30%;
+  }
+  @media (pointer:coarse) and (orientation: portrait) {
+    width: 70%;
+    margin-left: 15%;
+    margin-bottom: 2vh;
+  }
+  .widget-size;
+  text-align: center;
+}
+
+.car-label {
+  margin-top: 2vh;
+  margin-bottom: 4vh;
+  @media (pointer:coarse) and (orientation: portrait){
+    margin-top: 4vh;
+  }
+  text-align: center;
+}
+
+.car-label .homepage-title {
+  color: @bulma-primary;
+  text-align: center;
+  font-size: 2.5vw;
+  @media (pointer:coarse) and (orientation: landscape){
+    font-size: 3.5vw;
+  }
+  @media (pointer:coarse) and (orientation: portrait){
+    font-size: 5.3vw;
+    font-weight: 700;
+  }
+  margin-bottom: 4vh;
+  -webkit-text-stroke-color: rgb(41, 21, 21);
+  -webkit-text-stroke-width: 1.00px;
+}
+
+.car-label img {
+  margin-left: 2vw;
+  width: 7%; 
+  height: 7%;
+}
+
+.form-wrapper {
+  margin-top: 5vh;
 }

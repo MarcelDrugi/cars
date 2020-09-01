@@ -56,11 +56,12 @@ export class LogComponent implements OnInit {
       () => {
         this.logService.getClient(this.logUser.username).subscribe(
           resp => {
+            console.log(resp)
             this.accDataService.setClient(resp.client);
             this.user = resp.client;
           },
           error => {
-            console.log(error);
+            this.accDataService.setClient({employee: true});
           }
         );
       }

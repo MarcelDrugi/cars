@@ -1,18 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { AccDataService } from './shared/services/acc-data.service';
 
 @Component({
   selector: 'rental-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.less'],
+  styleUrls: ['./app.component.less', './app.component.sass'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
   title = 'cars';
   public login = false;
   public username: string;
   public avatar: string;
+  public employee: boolean;
 
-  constructor(private accDataService: AccDataService) { }
+  // mobile switch
+  public mobile: boolean;
+  public smallMobile: boolean;
+  public globalClass: string;
+
+  // loading bar switch
+  public pageLoader: boolean;
+
+  constructor(private accDataService: AccDataService) { this.employee = false, this.pageLoader = true }
 
   public logOut() {
     this.accDataService.setToken('');
@@ -27,8 +36,32 @@ export class AppComponent implements OnInit {
     this.accDataService.getClient().subscribe((client: any) => {
       const parsedClient = JSON.parse(client);
       this.avatar = parsedClient.avatar;
+      if (parsedClient.employee) {
+        this.employee = true;
+      }
     });
 
     console.log(this.accDataService.getToken());
+    if (window.innerHeight > window.innerWidth) {
+      this.mobile = true;
+    }
+    window.onresize = () => {
+      if(window.innerHeight > window.innerWidth) {
+        this.mobile = true
+      }
+      else {
+        this.mobile = false
+      }
+    }
+    if(this.mobile) {
+      this.globalClass = "long"
+    }
+    else {
+      this.globalClass = ""
+    }
+  }
+
+  public ngAfterViewInit(): void {
+    this.pageLoader = false;
   }
 }

@@ -1,38 +1,117 @@
-<h1>Witaj w aplikacji car-rental</h1>
-<div *ngIf="avatar"> <img src={{avatar}} height="75" width="75"></div>
-<div *ngIf="username">
-  <div class="username">Jesteś zalogowany jako <b>{{username}}</b> </div>
-  <button (click)="logOut()">WYLOGUJ</button></div>
-<ul>
-  <li *ngIf="!username">
-      <a [routerLink]="['/signup']">rejestracja</a>
-  </li>
-  <li *ngIf="!username">
-      <a [routerLink]="['/signin']">logowanie</a>
-  </li>
-  <li *ngIf="username">
-    <a [routerLink]="['/profile']">PROFIL</a>
-</li>
-  <li>
-    <a [routerLink]="['/addcar']">dodawanie samochodu</a>
-  </li>
-  <li>
-    <a [routerLink]="['/homepage']">strona główna</a>
-  </li>
-  <li>
-    <a [routerLink]="['/fleet']">flota</a>
-  </li>
-  <li>
-    <a [routerLink]="['/location']">lokalizacje</a>
-  </li>
-  <li>
-    <a [routerLink]="['/rules']">zasady</a>
-  </li>
-  <li>
-    <a [routerLink]="['/about']">o nas</a>
-  </li>
-  <div class="outer-outlet">
-      <router-outlet></router-outlet>
+<div *ngIf="pageLoader" class="pageloader is-active is-dark is-bottom-to-top">
+  <span class="title">ŁADUJĘ STRONĘ . . .</span>
+</div>
+<section class="hero is-primary">
+  <div class="info">
+    <div class="static-hero columns">
+      <div *ngIf="!mobile" class="column is-9">
+        <span class="second-description">ul. Lotników 29B (nieopdal terminualu przylotów)</span>
+        <span class="topic">CAR-RENTAL WROCŁAW </span>  <span class="phone third-description"> <img src="/assets/static/phone.png"class="earphone"> 132 212 759</span> <br>
+        <span class="description">ul. Lotników 29B (nieopdal terminualu przylotów)</span><br>
+        <span class="description"><img src="/assets/static/phone.png"class="earphone"> 132 212 759</span>
+      </div>
+      <div *ngIf="mobile" class="column is-12">
+        <span class="topic">CAR-RENTAL WROCŁAW </span>  
+        <span class="phone third-description"> <img src="/assets/static/phone.png"class="earphone"> 132 212 759</span>
+        <span class="second-description">ul. Lotników 29B (nieopdal terminualu przylotów)</span>
+      </div>
+      <div *ngIf="!mobile" class="column is-1 hero-avatar">
+        <img *ngIf="avatar" src={{avatar}}>
+      </div>
+      <div *ngIf="!mobile" class="column is-2 hero-profile">
+        <div class="hello">
+          <span *ngIf="username" class="username">Witaj <b>{{username}}!</b> </span>
+        </div>
+        <a *ngIf="username" [routerLink]="['/profile']"  class="button is-primary is-light">EDYTUJ SWÓJ PROFIL</a>
+      </div>
+    </div>
+    <div class="dynamic-tpye-first">
+      <span>Witaj w naszej wypożyczalni</span><br>
+    </div>
+    <div class="dynamic-tpye-second">
+      <span>Sprawdź nasze ceny!</span>
+    </div>
   </div>
-</ul>
-
+</section>
+<header class="section">
+  <nav [hidden]="mobile" class="navbar horizontal-menu" role="navigation">
+    <div class="navbar-menu">
+      <div class="navbar-start">
+        <a *ngIf="username && employee" [routerLink]="['/addcar']"  class="navbar-item"><span style="color: red;">ZARZĄDZAJ</span></a>
+        <a [routerLink]="['']"  class="navbar-item">zarezerwuj samochód</a>
+        <a [routerLink]="['/fleet']"  class="navbar-item">flota</a>
+        <a [routerLink]="['/location']"  class="navbar-item">lokalizacje</a>
+        <a [routerLink]="['/rules']"  class="navbar-item">zasady</a>
+        <a [routerLink]="['/about']"  class="navbar-item">o nas</a>
+      </div>
+      <div class="navbar-end">
+        <div *ngIf="!username" class="navbar-item">
+          <div class="buttons">
+            <a [routerLink]="['/signup']" class="button is-primary sign-up">
+              <strong>Stwórz konto</strong>
+            </a>
+            <a [routerLink]="['/signin']" class="button is-primary is-light sign-in">
+              <strong>Zaloguj się</strong>
+            </a>
+          </div>
+        </div>
+        <div *ngIf="username" class="navbar-item">
+          <div class="buttons">
+            <a class="button is-primary sign-up" (click)="logOut()"> <strong>WYLOGUJ</strong> </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div *ngIf="mobile" class="vertical-menu">
+    <div *ngIf="avatar"> <img src={{avatar}}></div>
+    <div *ngIf="username" class="profile">
+      <div class="username">Witaj <b>{{username}}!</b> </div>
+      <button [routerLink]="['/profile']" class="button acc menu-label">twoje konto</button>
+      <span class="separator"> </span>
+      <button (click)="logOut()" class="button logout menu-label">WYLOGUJ</button>
+    </div>
+    <br>
+    <div class="menu">
+      <ul class="menu-list">
+        <div class="sign">
+          <li>
+            <a *ngIf="!username" [routerLink]="['/signup']" class="button is-primary menu-label sign-up">
+              <strong>Stwórz konto</strong>
+            </a>
+          </li>
+          <li>
+            <a *ngIf="!username" [routerLink]="['/signin']" class="button is-primary is-light menu-label sign-in">
+              <strong>Zaloguj się</strong>
+            </a>
+          </li>
+        </div>
+        <br>
+        <li><a *ngIf="username && employee" [routerLink]="['/addcar']"  class="button is-primary is-light menu-label"><span style="color: red;">ZARZĄDZAJ</span></a></li>
+        <li><a [routerLink]="['']"  class="button is-primary menu-label">zarezerwuj samochódna</a></li>
+        <li><a [routerLink]="['/fleet']"  class="button is-primary is-light menu-label">flota</a></li>
+        <li><a [routerLink]="['/location']"  class="button is-primary menu-label">lokalizacje</a></li>
+        <li><a [routerLink]="['/rules']"  class="button is-primary is-light menu-label">zasady</a></li>
+        <li><a [routerLink]="['/about']"  class="button is-primary menu-label">o nas</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+<section>
+  <div class="outer-outlet">
+    <router-outlet></router-outlet>
+  </div>
+</section>
+<footer class="footer is-primary">
+  <a href="https://github.com/MarcelDrugi/cars">
+    <span class="gh-wrapper">
+      <span class="git">github.com/MarcelDrugi/cars</span>
+    </span>
+  </a>
+  <span class="author-wrapper">
+    <span class="author">Created by <strong>Piotr Mazur</strong></span>
+  </span>
+  <span class="mail-wrapper">
+    <span class="mail">email: <strong>piotr.a.mazur@wp.pl</strong></span>
+  </span>
+</footer>

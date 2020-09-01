@@ -24,6 +24,7 @@
     "bulma-extensions": "^6.2.7",
     "moment": "^2.27.0",
     "rxjs": "^6.6.0",
+    "sass": "^1.26.10",
     "sass-loader": "^9.0.2",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
