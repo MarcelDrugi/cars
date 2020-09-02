@@ -16,7 +16,7 @@
 
 ###### 4. Create database for the project.
 You can use any SQL management system, but you need to install it into venv.
-From requirements.txt you have already installed mySQL-client. If you want to use it:
+From <i>requirements.txt</i> you have already installed mySQL-client. If you want to use it:
 
     mysql -u [your_username] -p
 
@@ -65,7 +65,7 @@ For mySQL-database and AWS-Ireland region the file should looks like:
     
 
 ###### 8. Create a s3-bucket, set the policy of the bucket (set as public) and upload default-avatar file to media directory in the bucket.
-These 3 things you can by running a prepared script:
+These 3 things you can do by running a prepared script:
 
     python3 cars/aws_settings/bucket_policy.py
 
