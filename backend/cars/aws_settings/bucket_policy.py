@@ -16,9 +16,8 @@ session = boto3.Session(
     aws_secret_access_key=env('AWS_SECRET_ACCESS_KEY'),
     region_name=env('REGION_NAME'),
 )
-
-# Create bucket
 s3_resource = session.resource('s3')
+
 bucket = s3_resource.create_bucket(
     ACL='public-read-write',
     Bucket=bucket_name,
@@ -44,3 +43,13 @@ bucket_policy = json.dumps(bucket_policy)
 # Set the new policy
 s3_client = session.client('s3')
 s3_client.put_bucket_policy(Bucket=bucket_name, Policy=bucket_policy)
+
+# Upload default avatar file
+filename = 'no-avatar.png'
+avatar = join(dirname(abspath(__file__)), f'static/{filename}')
+s3_client.upload_file(
+    avatar,
+    bucket_name,
+    f'media/{filename}',
+    ExtraArgs={'ContentType': 'image/jpeg'}
+)

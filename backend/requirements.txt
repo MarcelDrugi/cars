@@ -11,6 +11,7 @@ django-storages==1.9.1
 djangorestframework==3.11.0
 djangorestframework-jwt==1.11.0
 docutils==0.15.2
+drf-yasg==1.17.1
 environ==1.0
 idna==2.10
 jmespath==0.10.0
