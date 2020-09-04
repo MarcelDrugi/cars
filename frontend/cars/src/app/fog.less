@@ -1,0 +1,80 @@
+.fog {
+    position: fixed;
+    z-index: 0;
+}
+  
+.fog-3 {
+    height: 100vh;
+    width: 100vw;
+    top:0;
+    left: 0;
+    opacity: 0.4;
+    background-position: center;
+    overflow:hidden;
+    background-image: url(/assets/static/fog2.png);
+    background-repeat: no-repeat;
+    @media (orientation: landscape) and (min-width: 2041px) {
+        background-image: url(/assets/static/fog1.png);
+    }
+    animation: horizontal_fog3-move 60s linear infinite;
+    @media (orientation:portrait) and (max-height: 2041px) {
+        background-image: url(/assets/static/fog3.png);
+        animation: vertical_fog3-move 35s linear infinite;
+    }
+    @media (orientation:portrait) and (min-height: 2042px) {
+        background-image: url(/assets/static/fog4.png);
+        animation: vertical_fog3-move 35s linear infinite;
+    }
+
+}
+
+.fog-2 {
+    .fog-3;
+    animation: horizontal_fog2-move 60s linear infinite;
+    @media (orientation:portrait) {
+        animation: vertical_fog2-move 35s linear infinite;
+    }
+
+}
+
+@fog-opacity: 0.8;
+  
+@keyframes horizontal_fog3-move {
+    0% { background-position-x: 0vw; background-position-y: 100vh; opacity: @fog-opacity;}
+    20% { background-position-x: 0vw; background-position-y: 50vh; opacity: @fog-opacity;}
+    40% { background-position-x: 0vw; background-position-y: 0vh; opacity: @fog-opacity; }
+    60% { background-position-x: 0vw; background-position-y: -50vh; opacity: @fog-opacity; }
+    80% { background-position-x: 0vw; background-position-y: -100vh; opacity: @fog-opacity; }
+    100% { background-position-x: 0vw; background-position-y: -150vh; opacity: 0.1; }
+}
+
+@keyframes horizontal_fog2-move {
+    0% { background-position-x: 0vw; background-position-y: 0vh; opacity: @fog-opacity; }
+    20% { background-position-x: 0vw; background-position-y: -50vh; opacity: @fog-opacity; }
+    40% { background-position-x: 0vw; background-position-y: -100vh; opacity: @fog-opacity; }
+    60% { background-position-x: 0vw; background-position-y: -150vh; opacity: 0.1; }
+    60.01% { visibility: hidden;}
+    60.02% { visibility: visible; background-position-x: 0vw; background-position-y: 100vh; opacity: @fog-opacity; }
+    80% { background-position-x: 0vw; background-position-y: 50vh; opacity: @fog-opacity; }
+    100% { background-position-x: 0vw; background-position-y: 0vh; opacity: @fog-opacity; }
+}
+  
+@keyframes vertical_fog3-move {
+    0% { background-position-x: 100vw; background-position-y: 0vh; opacity: @fog-opacity;}
+    20% { background-position-x: 50vw; background-position-y: 0vh; opacity: @fog-opacity;}
+    40% { background-position-x: 0vw; background-position-y: 0vh; opacity: @fog-opacity; }
+    60% { background-position-x: -50vw; background-position-y: 0vh; opacity: @fog-opacity; }
+    80% { background-position-x: -100vw; background-position-y: 0vh; opacity: @fog-opacity; }
+    100% { background-position-x: -150vw; background-position-y: 0vh; opacity: 0.1; }
+}
+
+@keyframes vertical_fog2-move {
+    0% { background-position-x: 0vw; background-position-y: 0vh; opacity: @fog-opacity; }
+    20% { background-position-x: -50vw; background-position-y: 0vh; opacity: @fog-opacity; }
+    40% { background-position-x: -100vw; background-position-y: 0vh; opacity: @fog-opacity; }
+    60% { background-position-x: -150vw; background-position-y: 0vh; opacity: 0.1; }
+    60.01% { visibility: hidden;}
+    60.02% { visibility: visible; background-position-x: 100vw; background-position-y: 0vh; opacity: @fog-opacity; }
+    80% { background-position-x: 50vw; background-position-y: 0vh; opacity: @fog-opacity; }
+    100% { background-position-x: 0vw; background-position-y: 0vh; opacity: @fog-opacity; }
+}
