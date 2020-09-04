@@ -49,10 +49,10 @@ class PaymentLinkGenerator:
     def payment(self, payment_data):
         """
         Method sends payment details and receives prepared payment-links
-        :param dict payment_data: must contain
-            :name str:
-            :value float:
-            :reg_number str:
+            :param dict payment_data: must contain
+                :name str:
+                :value float:
+                :reg_number str:
         """
 
         taxation = self._tax_calculate(payment_data['value'], 0.23)

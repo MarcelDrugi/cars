@@ -50,23 +50,31 @@
 }
 
 ::ng-deep body {
+  z-index: -1;
   @media (orientation: landscape) and (max-width: 1922px) {
     background-image: url(/assets/static/homepageI.jpg);
+    background-position: center;
+    background-attachment: fixed;
   }
   @media (orientation: landscape) and (min-width: 1921px) and (max-width: 2600px) {
     background-image: url(/assets/static/homepageJ.jpg);
+    background-attachment: fixed;
   }
   @media (orientation: landscape) and (min-width: 2601px) {
     background-image: url(/assets/static/homepageK.jpg);
+    background-attachment: fixed;
   }
   @media (orientation:portrait) and (max-height: 1922px) {
     background-image: url(/assets/static/homepageL.jpg);
+    background-attachment: fixed;
   }
   @media (orientation:portrait) and (min-height: 1922px)  and (max-height: 2600px) {
     background-image: url(/assets/static/homepageM.jpg);
+    background-attachment: fixed;
   }
   @media (orientation:portrait) and (min-height: 2601px) {
     background-image: url(/assets/static/homepageN.jpg);
+    background-attachment: fixed;
   }
 }
 
@@ -87,6 +95,7 @@
 .widget-size {
   height: 2.5vw;
   font-size: 1.2vw;
+  z-index: 2;
   @media (pointer:coarse) and (orientation:landscape) {
     height: 6.5vh;
     font-size: 1.8vw;
@@ -99,6 +108,7 @@
 
 .confirmation-button .button {
   .widget-size;
+  color: @bulma-text;
   width: 100%;
 }
 
@@ -152,6 +162,8 @@
 }
 
 .car-label {
+  position: relative;
+  z-index: 2;
   margin-top: 2vh;
   margin-bottom: 4vh;
   @media (pointer:coarse) and (orientation: portrait){
@@ -163,23 +175,25 @@
 .car-label .homepage-title {
   color: @bulma-primary;
   text-align: center;
-  font-size: 2.5vw;
+  font-size: 300%;
   @media (pointer:coarse) and (orientation: landscape){
-    font-size: 3.5vw;
+    font-size: 3.7vw;
   }
   @media (pointer:coarse) and (orientation: portrait){
     font-size: 5.3vw;
     font-weight: 700;
   }
-  margin-bottom: 4vh;
+  margin-bottom: 4%;
   -webkit-text-stroke-color: rgb(41, 21, 21);
   -webkit-text-stroke-width: 1.00px;
+  z-index: 2;
 }
 
 .car-label img {
-  margin-left: 2vw;
+  margin-left: 2%;
   width: 7%; 
   height: 7%;
+  z-index: 2;
 }
 
 .form-wrapper {

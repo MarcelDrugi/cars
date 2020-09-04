@@ -31,7 +31,7 @@ From <i>requirements.txt</i> you have already installed mySQL-client. If you wan
 
     touch cars/config/settings/.env
 
-###### 7. To the .env file enter 5 groups of data:
+###### 7. To the .env file enter 7 groups of data:
 <ol type="a">
    <li> some secret key, </li>
    <li> settings of the database you created in step 4,</li>
@@ -64,7 +64,13 @@ For mySQL-database and AWS-Ireland region the file should looks like:
     FRONTEND_HOST=http://localhost:4200/
     
 
-###### 8. Create a s3-bucket, set the policy of the bucket (set as public) and upload default-avatar file to media directory in the bucket.
+###### 8. Create new bucket
+<ul>
+<li>create a s3-bucket</li>
+<li>set the policy of the bucket (set as public)</li> 
+<li>upload default-avatar file to media directory in the bucket</li>
+</ul>
+
 These 3 things you can do by running a prepared script:
 
     python3 cars/aws_settings/bucket_policy.py
