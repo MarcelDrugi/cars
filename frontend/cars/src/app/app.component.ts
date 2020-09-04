@@ -4,7 +4,7 @@ import { AccDataService } from './shared/services/acc-data.service';
 @Component({
   selector: 'rental-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.less', './app.component.sass'],
+  styleUrls: ['./app.component.less', './app.component.sass', './fog.less'],
 })
 export class AppComponent implements OnInit, AfterViewInit {
   title = 'cars';
