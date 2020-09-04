@@ -69,7 +69,7 @@ For mySQL-database and AWS-Ireland region the file should looks like:
 <li>create a s3-bucket</li>
 <li>set the policy of the bucket (set as public)</li> 
 <li>upload default-avatar file to media directory in the bucket</li>
-<ul>
+</ul>
 
 These 3 things you can do by running a prepared script:
 
