@@ -37,7 +37,7 @@
   <nav [hidden]="mobile" class="navbar horizontal-menu" role="navigation">
     <div class="navbar-menu">
       <div class="navbar-start">
-        <a *ngIf="username && employee" [routerLink]="['/addcar']"  class="navbar-item"><span style="color: red;">ZARZĄDZAJ</span></a>
+        <a *ngIf="username && employee" [routerLink]="['/addcar']"  class="navbar-item"><span style="color: red;">zarządzaj</span></a>
         <a [routerLink]="['']"  class="navbar-item">zarezerwuj samochód</a>
         <a [routerLink]="['/fleet']"  class="navbar-item">flota</a>
         <a [routerLink]="['/location']"  class="navbar-item">lokalizacje</a>
@@ -87,7 +87,7 @@
           </li>
         </div>
         <br>
-        <li><a *ngIf="username && employee" [routerLink]="['/addcar']"  class="button is-primary is-light menu-label"><span style="color: red;">ZARZĄDZAJ</span></a></li>
+        <li><a *ngIf="username && employee" [routerLink]="['/addcar']"  class="button is-primary is-light menu-label"><span style="color: red;">zarządzaj</span></a></li>
         <li><a [routerLink]="['']"  class="button is-primary menu-label">zarezerwuj samochód</a></li>
         <li><a [routerLink]="['/fleet']"  class="button is-primary is-light menu-label">flota</a></li>
         <li><a [routerLink]="['/location']"  class="button is-primary menu-label">lokalizacje</a></li>

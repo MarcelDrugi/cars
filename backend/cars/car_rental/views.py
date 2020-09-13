@@ -46,49 +46,28 @@ class TokenRefresh(GenericAPIView):
         return refreshed_token
 
 
-class SignUp(CreateAPIView):
+class ClientsAPI(TokenRefresh, ListModelMixin):
     """
-    Handles :model:`car_rental.Client` and the assigned :model:`auth.User`.
-    Contains only one request: POST.
+    Handles :model:`car_rental:Clients` for GET requests.
     """
-    permission_classes = ()
+    permission_classes = (IsAuthenticated, )
+    serializer_class = ClientSerializer
+    queryset = Clients.objects.select_related().all().order_by(
+        'user__username'
+    )
 
-    def create(self, request, **kwargs):
-        avatar = request.data['avatar']
-        if avatar == 'undefined':
-            data = {'user': request.data}
-        else:
-            data = {'user': request.data, 'avatar': avatar}
-        serializer = ClientSerializer(data=data)
+    def get_serializer_context(self):
+        context = super(ClientsAPI, self).get_serializer_context()
+        if self.request.method == 'GET':
+            context.update({'skip_fields': ['avatar', ]})
+        return context
 
-        if serializer.is_valid():
-            try:
-                serializer.save()
-                return Response(
-                    serializer.data,
-                    status=status.HTTP_201_CREATED
-                )
-            except User.DoesNotExist:
-                return Response(
-                    serializer.errors,
-                    status=status.HTTP_507_INSUFFICIENT_STORAGE
-                )
-            except Exception:
-                return Response(
-                    serializer.errors,
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
-        else:
-            if User.objects.filter(username=request.data['username']).exists():
-                return Response(
-                    serializer.errors,
-                    status=status.HTTP_409_CONFLICT
-                )
-            else:
-                return Response(
-                    serializer.errors,
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+    def get(self, request, **kwargs):
+        response = self.list(request, **kwargs)
+        response.data.append(
+            {'token': self._take_new_token()}
+        )
+        return response
 
 
 class ClientDataAPI(TokenRefresh, UpdateModelMixin):
@@ -146,30 +125,6 @@ class ClientDataAPI(TokenRefresh, UpdateModelMixin):
             response = self.update(request, *args, **kwargs)
             response.data['token'] = self._take_new_token()
             return response
-
-
-class ClientsAPI(TokenRefresh, ListModelMixin):
-    """
-    Handles :model:`car_rental:Clients` for GET requests.
-    """
-    permission_classes = (IsAuthenticated, )
-    serializer_class = ClientSerializer
-    queryset = Clients.objects.select_related().all().order_by(
-        'user__username'
-    )
-
-    def get_serializer_context(self):
-        context = super(ClientsAPI, self).get_serializer_context()
-        if self.request.method == 'GET':
-            context.update({'skip_fields': ['avatar', ]})
-        return context
-
-    def get(self, request, **kwargs):
-        response = self.list(request, **kwargs)
-        response.data.append(
-            {'token': self._take_new_token()}
-        )
-        return response
 
 
 class DiscountsAPI(TokenRefresh, ListModelMixin, CreateModelMixin,
@@ -557,3 +512,48 @@ class OrderAPI(TokenRefresh):
             return Response(
                 status=status.HTTP_406_NOT_ACCEPTABLE,
             )
+
+
+class SignUp(CreateAPIView):
+    """
+    Handles :model:`car_rental.Client` and the assigned :model:`auth.User`.
+    Contains only one request: POST.
+    """
+    permission_classes = ()
+
+    def create(self, request, **kwargs):
+        avatar = request.data['avatar']
+        if avatar == 'undefined':
+            data = {'user': request.data}
+        else:
+            data = {'user': request.data, 'avatar': avatar}
+        serializer = ClientSerializer(data=data)
+
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_201_CREATED
+                )
+            except User.DoesNotExist:
+                return Response(
+                    serializer.errors,
+                    status=status.HTTP_507_INSUFFICIENT_STORAGE
+                )
+            except Exception:
+                return Response(
+                    serializer.errors,
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+        else:
+            if User.objects.filter(username=request.data['username']).exists():
+                return Response(
+                    serializer.errors,
+                    status=status.HTTP_409_CONFLICT
+                )
+            else:
+                return Response(
+                    serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST
+                )

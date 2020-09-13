@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { OrderService } from '../shared/services/order.service';
 import { Register } from '../models/register.model';
 import { Client } from '../models/client.model';
+import { Car } from '../models/car.model';
 
 
 @Component({
@@ -24,11 +25,14 @@ export class HomepageComponent implements OnInit {
 
   // data containers
   public segments: Array<Segment>;
+  public cars: Array<Car>;
   public reservationForm: FormGroup;
   public theDate: Date;
   private termPlaceHolder = 'PRZEDZIAŁ CZASU';
   public termRange: string;
   private selectedSegment: number;
+  public firstCarIndex: number;
+  public baseFleetClass = 'column is-2 car '
 
   // form switches
   public rangeError = false;
@@ -50,6 +54,20 @@ export class HomepageComponent implements OnInit {
       (segments: any) => {
         this.accDataService.setToken(segments.slice(-1)[0].token);
         this.segments = segments.slice(0, -1);
+      },
+      error => {
+        console.log(error);
+        if (error.statusText === 'Unauthorized' && error.status === 401) {
+          this.accDataService.setToken('');
+        }
+      }
+    );
+  }
+
+  private getCars(): void {
+    this.getPublicDataService.getCars().subscribe(
+      (cars: any) => {
+        this.cars = cars
       },
       error => {
         console.log(error);
@@ -115,9 +133,42 @@ export class HomepageComponent implements OnInit {
     this.selectedSegment = segment;
   }
 
+  public onHoverEnter(event: any) {
+    const className = event.target.className
+    let div = document.getElementById(event.target.id);
+    div.className = this.baseFleetClass + 'car-bigger';
+    try {
+      let divLeft = document.getElementById((parseInt(event.target.id)-1).toString());
+      divLeft.className = this.baseFleetClass + 'car-bigger-side';
+    }
+    catch (e) { }
+    try {
+      let divLeft = document.getElementById((parseInt(event.target.id)+1).toString());
+      divLeft.className = this.baseFleetClass + 'car-bigger-side';
+    }
+    catch (e) { }
+  }
+
+  public onHoverLeave(event: any) {
+    let div = document.getElementById(event.target.id);
+    div.className = this.baseFleetClass;
+    try {
+      let divLeft = document.getElementById((parseInt(event.target.id)-1).toString());
+      divLeft.className = this.baseFleetClass;
+    }
+    catch (e) { }
+    try {
+      let divLeft = document.getElementById((parseInt(event.target.id)+1).toString());
+      divLeft.className = this.baseFleetClass;
+    }
+    catch (e) { }
+  }
+
   ngOnInit(): void {
     this.termRange = this.termPlaceHolder;
     this.getSegments();
+    this.getCars();
+    this.firstCarIndex = 0;
 
     const options = {
       type: 'date',

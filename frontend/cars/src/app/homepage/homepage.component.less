@@ -78,23 +78,9 @@
   }
 }
 
-.confirmation-button {
-  width: 30%;
-  margin-left: 50%;
-  @media (pointer:coarse) and (orientation:landscape) {
-    width: 40%;
-    margin-left: 50%;
-  }
-  @media (pointer:coarse) and (orientation:portrait) {
-    width: 70%;
-    margin-left: 25%;
-    //margin-bottom: 2vh;
-  }
-}
-
 .widget-size {
-  height: 2.5vw;
-  font-size: 1.2vw;
+  height: 30%;
+  font-size: 100%;
   z-index: 2;
   @media (pointer:coarse) and (orientation:landscape) {
     height: 6.5vh;
@@ -106,8 +92,25 @@
   }
 }
 
-.confirmation-button .button {
+.confirmation-button {
+  width: 30%;
+  margin-left: 50%;
   .widget-size;
+  position: relative;
+  @media (pointer:coarse) and (orientation:landscape) {
+    width: 40%;
+    margin-left: 50%;
+  }
+  @media (pointer:coarse) and (orientation:portrait) {
+    width: 70%;
+    margin-left: 25%;
+    //margin-bottom: 2vh;
+  }
+}
+
+.confirmation-button .button {
+  height: 100%;
+  font-size: 100%;
   color: @bulma-text;
   width: 100%;
 }
@@ -144,10 +147,9 @@
   }
 }
 
-.input-date .input {
+.input-date {
   width: 30%;
   margin-left: 35%;
-  background-color: @widgets-color_2;
   @media (pointer:coarse) and (orientation: landscape) {
     width: 40%;
     margin-left: 30%;
@@ -157,15 +159,27 @@
     margin-left: 15%;
     margin-bottom: 2vh;
   }
+  text-align: center;
+  position: relative;
   .widget-size;
+}
+
+.input-date .input {
+  width: 100%;
+  background-color: @widgets-color_2;
+  height: 100%;
+  font-size: 100%;
   text-align: center;
 }
 
 .car-label {
   position: relative;
   z-index: 2;
-  margin-top: 2vh;
   margin-bottom: 4vh;
+  margin-top: 1.5vh;
+  @media (pointer:coarse) and (orientation: landscape){
+    margin-top: 2.2vh;
+  }
   @media (pointer:coarse) and (orientation: portrait){
     margin-top: 4vh;
   }
@@ -196,6 +210,101 @@
   z-index: 2;
 }
 
+.fleet-label {
+  position: relative;
+  z-index: 2;
+  margin-top: 1vh;
+  margin-bottom: 2vh;
+  @media (pointer:coarse) {
+    display: none;
+  }
+  text-align: center;
+}
+
+.fleet-label .homepage-subtitle {
+  color: @bulma-primary;
+  text-align: center;
+  font-size: 200%;
+  margin-bottom: 4%;
+  -webkit-text-stroke-color: rgb(41, 21, 21);
+  -webkit-text-stroke-width: 1.00px;
+  z-index: 2;
+}
+
 .form-wrapper {
-  margin-top: 5vh;
+  @media (pointer:coarse) {
+    margin-top: 5vh;
+  }
+}
+
+.cars {
+  margin-bottom: 2.2%;
+  position: relative;
+  @media (pointer:coarse) {
+    display: none;
+  }
+}
+.cars .background {
+  z-index: 1;
+  position: absolute;
+  background-color: @bulma-primary;
+  opacity: 0.15;
+  width: 100%;
+  height: 95%;
+}
+
+.car {
+  text-align: center;
+  z-index: 1;
+}
+
+.car img {
+  width: 85%;
+  border: solid @bulma-primary 3px;
+}
+
+.car-bigger {
+  transform: scale(1.40) translateY(-15%);
+  transition-duration: .4s;
+  .fleet-car-label {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+  z-index: 2;
+}
+
+.car-bigger-side {
+  transform: scale(1.25); 
+  transition-duration: .4s;
+}
+
+.fleet-labels {
+  font-size: 110%;
+  font-weight: 700;
+  color: @bulma-primary;
+}
+
+.fleet-car-label {
+  .fleet-labels;
+  display: none;
+}
+
+.arrow {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.arrow:hover {
+  transform: scale(1.20) translateY(-13%);
+  .arrow-label {
+    display: block;
+  }
+}
+
+.arrow-label {
+  .fleet-labels;
+  display: none;
 }

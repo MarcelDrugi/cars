@@ -9,7 +9,7 @@
   <div class="columns">
     <div class="column is-6">
       <div>
-        PRZYPISZ ZNIŻKĘ DO KLIENTA
+        <h1 class="title">PRZYPISZ ZNIŻKĘ DO KLIENTA</h1>
       </div>
       <label>Klienci: </label>
       <select (change)="clientSelection($event.target.value)">
@@ -42,7 +42,7 @@
     </div>
     <div class="column is-6">
       <div>
-        DODAWANIE NOWEJ ZNIŻKI
+        <h1 class="title">DODAWANIE NOWEJ ZNIŻKI</h1>
       </div>
       <form [formGroup]="addDiscount" (ngSubmit)="validNewDiscount()">
 

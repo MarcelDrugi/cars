@@ -11,7 +11,7 @@
     <div *ngIf="selectedSegment">
         <div *ngFor="let car of cars"> 
             <div *ngIf="car.segment">
-                <div *ngIf="car.segment.id == selectedSegment">
+                <div *ngIf="car.segment.id == selectedSegment" class="single-car">
                     <a routerLink="/details" [state]="{ carId: car.id }">{{car.model}}</a>
                 </div>
             </div>
