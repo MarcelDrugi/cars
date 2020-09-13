@@ -55,9 +55,16 @@ export class GetPublicDataService {
 
   public getTerms(carId: number): Observable<Array<Reservation>> {
     const url = this.backendInfoService.absolutePath + 'terms/' + carId;
-    const headers = new HttpHeaders({
-      Authorization: 'JWT ' + this.accDataService.getToken()
-    });
+    const token = this.accDataService.getToken();
+    let headers: HttpHeaders;
+    if (token !== 'null' && token !== '') {
+      headers = new HttpHeaders({
+        Authorization: 'JWT ' + token
+      });
+    }
+    else {
+      headers = new HttpHeaders({ });
+    }
     const httpOptions = {
       headers,
     };

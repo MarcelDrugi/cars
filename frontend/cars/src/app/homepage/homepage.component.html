@@ -21,8 +21,29 @@
     <span class="homepage-title">WYKONAJ 3 KROKI DO REZERWACJI</span>
     <img src="/assets/static/step.png"> 
   </div>
+  <div class="fleet-label">
+    <span class="homepage-subtitle">LUB WYBIERZ KONKRETNY SAMOCHÓD Z NASZEJ FLOTY</span>
+  </div>
   <div *ngIf="segmentError"> Prosimy wybrać segment aut</div>
   <div *ngIf="rangeError"> Prosimy wybrać przedział czasu </div>
   <div *ngIf="loginError"> Prosimy zalogować się przed dokonaniem rezerwacji</div>
   <div *ngIf="allowError"> We wskazanym terminie nie ma dosteponych samochodów z rządanego segmentu. Prosimy wybrać inny segment lub skontaktować się z obsługą wypożyczalni.</div>
+  <div *ngIf="cars" class="columns cars">
+    <div class="background"></div>
+    <div class="column is-1 arrow"></div>
+    <ng-container *ngFor="let number of [0, 1, 2, 3, 4]">
+        <div class="column is-2 car" id={{firstCarIndex+number}} (mouseenter) = "onHoverEnter($event)" (mouseleave)="onHoverLeave($event)">
+          <a routerLink="/details" [state]={carId:cars[firstCarIndex+number].id}>
+            <img src={{cars[firstCarIndex+number].img}}>
+            <span class="fleet-car-label">{{cars[firstCarIndex+number].brand}} {{cars[firstCarIndex+number].model}}</span>
+          </a>
+        </div>
+    </ng-container>
+    <div class="column is-1 arrow">
+      <a [routerLink]="['/fleet']">
+        <img src="/assets/static/arrow.png">
+        <span class="arrow-label">RESZTA FLOTY</span>
+      </a>
+    </div>
+  </div>
 </section>
