@@ -1,21 +1,90 @@
-<p>fleet works!</p>
-
-<select (change)="checkSegment($event)">
-    <option *ngFor="let segment of segments" [value]="segment.id">
-        {{segment.name}}
-    </option>
-</select>
-
-<div>lista aut:</div>
-<div *ngIf="cars">
-    <div *ngIf="selectedSegment">
-        <div *ngFor="let car of cars"> 
-            <div *ngIf="car.segment">
-                <div *ngIf="car.segment.id == selectedSegment" class="single-car">
-                    <a routerLink="/details" [state]="{ carId: car.id }">{{car.model}}</a>
+<section class="section">
+    <div class="horizontal-select">
+        <span class="select-form">
+            <div class="select is-primary">
+                <select (change)="checkSegment($event)">
+                    <option value="" disabled [defaultSelected]=true>WYBIERZ SEGMENT AUT</option>
+                    <option *ngFor="let segment of segments; let i = index;" [value]="i">
+                        {{segment.name}}
+                    </option>
+                </select>
+                <div class="cars-number">
+                    <p>Aktualnie posiadamy do wyboru</p> 
+                    <p><b>{{cars.length}}</b> pojazdy z <b>{{segments.length}}</b> segmentów.</p>
                 </div>
             </div>
+        </span>
+        <span class="pricing">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th><b title="Position">Segment</b></th>
+                    <th><abbr title="">Dzień</abbr></th>
+                    <th><abbr title="">Tydzień</abbr></th>
+                    <th><abbr title="">Opłata za spóźnienie (godz.)</abbr></th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <tr *ngIf="segments">
+                        <th><b>{{ segments[selectedSegment].name}}</b></th>
+                        <th>{{ segments[selectedSegment].pricing.day | number:'.2-2' }} PLN</th>
+                        <th>{{ segments[selectedSegment].pricing.week | number:'.2-2' }} PLN</th>
+                        <th>{{ segments[selectedSegment].pricing.hour | number:'.2-2' }} PLN </th>
+                    </tr>
+                    <tr *ngIf="segments" class="info">
+                        <td colspan="4">* Opłata karna naliczana za każdą zakończoną godzinę po terminie zwrotu.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </span>
+    </div>
+    <div class="vertical-select">
+        <div class="select is-primary">
+            <select (change)="checkSegment($event)">
+                <option value="" disabled [defaultSelected]=true>WYBIERZ SEGMENT AUT</option>
+                <option *ngFor="let segment of segments; let i = index;" [value]="i">
+                    {{segment.name}}
+                </option>
+            </select>
+        </div>
+        <span class="pricing">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th><b title="Position">Segment</b></th>
+                    <th><abbr title="">Dzień</abbr></th>
+                    <th><abbr title="">Tydzień</abbr></th>
+                    <th><abbr title="">Opłata za spóźnienie (godz.)</abbr></th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <tr *ngIf="segments">
+                        <th><b>{{ segments[selectedSegment].name}}</b></th>
+                        <th>{{ segments[selectedSegment].pricing.day | number:'.2-2' }} PLN</th>
+                        <th>{{ segments[selectedSegment].pricing.week | number:'.2-2' }} PLN</th>
+                        <th>{{ segments[selectedSegment].pricing.hour | number:'.2-2' }} PLN </th>
+                    </tr>
+                    <tr *ngIf="segments" class="info">
+                        <td colspan="4">* Opłata karna naliczana za każdą zakończoną godzinę po terminie zwrotu.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </span>
+    </div>
+
+    <div class="title"> DOSTĘPNE SAMOCHODY W WYBRANYM SEGMENCIE</div>
+    <div *ngIf="cars">
+        <div *ngIf="selectedSegmentId">
+            <ng-container *ngFor="let car of cars"> 
+                <ng-container *ngIf="car.segment">
+                    <span *ngIf="car.segment.id == selectedSegmentId" class="single-car">
+                        <a routerLink="/details" [state]="{ carId: car.id }">
+                            <img src={{car.img}}>
+                            <span class="single-car-name">{{car.brand}} {{car.model}}</span>
+                        </a>
+                    </span>
+                </ng-container>
+            </ng-container>
         </div>
     </div>
-</div>
-<br>
+</section>

@@ -16,6 +16,7 @@ export class FleetComponent implements OnInit {
   public segments: Array<Segment>;
   public cars: Array<Car>;
   public selectedSegment: number;
+  public selectedSegmentId: number;
 
   constructor(
     private getPublicDataService: GetPublicDataService,
@@ -33,6 +34,11 @@ export class FleetComponent implements OnInit {
         if (error.statusText === 'Unauthorized' && error.status === 401) {
           this.accDataService.setToken('');
         }
+      },
+      () => {
+        this.selectedSegment = 0;
+        this.selectedSegmentId = this.segments[this.selectedSegment].id
+        console.log(this.selectedSegmentId)
       }
     );
   }
@@ -54,10 +60,10 @@ export class FleetComponent implements OnInit {
 
   public checkSegment(event: any) {
     this.selectedSegment = event.target.value
+    this.selectedSegmentId = this.segments[this.selectedSegment].id
   }
 
   ngOnInit(): void {
-    this.selectedSegment = 1;
     this.getCars();
     this.getSegments();
   }
