@@ -6,6 +6,8 @@ import { Reservation } from '../models/reservation.model';
 import { ReservService } from '../services/reserv.service';
 import { OrderService } from '../shared/services/order.service';
 import { Client } from '../models/client.model';
+import { Car } from '../models/car.model';
+import { Segment } from '../models/segment.model';
 
 @Component({
   selector: 'rental-car-details',
@@ -15,8 +17,10 @@ import { Client } from '../models/client.model';
 export class CarDetailsComponent implements OnInit {
 
   // data containers
-  private carId: number;
+  //private carId: number;
+  public car: Car;
   private terms: Array<Reservation>;
+  public segment: Segment;
   public termRange: string;
 
   private termPlaceHolder = 'WYBIERZ PRZEDZIAŁ';
@@ -39,6 +43,21 @@ export class CarDetailsComponent implements OnInit {
       (terms: Array<Reservation>) => {
         this.terms = terms;
         console.log(this.terms)
+      },
+      error => {
+        console.log(error);
+        if (error.statusText === 'Unauthorized' && error.status === 401) {
+          this.accDataService.setToken('');
+        }
+      }
+    );
+  }
+
+  public getCar(carId: number): void {
+    this.getPublicDataService.getCar(carId).subscribe(
+      (car: Car) => {
+        this.car = car;
+        console.log('mój samochód', this.car)
       },
       error => {
         console.log(error);
@@ -75,19 +94,23 @@ export class CarDetailsComponent implements OnInit {
     );
   }
 
-  public validData(): void {
-
-    // disable previous error messages
+  public disableErrors(): void {
     this.rangeError = false;
     this.loginError = false;
     this.allowError = false;
+  }
+
+  public validData(): void {
+
+    // disable previous error messages
+    this.disableErrors()
 
     if (this.termRange !== this.termPlaceHolder && this.termRange !== '') {
       const terms = this.termRange.split(' - ');
       const reservationData = {
         begin: terms[0],
         end: terms[1],
-        car_id: this.carId,
+        car_id: this.car.id,
       };
       this.postReservation(reservationData);
     }
@@ -97,8 +120,9 @@ export class CarDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.carId = window.history.state.carId
-    this.getTerms(this.carId)
+    this.car = window.history.state.car;
+    this.segment = window.history.state.segment;
+    this.getTerms(this.car.id);
 
     this.termRange = this.termPlaceHolder;
     const options = {
@@ -111,6 +135,8 @@ export class CarDetailsComponent implements OnInit {
       labelFrom: 'początek',
       labelTo: 'koniec',
       dateFormat: 'DD.MM.YYYY',
+      displayMode: 'dialog',
+      minDate: new Date(),
 
     };
 

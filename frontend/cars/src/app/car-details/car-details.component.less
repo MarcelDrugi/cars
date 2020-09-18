@@ -1,5 +1,35 @@
 @bulma-primary: hsl(171, 100%, 41%);
 @bulma-text: hsl(0, 0%, 21%);
+@addition: hsl(302, 15%, 62%);
+
+::ng-deep body {
+  z-index: -1;
+  @media (orientation: landscape) and (max-width: 1922px) {
+    background-image: url(/assets/static/homepageI.jpg);
+    background-position: center;
+    background-attachment: fixed;
+  }
+  @media (orientation: landscape) and (min-width: 1921px) and (max-width: 2600px) {
+    background-image: url(/assets/static/homepageJ.jpg);
+    background-attachment: fixed;
+  }
+  @media (orientation: landscape) and (min-width: 2601px) {
+    background-image: url(/assets/static/homepageK.jpg);
+    background-attachment: fixed;
+  }
+  @media (orientation:portrait) and (max-height: 1922px) {
+    background-image: url(/assets/static/homepageL.jpg);
+    background-attachment: fixed;
+  }
+  @media (orientation:portrait) and (min-height: 1922px)  and (max-height: 2600px) {
+    background-image: url(/assets/static/homepageM.jpg);
+    background-attachment: fixed;
+  }
+  @media (orientation:portrait) and (min-height: 2601px) {
+    background-image: url(/assets/static/homepageN.jpg);
+    background-attachment: fixed;
+  }
+}
 
 /deep/.calendar-footer-validate {
   visibility: hidden;
@@ -45,4 +75,370 @@
   background-color: @bulma-primary;
   padding: 4px;
   border-radius: 0.3vw;
+}
+
+.calendar {
+  width: 40%;
+  margin-left: 30%;
+  @media (pointer:coarse) and (orientation:portrait) {
+    width: 80%;
+    margin-left: 10%;
+  }
+  position: relative;
+  z-index: 1;
+}
+
+.calendar input {
+  @media (pointer:coarse) and (orientation:portrait) {
+    font-size: 1.8vh;
+    text-align: center;
+  }
+  @media (pointer:coarse) and (orientation:landscape) {
+    font-size: 1.6vw;
+  }
+}
+
+.confirmation-button {
+  margin-left: 29.7%;
+  width: 18%;
+  min-width: 18%;
+  @media (pointer:coarse) and (orientation:portrait) {
+    width: 60%;
+    margin-left: 20%;
+    height: 5vh;
+  }
+  @media (pointer:coarse) and (orientation:landscape) {
+    width: 25%;
+    margin-left: 37.5%;
+    margin-top: 1%;
+  }
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.confirmation-button button {
+  //width: 100%;
+  height: 100%;
+  font-size: 140%;
+  @media (pointer:coarse) and (orientation:portrait) {
+    font-size: 2vh;
+  }
+  @media (pointer:coarse) and (orientation:landscape) {
+    font-size: 1.7vw;
+    font-weight: 500;
+  }
+}
+
+.confirmation-button button:hover {
+  background-color: @addition;
+  color: white;
+}
+
+.main-label {
+  font-size: 250%;
+  font-weight: 500;
+  width: 60%;
+  margin-left: 20%;
+  @media (pointer:coarse) and (orientation:portrait) {
+    font-size: 5.2vw;
+    width: 90%;
+    margin-left: 5%;
+    margin-bottom: 2vh;
+  }
+  @media (pointer:coarse) and (orientation:landscape) {
+    font-size: 2.6vw;
+  }
+  color: @bulma-primary;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.car-horizontal {
+  margin-top: 4%;
+  position: relative;
+  @media (pointer:coarse) and (orientation:portrait) {
+    display: none;
+  }
+}
+
+.car-horizontal .info {
+  position: relative;
+  height: 100%;
+  animation: transform-horizontal .5s linear;
+}
+
+.car-horizontal .info-up {
+  position: relative;
+  height: 100%;
+}
+
+
+.car-horizontal .background {
+  width: 90%;
+  height: 100%;
+  border-radius: 1vw;
+  @media (pointer:coarse) and (orientation:portrait) {
+    border-radius: 0.5vh;
+  }
+  background-color: @bulma-primary;
+  opacity: 0.6;
+  z-index: 0;
+  position: absolute;
+}
+
+.car-horizontal .car-name {
+  color: @bulma-text;
+  position: relative;
+  z-index: 1;
+  margin: 2%;
+  font-weight: 500;
+  font-size: 200%;
+  @media (pointer:coarse) and (orientation:landscape) {
+    font-size: 2.5vw;
+  }
+}
+
+.car-horizontal .car-description{
+  color: @bulma-text;
+  position: relative;
+  z-index: 1;
+  margin: 2%;
+  font-size: 120%;
+  @media (pointer:coarse) and (orientation:landscape) {
+    font-size: 1.5vw;
+  }
+}
+
+.car-horizontal .photo {
+  text-align: center;
+}
+
+.car-horizontal img {
+  position: relative;
+  z-index: 1;
+  border: ridge @bulma-primary 4px;
+  @media (pointer:coarse) and (orientation:landscape) {
+    border: ridge @bulma-primary 0.2vw;
+  }
+  animation: transform-horizontal-img .5s linear;
+}
+
+.car-horizontal .pricing {
+  position: relative;
+  font-size: 100%;
+  z-index: 1;
+  @media (pointer:coarse) and (orientation:landscape) {
+      font-size: 1.6vw;
+  }
+}
+
+.car-horizontal .pricing table {
+  position: relative;
+  z-index: 2;
+  background-color: @bulma-primary;
+}
+
+.car-horizontal .pricing .pricing-info {
+  color: @bulma-primary;
+  font-size: 200%;
+  font-weight: 500;
+  @media (pointer:coarse) and (orientation:landscape) {
+    font-size: 2.5vw;
+  }
+}
+
+.car-vertical {
+  display: none;
+  text-align: center;
+  @media (pointer:coarse) and (orientation:portrait) {
+    display: block;
+  }
+}
+
+.car-vertical .photo {
+  text-align: center;
+  margin-top: 2vh;
+}
+
+.car-vertical img {
+  position: relative;
+  z-index: 1;
+  border: ridge @bulma-primary 0.2vh;
+  animation: transform-vertical-img .5s linear;
+}
+
+.car-vertical .info {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  animation: transform-vertical .5s linear;
+}
+
+.car-vertical .info-up {
+  position: relative;
+  height: 100%;
+  width: 90%;
+  margin-left: 5%;
+  text-align: center;
+}
+
+
+.car-vertical .background {
+  width: 100%;
+  height: 101%;
+  border-radius: 0.5vh;
+  background-color: @bulma-primary;
+  opacity: 0.6;
+  z-index: 0;
+  position: absolute;
+}
+
+.car-vertical .car-name {
+  color: @bulma-text;
+  position: relative;
+  z-index: 1;
+  margin: 2%;
+  font-weight: 500;
+  font-size: 5vw;
+  text-align: center;
+}
+
+.car-vertical .car-description{
+  color: @bulma-text;
+  position: relative;
+  z-index: 1;
+  margin-left: 3%;
+  margin-right: 3%;
+  margin-bottom: 3%;
+  font-size: 3vw;
+}
+
+.car-vertical .pricing {
+  position: relative;
+  font-size: 100%;
+  z-index: 1;
+  font-size: 2.5vw;
+  text-align: center;
+}
+
+.car-vertical .pricing .pricing-info {
+  color: @bulma-primary;
+  font-size: 200%;
+  font-weight: 500;
+  font-size: 2.5vh;
+}
+
+.car-vertical .pricing table {
+  position: relative;
+  z-index: 2;
+  background-color: @bulma-primary;
+  margin-bottom: 8%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fleet {
+  position: relative;
+  z-index: 1;
+  font-size: 200%;
+  text-align: right;
+  margin-bottom: 2%;
+  margin-right: 3%;
+  @media (pointer:coarse) and (orientation:portrait) {
+    margin-bottom: 3.2vh;
+    font-size: 5.5vw;
+  }
+  @media (pointer:coarse) and (orientation:landscape) {
+    margin-bottom: 3vw;
+    font-size: 2.5vw;
+  }
+   
+}
+
+.fleet:hover {
+  transform: scale(1.05) translateX(-1vw);
+  font-weight: 450;
+}
+
+.fleet a {
+  color: @bulma-primary;
+}
+
+.fleet img {
+  height: 0.7em;
+  margin-left: 0.6%;
+}
+
+.fleet .arrow-1 {
+  animation: arrow-1 2.2s linear infinite;
+}
+
+.fleet .arrow-2 {
+  animation: arrow-2 2.2s linear infinite;
+}
+
+.fleet .arrow-3 {
+  animation: arrow-3 2.2s linear infinite;
+}
+
+.message {
+  position: relative;
+  z-index: 1;
+  width: 60%;
+  margin-left: 20%;
+  animation: message .3s linear;
+  @media (pointer:coarse) and (orientation:portrait) {
+    font-size: 3.8vw;
+    width: 90%;
+    margin-left: 5%;
+  }
+  @media (pointer:coarse) and (orientation:landscape) {
+    width: 80%;
+    margin-left: 10%;
+    font-size: 1.6vw;
+  }
+}
+
+@keyframes arrow-1 {
+  0% { transform: translateX(0) }
+  10% { transform: translateX(0) }
+  35% {transform: translateX(1vw) }
+  100% { transform: translateX(0) }
+}
+
+@keyframes arrow-2 {
+  0% { transform: translateX(0) }
+  35% {transform: translateX(0) }
+  60% { transform: translateX(1vw)}
+  100% { transform: translateX(0) }
+}
+
+@keyframes arrow-3 {
+  0% { transform: translateX(0) }
+  60% { transform: translateX(0) }
+  85% { transform: translateX(1vw) }
+  100% { transform: translateX(0) }
+}
+
+@keyframes transform-horizontal-img {
+  0% { transform: translateX(-100vw); }
+}
+
+@keyframes transform-horizontal {
+  0% { transform: translateX(100vw); }
+}
+
+@keyframes transform-vertical-img {
+  0% { transform: translateX(-100vw); }
+}
+
+@keyframes transform-vertical {
+  0% { transform: translateX(100vw); }
+}
+
+@keyframes message {
+  0% { transform: translateX(-100vw); }
 }

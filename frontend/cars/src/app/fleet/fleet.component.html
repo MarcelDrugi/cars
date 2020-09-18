@@ -8,9 +8,9 @@
                         {{segment.name}}
                     </option>
                 </select>
-                <div class="cars-number">
-                    <p>Aktualnie posiadamy do wyboru</p> 
-                    <p><b>{{cars.length}}</b> pojazdy z <b>{{segments.length}}</b> segmentów.</p>
+                <div *ngIf="cars && segments" class="cars-number">
+                    <p>Możesz wybierać spośród</p> 
+                    <p><b>{{cars.length}}</b> pojazdów w <b>{{segments.length}}</b> segmentach</p>
                 </div>
             </div>
         </span>
@@ -78,7 +78,7 @@
             <ng-container *ngFor="let car of cars"> 
                 <ng-container *ngIf="car.segment">
                     <span *ngIf="car.segment.id == selectedSegmentId" class="single-car">
-                        <a routerLink="/details" [state]="{ carId: car.id }">
+                        <a routerLink="/details" [state]="{ car: car, segment: segments[selectedSegment] }">
                             <img src={{car.img}}>
                             <span class="single-car-name">{{car.brand}} {{car.model}}</span>
                         </a>

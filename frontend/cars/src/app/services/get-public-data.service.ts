@@ -53,6 +53,24 @@ export class GetPublicDataService {
     return this.http.get<Array<Car>>(url, httpOptions);
   }
 
+  public getCar(carId: number): Observable<Car> {
+    const url = this.backendInfoService.absolutePath + 'cars/' + carId;
+    const token = this.accDataService.getToken();
+    let headers: HttpHeaders;
+    if (token !== 'null' && token !== '') {
+      headers = new HttpHeaders({
+        Authorization: 'JWT ' + token
+      });
+    }
+    else {
+      headers = new HttpHeaders({ });
+    }
+    const httpOptions = {
+      headers,
+    };
+    return this.http.get<Car>(url, httpOptions);
+  }
+
   public getTerms(carId: number): Observable<Array<Reservation>> {
     const url = this.backendInfoService.absolutePath + 'terms/' + carId;
     const token = this.accDataService.getToken();

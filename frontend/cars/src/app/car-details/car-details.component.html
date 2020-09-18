@@ -1,8 +1,115 @@
-<p>car-details works!</p>
-<input class="input"  type="date" [value]="termRange" >
-<div ><button (click)="validData()">PRZEJDŹ DO ZAMÓWIENIA</button></div>
-<div *ngIf="rangeError"> Prosimy wybrać przedział czasu </div>
-<div *ngIf="loginError"> Prosimy zalogować się przed dokonaniem rezerwacji</div>
-<div *ngIf="allowError"> We wskazanym terminie ten samochód jest niedostępny. Prosimy wybrać inny samochód lub skontaktować się z obsługą wypożyczalni.</div>
+<section class="section">
+    <article *ngIf="rangeError" class="message is-primary">
+        <div class="message-header">
+          <p>UWAGA !</p>
+          <button class="delete" aria-label="delete" (click)="disableErrors()"></button>
+        </div>
+        <div class="message-body">
+           <strong>Prosimy wybrać przedział czasu.</strong>
+        </div>
+      </article>
+      <article *ngIf="loginError" class="message is-primary">
+        <div class="message-header">
+          <p>UWAGA !</p>
+          <button class="delete" aria-label="delete" (click)="disableErrors()"></button>
+        </div>
+        <div class="message-body">
+           <strong>Prosimy zalogować się przed dokonaniem rezerwacji.</strong>
+        </div>
+      </article>
+      <article *ngIf="allowError" class="message is-primary">
+        <div class="message-header">
+          <p>UWAGA !</p>
+          <button class="delete" aria-label="delete" (click)="disableErrors()"></button>
+        </div>
+        <div class="message-body">
+           <strong>We wskazanym terminie nie ma dosteponych samochodów z rządanego segmentu. Prosimy wybrać inny segment lub skontaktować się z obsługą wypożyczalni..</strong>
+        </div>
+      </article>
+    <div class="main-label">ZAREZERWUJ TEN SAMOCHÓD</div>
+    <div class="calendar">
+        <input class="input"  type="date" [value]="termRange" >
+    </div>
+    <div class="confirmation-button"><button (click)="validData()" class="button is-primary">PRZEJDŹ DO ZAMÓWIENIA</button></div>
 
-<div *ngIf="termRange"> {{termRange}} </div>
+    <div class="car-horizontal columns">
+        <div class="column is-5 photo">
+            <img src={{car.img}}>
+        </div>
+        <div class="column is-7 info">
+            <div class="info-up">
+                <div class="background"></div>
+                <div *ngIf="car" class="car-name"> {{car.brand}} {{car.model}}</div>
+                <div *ngIf="car" class="car-description"> {{car.description}}</div>
+            </div>
+            <div class="pricing">
+                <div class="pricing-info"> CENNIK:</div>
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th><b title="Position">Segment</b></th>
+                        <th><abbr title="">Dzień</abbr></th>
+                        <th><abbr title="">Tydzień</abbr></th>
+                        <th><abbr title="">Opłata za spóźnienie (godz.)</abbr></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngIf="segment">
+                            <th><b>{{ segment.name}}</b></th>
+                            <th>{{ segment.pricing.day | number:'.2-2' }} PLN</th>
+                            <th>{{ segment.pricing.week | number:'.2-2' }} PLN</th>
+                            <th>{{ segment.pricing.hour | number:'.2-2' }} PLN </th>
+                        </tr>
+                        <tr *ngIf="segment" class="info">
+                            <td colspan="4">* Opłata karna naliczana za każdą zakończoną godzinę po terminie zwrotu.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="car-vertical">
+        <div class="photo">
+            <img src={{car.img}}>
+        </div>
+        <div class="info">
+            <div class="info-up">
+                <div class="background"></div>
+                <div *ngIf="car" class="car-name"> {{car.brand}} {{car.model}}</div>
+                <div *ngIf="car" class="car-description"> {{car.description}}</div>
+            </div>
+            <div class="pricing">
+                <div class="pricing-info"> CENNIK:</div>
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th><b title="Position">Segment</b></th>
+                        <th><abbr title="">Dzień</abbr></th>
+                        <th><abbr title="">Tydzień</abbr></th>
+                        <th><abbr title="">Opłata za spóźnienie (godz.)</abbr></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngIf="segment">
+                            <th><b>{{ segment.name}}</b></th>
+                            <th>{{ segment.pricing.day | number:'.2-2' }} PLN</th>
+                            <th>{{ segment.pricing.week | number:'.2-2' }} PLN</th>
+                            <th>{{ segment.pricing.hour | number:'.2-2' }} PLN </th>
+                        </tr>
+                        <tr *ngIf="segment" class="info">
+                            <td colspan="4">* Opłata karna naliczana za każdą zakończoną godzinę po terminie zwrotu.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="fleet"> 
+        <a [routerLink]="['/fleet']"> PRZEGLĄDAJ RESZTĘ FLOTY</a> 
+        <img class="arrow-1" src="/assets/static/arrow.png">
+        <img class="arrow-2" src="/assets/static/arrow.png">
+        <img class="arrow-3" src="/assets/static/arrow.png">
+    </div>
+</section>

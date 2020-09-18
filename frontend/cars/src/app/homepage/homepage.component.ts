@@ -104,13 +104,17 @@ export class HomepageComponent implements OnInit {
     );
   }
 
-  public validData(): void {
-
-    // disable previous error messages
+  public disableErrors(): void {
     this.rangeError = false;
     this.segmentError = false;
     this.loginError = false;
     this.allowError = false;
+  }
+
+  public validData(): void {
+
+    // disable previous error messages
+    this.disableErrors();
 
     if (this.termRange !== this.termPlaceHolder && this.termRange !== '' && this.selectedSegment) {
       const terms = this.termRange.split(' - ');
@@ -133,7 +137,7 @@ export class HomepageComponent implements OnInit {
     this.selectedSegment = segment;
   }
 
-  public onHoverEnter(event: any) {
+  public onHoverEnter(event: any): void {
     const className = event.target.className
     let div = document.getElementById(event.target.id);
     div.className = this.baseFleetClass + 'car-bigger';
@@ -149,7 +153,7 @@ export class HomepageComponent implements OnInit {
     catch (e) { }
   }
 
-  public onHoverLeave(event: any) {
+  public onHoverLeave(event: any): void {
     let div = document.getElementById(event.target.id);
     div.className = this.baseFleetClass;
     try {
@@ -181,6 +185,7 @@ export class HomepageComponent implements OnInit {
       labelTo: 'koniec',
       dateFormat: 'DD.MM.YYYY',
       displayMode: 'dialog',
+      minDate: new Date(),
 
     };
 

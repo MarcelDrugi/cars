@@ -78,17 +78,28 @@
   }
 }
 
+.message {
+  position: relative;
+  z-index: 1;
+  width: 60%;
+  margin-left: 20%;
+  animation: message .3s linear;
+}
+
 .widget-size {
   height: 30%;
   font-size: 100%;
   z-index: 2;
+  border: 1px inset @bulma-text;
   @media (pointer:coarse) and (orientation:landscape) {
     height: 6.5vh;
     font-size: 1.8vw;
+    border: none;
   }
   @media (pointer:coarse) and (orientation:portrait) {
     height: 5.5vh;
     font-size: 2.2vh;
+    border: none;
   }
 }
 
@@ -307,4 +318,8 @@
 .arrow-label {
   .fleet-labels;
   display: none;
+}
+
+@keyframes message {
+  0% { transform: translateX(-100vw); }
 }

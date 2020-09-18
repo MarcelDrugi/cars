@@ -38,7 +38,6 @@ export class FleetComponent implements OnInit {
       () => {
         this.selectedSegment = 0;
         this.selectedSegmentId = this.segments[this.selectedSegment].id
-        console.log(this.selectedSegmentId)
       }
     );
   }
