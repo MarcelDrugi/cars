@@ -117,6 +117,7 @@ export class ClientProfileComponent implements OnInit {
         this.newData = true;
         this.dataEdition = false;
         this.dataForm.reset();
+        window.scrollTo(0, 0);
       },
       error => {
         if (error.statusText === 'Unauthorized' && error.status === 401) {
@@ -130,6 +131,13 @@ export class ClientProfileComponent implements OnInit {
         }
       }
     );
+  }
+
+  public disableWarning():void {
+    this.newData = false;
+    this.newPassword = false;
+    this.wrongPass = false;
+    this.badData = false;
   }
 
   public validData(): void {
@@ -211,6 +219,7 @@ export class ClientProfileComponent implements OnInit {
         this.passwordForm.reset();
         this.passwordEdition = false;
         this.sentPassword = false;
+        window.scrollTo(0, 0);
       },
       error => {
         if (error.statusText === 'Unauthorized' && error.status === 401) {
@@ -221,6 +230,7 @@ export class ClientProfileComponent implements OnInit {
         }
         if (error.statusText === 'Conflict' && error.status === 409) {
           this.wrongPass = true;
+          window.scrollTo(0, 0);
         }
       }
     );

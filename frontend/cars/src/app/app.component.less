@@ -7,7 +7,7 @@
 @dark: hsl(0, 0%, 21%);
 @welcome_color: hsl(0, 11%, 12%);
 @basetime: 4.5s;
-@herosize: 15vh;
+@herosize: 16vh;
 
 @media screen and (max-width: 1279px){ 
     .hero-avatar {
@@ -188,13 +188,15 @@
     height: 140px;
     @media (pointer:coarse) and (orientation:landscape) {
         height: @herosize;
+        min-height: 125px;
     }
     @media (pointer:coarse) and (orientation:portrait) {
         height: 13vh;
         min-height: 106px;
     }
     text-align: left;
-    //animation: hero-resize 10s linear;
+    //
+    animation: hero-resize 10s linear;
     background-repeat: no-repeat;
     background-position: center;
     position: relative;
@@ -264,10 +266,10 @@
 }
 
 .topic {
-    font-size: 160%;//2.5vh;
+    font-size: 160%;
     font-weight: 800;
-    margin-left: 5%;//3vw;
-    margin-top: 1.5%;//2vh;
+    margin-left: 5%;
+    margin-top: 1.5%;
     display: inline-block;
     @media (pointer:coarse) and (orientation:landscape) {
         font-size: 4.2vh;
@@ -283,14 +285,17 @@
     }
 }
 .hero-avatar {
-    height: 120px;
-    width: 120px;
+    height: 118px;
+    width: 118px;
     margin-top: 1%;
 
     @media (pointer:coarse) {
+        height: 10vw;
+        width: 10vw;
         max-height: 14vh;
         max-width: 14vh;
-        margin-top: 1vh;
+        margin-top: auto;
+        margin-bottom: auto;
     }
     text-align: right;
 }
@@ -300,6 +305,10 @@
     border-radius: 10%;
     height: 100%;
     width: 100%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        width: 100%;
+        height: 100%;
+    }
 }
 
 .hero-profile {
@@ -350,7 +359,8 @@
     white-space: nowrap; 
     margin: 0 auto; 
     letter-spacing: 0.22vw; 
-    //animation: typing-first @basetime steps(20, end), blink-caret-first .9s step-end infinite, blink-caret-first .175s step-end 8;
+    //
+    animation: typing-first @basetime steps(20, end), blink-caret-first .9s step-end infinite, blink-caret-first .175s step-end 8;
     margin-top: 30vh;
 }
 
@@ -371,7 +381,8 @@
     white-space: nowrap; 
     margin: 0 auto; 
     letter-spacing: 0.22vw;
-    //animation: typing-second 8s steps(20, end), blink-caret-first .9s step-end infinite;
+    //
+    animation: typing-second 8s steps(20, end), blink-caret-first .9s step-end infinite;
 }
 
 .static-hero {
@@ -385,14 +396,16 @@
     @media (pointer:coarse) and (orientation:portrait) {
         text-align: center;
     }
-    //animation: static-hero 10s linear;
+    //
+    animation: static-hero 10s linear;
 }
 
 .outer-outlet {
     overflow: hidden;
     height: 100%;
     background-size: cover;
-    //animation: content-appear 10s linear;
+    //
+    animation: content-appear 10s linear;
     position: relative;
 }
 

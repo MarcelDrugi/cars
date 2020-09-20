@@ -19,6 +19,9 @@ export class RegComponent implements OnInit {
   private clientData: FormData;
   private img: File;
 
+  // modal
+  public warning = true
+
   // form errors switches
   public sent = false;
   public takenUsernameError = false;
@@ -100,6 +103,10 @@ export class RegComponent implements OnInit {
     else {
       this.imgValidator = true;
     }
+  }
+
+  public disableWarning(): void {
+    this.warning = false;
   }
 
   public ngOnInit(): void {

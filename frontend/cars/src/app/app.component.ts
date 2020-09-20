@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AccDataService } from './shared/services/acc-data.service';
 
 @Component({
@@ -21,12 +22,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   // loading bar switch
   public pageLoader: boolean;
 
-  constructor(private accDataService: AccDataService) { this.employee = false, this.pageLoader = true }
+  constructor(private accDataService: AccDataService, private router: Router) { this.employee = false, this.pageLoader = true }
 
   public logOut() {
     this.accDataService.setToken('');
     this.accDataService.setUsername('');
     this.accDataService.setClient('');
+    this.router.navigateByUrl('');
   }
   public ngOnInit(): void {
     this.accDataService.getUsername().subscribe((username: string) => {

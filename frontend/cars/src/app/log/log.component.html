@@ -1,24 +1,38 @@
-LOGOWANIE:
-<br>
-<br>
+<article *ngIf="warning" class="message is-primary">
+  <div class="message-header">
+    <p>UWAGA !</p>
+    <button class="delete" aria-label="delete" (click)="disableWarning()"></button>
+  </div>
+  <div class="message-body">
+      Przed zalogowaniem się jako klient prosimy o rejestrację konta (nie wymaga podawania prawdziwych danych ani weryfikacji przez e-mail).<br>
+      <br>
+      Możesz także zalogować się jako pracownik na przygotowane konto: <br>
+      <span style="color: black;">login: </span> <b style="color: red;">pracownik</b> <br>
+      <span style="color: black;">  haslo: </span> <b style="color: red;">haslo_pracownika</b> <br>
+      Wprowadzaj śmiało zmiany (baza danych jest autoamtycznie resetowana raz dziennie).
+  </div>
+</article>
+
 <form [formGroup]="form" (ngSubmit)="validData()">
   <div class="form-group">
-    <label>Nick</label>
-    <input type="text" formControlName="username" class="form-control" />
+    <label>Nick </label>
+    <input type="text" formControlName="username" class="form-control input is-primary" placeholder="Twój login" />
     <div *ngIf="sent && form.controls.username.errors" class="regFormError">
-        <div *ngIf="form.controls.username.errors.required">Proszę wybrać swój nick.</div>
+        <div *ngIf="form.controls.username.errors.required" class="error">Proszę wybrać swój nick</div>
     </div>
   </div>
   <div class="form-group">
-    <label>Hasło</label>
-    <input type="text" formControlName="password" class="form-control" />
+    <label>Hasło </label>
+    <input type="text" formControlName="password" type="password" class="form-control input is-primary" placeholder="Twoje hasło" />
     <div *ngIf="sent && form.controls.password.errors" class="regFormError">
-      <div *ngIf="form.controls.password.errors.required">Proszę podać hasło.</div>
-      <div *ngIf="form.controls.password.errors.minlength">Zbyt krótkie hasło.</div>
+      <div *ngIf="form.controls.password.errors.required" class="error">Proszę podać hasło</div>
+      <div *ngIf="form.controls.password.errors.minlength" class="error">Zbyt krótkie hasło</div>
     </div>
+    <div *ngIf="sent && usernamePasswordError" class="error regFormError">Podano błędne dane. Proszę spróbować ponownie</div>
   </div>
-  <div *ngIf="sent && usernamePasswordError" class="regFormError">Podano błędne dane. Proszę spróbować ponownie</div>
-  <button>Zaloguj</button>
+  <div class="confirmation-button">
+    <button class="button is-primary">Zaloguj</button>
+  </div>
 </form>
 <br>
 <br>

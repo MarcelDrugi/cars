@@ -5,6 +5,7 @@ import { LogIn } from '../models/login.model';
 import {Token } from '../models/token.model';
 import { AccDataService } from '../shared/services/acc-data.service';
 import { Register } from '../models/register.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'rental-log',
@@ -14,16 +15,21 @@ import { Register } from '../models/register.model';
 })
 export class LogComponent implements OnInit {
 
+  // form
   public form: FormGroup;
-  public logUser: LogIn;
   public sent = false;
   public usernamePasswordError = false;
+  // data containers
+  public logUser: LogIn;
   public user: Register;
+  // modal
+  public warning = true
 
   constructor(
     private logService: LogService,
     private formBuilder: FormBuilder,
-    private accDataService: AccDataService
+    private accDataService: AccDataService,
+    private router: Router
   ) {}
 
   public validData(): void {
@@ -59,6 +65,7 @@ export class LogComponent implements OnInit {
             console.log(resp)
             this.accDataService.setClient(resp.client);
             this.user = resp.client;
+            this.router.navigateByUrl('');
           },
           error => {
             this.accDataService.setClient({employee: true});
@@ -66,6 +73,10 @@ export class LogComponent implements OnInit {
         );
       }
     );
+  }
+
+  public disableWarning(): void {
+    this.warning = false;
   }
 
   public ngOnInit(): void {

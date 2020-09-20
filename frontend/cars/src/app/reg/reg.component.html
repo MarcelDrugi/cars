@@ -1,53 +1,68 @@
-Zarejestruj się
-<br>
-Podaj dane:
-<br>
+<article *ngIf="warning" class="message is-primary">
+  <div class="message-header">
+    <p>UWAGA !</p>
+    <button class="delete" aria-label="delete" (click)="disableWarning()"></button>
+  </div>
+  <div class="message-body">
+      Prosimy nie podawać prawdziwych danych! Dotyczy to również adresu e-mail. Wersja demo <b>nie wymaga weryfikacji rejestracji przez e-mail</b>.
+      Należy podać fikcyjne dane i po wysłaniu formularza konto jest gotowe do użytku.
+      <br>
+      Strona jest tylko demonstatorem projektu szkoleniowego i nie przestrzega RODO, ani innych zasad ochrony danych osobowych. Nie należy ich więc podawać.
+      <br>
+  </div>
+</article>
+
 <form [formGroup]="form" (ngSubmit)="validData()">
+  <div *ngIf="sent && unknownError" class="regFormError error">Wystąpił nieznany błąd. Prosimy spróbować ponownie.</div>
+  <div class="background"></div>
   <div class="form-group">
     <label>Imię</label>
-    <input type="text" formControlName="firstName" class="form-control" />
+    <input type="text" formControlName="firstName" class="form-control input is-primary" />
     <div *ngIf="sent && form.controls.firstName.errors" class="regFormError">
-        <div *ngIf="form.controls.firstName.errors.required">Proszę podać imię.</div>
+        <div *ngIf="form.controls.firstName.errors.required" class="error">Proszę podać imię.</div>
     </div>
   </div>
   <div class="form-group">
     <label>Nazwisko</label>
-    <input type="text" formControlName="lastName" class="form-control" />
+    <input type="text" formControlName="lastName" class="form-control input is-primary" />
     <div *ngIf="sent && form.controls.lastName.errors" class="regFormError">
-        <div *ngIf="form.controls.lastName.errors.required">Proszę podać nazwisko.</div>
+        <div *ngIf="form.controls.lastName.errors.required" class="error">Proszę podać nazwisko.</div>
     </div>
   </div>
   <div class="form-group">
     <label>E-mail</label>
-    <input type="text" formControlName="email" class="form-control" />
+    <input type="text" formControlName="email" class="form-control input is-primary" />
     <div *ngIf="sent && form.controls.email.errors" class="regFormError">
-        <div *ngIf="form.controls.email.errors.required">Proszę podać adres e-mail</div>
-        <div *ngIf="form.controls.email.errors.email">Niepoprawny format adresu e-mail</div>
+        <div *ngIf="form.controls.email.errors.required" class="error">Proszę podać adres e-mail</div>
+        <div *ngIf="form.controls.email.errors.email" class="error">Niepoprawny format adresu e-mail</div>
     </div>
   </div>
   <div class="form-group">
     <label>Nick</label>
-    <input type="text" formControlName="username" class="form-control" />
+    <input type="text" formControlName="username" class="form-control input is-primary" />
     <div *ngIf="sent && form.controls.username.errors" class="regFormError">
-        <div *ngIf="form.controls.username.errors.required">Proszę wybrać swój nick.</div>
+        <div *ngIf="form.controls.username.errors.required" class="error">Proszę wybrać swój nick.</div>
     </div>
     <div *ngIf="sent && takenUsernameError" class="regFormError">Ten nick jest zajęty.</div>
   </div>
   <div class="form-group">
     <label>Hasło</label>
-    <input type="text" formControlName="password" class="form-control" />
+    <input type="text" formControlName="password" type="password" class="form-control input is-primary" />
     <div *ngIf="sent && form.controls.password.errors" class="regFormError">
-      <div *ngIf="form.controls.password.errors.required">Proszę podać hasło.</div>
-      <div *ngIf="form.controls.password.errors.minlength">Hasło musi mieć min. 6 znaków.</div>
+      <div *ngIf="form.controls.password.errors.required" class="error">Proszę podać hasło.</div>
+      <div *ngIf="form.controls.password.errors.minlength" class="error">Hasło musi mieć min. 6 znaków.</div>
     </div>
   </div>
   <div class="form-group">
-    <label> <img [hidden]="!avatar" src={{avatar}} width="80" height="80"> Dodaj avatar: </label>
-    <input type="file" (change)="validImg($event)" formControlName="img" class="form-control" />
-    <div *ngIf="sizeError" class="regFormError">
+    <label> Dodaj avatar: </label>
+    <div> <img [hidden]="!avatar" src={{avatar}}>  </div>
+    <input type="file" (change)="validImg($event)" formControlName="img" type="file" name="resume" class="form-control file" />
+    <div *ngIf="sizeError" class="regFormError error">
       Zbyt duży plik. Maksymalny rozmiar to: {{maxSize/1000}}KB
     </div>
   </div>
-  <button>Stwórz konto</button>
+  <div class="confirmation-button">
+    <button class="button is-primary">Stwórz konto</button>
+  </div>
 </form>
-<div *ngIf="sent && unknownError" class="regFormError">Wystąpił nieznany błąd. Prosimy spróbować ponownie.</div>
+

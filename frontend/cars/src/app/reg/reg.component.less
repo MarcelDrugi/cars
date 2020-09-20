@@ -1,0 +1,197 @@
+@addition: hsl(302, 15%, 62%);
+@bulma-primary: hsl(171, 100%, 41%);
+@error: hsl(0, 47%, 59%);
+
+form {
+    position: relative;
+    margin-bottom: 5%;
+    margin-top: 2%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        margin-bottom: 13vh;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        margin-bottom: 8.8vh;
+    }
+}
+
+form .background {
+    position: absolute;
+    z-index: 1;
+    width: 30%;
+    height: 100%;
+    margin-left: 35%;
+    margin-right: 35%;
+    margin-bottom: 2%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        width: 40%;
+        margin-left: 30%;
+        margin-right: 30%;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        width: 85%;
+        margin-left: 7.5%;
+        margin-right: 7.5%;
+    }
+    border-radius: 5%;
+    background-color: @addition;
+    opacity: 0.5;
+}
+
+.form-group {
+    position: relative;
+    z-index: 1;
+    width: 25%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        width: 35%;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        width: 70%;
+    }
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.form-group .input {
+    @media (pointer:coarse) and (orientation:landscape) {
+        height: 7vh;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        height: 4.4vh;
+    }
+}
+
+.form-group label {
+    font-size: 120%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 2vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 5.8vw;
+    }
+    font-weight: 450;
+    color: @bulma-primary;
+}
+
+.form-group .file {
+    color: @bulma-primary;
+    font-size: 120%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 1.6vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 4.8vw;
+    }
+}
+
+.form-group img {
+    border-radius: 49%;
+    border: 4px solid @bulma-primary;
+    width: 40%;
+    height: 40%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 1.6vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 4.8vw;
+    }
+}
+
+.confirmation-button {
+    width: 25%;
+    margin-top: 1%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        width: 35%;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        width: 70%;
+        margin-top: 2vh;
+    }
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.confirmation-button .button {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    font-size: 100%;
+    margin-bottom: 5%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 1.7vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 5.1vw;
+    }
+}
+
+.confirmation-button .button:hover {
+    color: black;
+    font-weight: 450;
+    border: 2px solid black;
+    background-color: @addition;
+}
+
+.error {
+    font-size: 110%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 1.5vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 3.9vw;
+    }
+    font-weight: 600;
+    color: @error;
+    background-color: @bulma-primary;
+    border-radius: 2%;
+}
+
+.message {
+    position: relative;
+    z-index: 1;
+    width: 60%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        width: 80%;
+        font-size: 1.5vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        width: 95%;
+        font-size: 4vw;
+    }
+    margin-left: auto;
+    margin-right: auto;
+    animation: message .3s linear;
+}
+
+@keyframes message {
+    0% { transform: translateX(-100vw); }
+}
+
+::ng-deep body {
+    z-index: -1;
+    @media (orientation: landscape) and (max-width: 1922px) {
+      background-image: url(/assets/static/homepageI.jpg);
+      background-position: center;
+      background-attachment: fixed;
+    }
+    @media (orientation: landscape) and (min-width: 1921px) and (max-width: 2600px) {
+      background-image: url(/assets/static/homepageJ.jpg);
+      background-attachment: fixed;
+    }
+    @media (orientation: landscape) and (min-width: 2601px) {
+      background-image: url(/assets/static/homepageK.jpg);
+      background-attachment: fixed;
+    }
+    @media (orientation:portrait) and (max-height: 1922px) {
+      background-image: url(/assets/static/homepageL.jpg);
+      background-attachment: fixed;
+    }
+    @media (orientation:portrait) and (min-height: 1922px)  and (max-height: 2600px) {
+      background-image: url(/assets/static/homepageM.jpg);
+      background-attachment: fixed;
+    }
+    @media (orientation:portrait) and (min-height: 2601px) {
+      background-image: url(/assets/static/homepageN.jpg);
+      background-attachment: fixed;
+    }
+}
