@@ -75,8 +75,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    # Car_rental app custom middlewares
-
     # DRF/frontend communication middlewares
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',

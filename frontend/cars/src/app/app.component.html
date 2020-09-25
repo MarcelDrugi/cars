@@ -6,23 +6,23 @@
     <div class="static-hero columns">
       <div *ngIf="!mobile" class="column is-9">
         <span class="second-description">ul. Lotników 29B (nieopdal terminualu przylotów)</span>
-        <span class="topic">CAR-RENTAL WROCŁAW </span>  <span class="phone third-description"> <img src="/assets/static/phone.png"class="earphone"> 132 212 759</span> <br>
+        <span class="topic">CAR-RENTAL WROCŁAW </span>  <span class="phone third-description"> <img src="/assets/static/phone.png"class="earphone"> 132 212 7592</span> <br>
         <span class="description">ul. Lotników 29B (nieopdal terminualu przylotów)</span><br>
-        <span class="description"><img src="/assets/static/phone.png"class="earphone"> 132 212 759</span>
+        <span class="description"><img src="/assets/static/phone.png"class="earphone"> 132 212 7592</span>
       </div>
       <div *ngIf="mobile" class="column is-12">
         <span class="topic">CAR-RENTAL WROCŁAW </span>  
-        <span class="phone third-description"> <img src="/assets/static/phone.png"class="earphone"> 132 212 759</span>
+        <span class="phone third-description"> <img src="/assets/static/phone.png"class="earphone"> 132 212 7592</span>
         <span class="second-description">ul. Lotników 29B (nieopdal terminualu przylotów)</span>
       </div>
       <div *ngIf="!mobile" class="column is-1 hero-avatar">
         <img *ngIf="avatar" src={{avatar}}>
       </div>
       <div *ngIf="!mobile" class="column is-2 hero-profile">
-        <div class="hello">
+        <div *ngIf="!employee" class="hello">
           <span *ngIf="username" class="username">Witaj <b>{{username}}!</b> </span>
         </div>
-        <a *ngIf="username" [routerLink]="['/profile']"  class="button is-primary is-light">EDYTUJ SWÓJ PROFIL</a>
+        <a *ngIf="username && !employee" [routerLink]="['/profile']"  class="button is-primary is-light">EDYTUJ SWÓJ PROFIL</a>
       </div>
     </div>
     <div class="dynamic-tpye-first">
@@ -66,8 +66,8 @@
   <div *ngIf="mobile" class="vertical-menu">
     <div *ngIf="avatar"> <img src={{avatar}}></div>
     <div *ngIf="username" class="profile">
-      <div class="username">Witaj <b>{{username}}!</b> </div>
-      <button [routerLink]="['/profile']" class="button acc menu-label">twoje konto</button>
+      <div *ngIf="!employee" class="username">Witaj <b>{{username}}!</b> </div>
+      <button *ngIf="!employee" [routerLink]="['/profile']" class="button acc menu-label">twoje konto</button>
       <span class="separator"> </span>
       <button (click)="logOut()" class="button logout menu-label">WYLOGUJ</button>
     </div>

@@ -165,3 +165,8 @@ class Reservations(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super(Reservations, self).save(*args, **kwargs)
+
+
+class Requests(models.Model):
+    time = models.DateTimeField(auto_now_add=True)
+    authorisation = models.BooleanField(default=False)

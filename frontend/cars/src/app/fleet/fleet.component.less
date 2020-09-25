@@ -50,6 +50,7 @@
         visibility: visible;
         font-size: 5vw
     }
+    animation: left-shake 1.3s linear;
 }
 
 .select-form {
@@ -205,4 +206,11 @@
 @keyframes car-position {
     0% { transform: translateX(-100vw) }
 
+}
+
+@keyframes left-shake {
+    0% { transform: translateY(-100vh); }
+    70% { transform: translateY(5vh); }
+    80% { transform: translateY(-3vh); } 
+    90% { transform: translateY(1vh); } 
 }

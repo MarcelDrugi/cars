@@ -1,0 +1,135 @@
+@bulma-primary: hsl(171, 100%, 41%);
+
+h1, h2, p {
+    position: relative;
+    z-index: 1;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+p {
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 1.4vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 3vw;
+    }
+}
+
+.sesction {
+    background-color: green;
+}
+
+.background {
+    position: absolute;
+    z-index: 1;
+    height: 103%;
+    width: 95%;
+    margin-left: 2.5%;
+    margin-top: -1%;
+    background-color: @bulma-primary;
+    opacity: 0.8;
+    border-radius: 2vw;
+    @media (pointer:coarse) and (orientation:portrait) {
+        border-radius: 2vh;
+        margin-top: -2%;
+    }
+    animation: background-expand .5s linear;
+}
+
+.title {
+    animation: left-shake 1.5s linear;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 3vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 5.2vw;
+        text-align: center;
+    }
+}
+
+.subtitle {
+    animation: left .62s linear;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 1.9vw;
+        text-align: center;
+        margin-top: 2%;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 4.2vw;
+        text-align: center;
+        margin-top: 5%;
+    }
+}
+
+.info {
+    @media (pointer:coarse) and (orientation:portrait) {
+        text-align: center;
+    }
+}
+
+.first {
+    animation: left .55s linear;
+}
+.second {
+    animation: left .6s linear;
+}
+
+.rule {
+    margin-top: 0.5%;
+}
+
+.up {
+    position: relative;
+    margin-bottom: 4%;
+    @media (pointer:coarse) and (orientation:portrait) {
+        margin-bottom: 9vh;
+    }
+    @media (pointer:coarse) and (orientation:landscape) {
+        margin-bottom: 5%;
+    }
+}
+
+.one {
+    animation: left .64s linear;
+}
+.two {
+    animation: left .68s linear;
+}
+.three {
+    animation: left .72s linear;
+}
+.four {
+    animation: left .76s linear;
+}
+.five {
+    animation: left .8s linear;
+}
+.six {
+    animation: left .84s linear;
+}
+.seven {
+    animation: left .88s linear;
+}
+.eight {
+    animation: left .92s linear;
+}
+.nine {
+    animation: left .96s linear;
+}
+
+@keyframes left {
+    0% { transform: translateX(-100vw); }
+}
+
+@keyframes left-shake {
+    0% { transform: translateX(-100vw); }
+    70% { transform: translateX(5vw) };
+    80% { transform: translateX(-3vw); } 
+    90% { transform: translateX(1vw); } 
+}
+
+@keyframes background-expand {
+    0% { height: 10vw; }
+}

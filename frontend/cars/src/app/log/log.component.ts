@@ -69,6 +69,7 @@ export class LogComponent implements OnInit {
           },
           error => {
             this.accDataService.setClient({employee: true});
+            this.router.navigateByUrl('');
           }
         );
       }

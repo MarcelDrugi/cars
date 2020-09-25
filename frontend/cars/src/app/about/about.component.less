@@ -1,0 +1,123 @@
+@primary: hsl(171, 100%, 41%);
+
+::ng-deep body {
+    background-image: url(/assets/static/location1.jpg);
+    background-position: center;
+    background-attachment: fixed;
+}
+
+
+ul, p, h1 {
+    position: relative;
+    z-index: 1;
+}
+
+.section {
+    position: relative;
+    margin-bottom: 2%;
+    @media (pointer:coarse) and (orientation:landscape)  {
+        margin-bottom: 8%;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        margin-bottom: 17%;
+    }
+    
+}
+
+.background {
+    position: absolute;
+    border-radius: 20px;
+    width: 90%;
+    height: 100%;
+    margin-left: 3.5%;
+    margin-top: -1%;
+    background-color: @primary;
+    opacity: 0.8;
+    animation: background-expand .6s linear;
+}
+
+.title {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    animation: title 1.4s linear;
+    @media (pointer:coarse) and (orientation:landscape)  {
+        font-size: 3vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 5.2vw;
+    }
+}
+
+.info {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 1.4vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 3vw;
+    }
+    animation: info .7s linear;
+}
+
+.technology {
+    font-weight: 600;
+}
+
+.link {
+    text-align: center;
+    width: 90px;
+    height: 90px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40px;
+}
+
+.link a {
+    color: black;
+}
+.link a:hover {
+    font-weight: 800;
+}
+
+.gh {
+    position: relative;
+    z-index: 1;
+    width: 80%;
+    height: 80%;
+    margin-left: 10%;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+}
+
+.repo {
+    position: relative;
+    z-index: 1;
+    height: 20%;
+    text-align: center;
+    font-size: 30px;
+}
+
+@keyframes title {
+    0% { transform: translateY(-100vh); }
+    70% { transform: translateY(5vh) };
+    80% { transform: translateY(-3vh); } 
+    90% { transform: translateY(1vh); } 
+}
+
+@keyframes info {
+    0% { transform: translateX(-100vh); }
+}
+
+@keyframes info {
+    0% { transform: translateX(-100vw); }
+}
+
+@keyframes background-expand {
+    0% { transform: translateX(200vw); }
+}

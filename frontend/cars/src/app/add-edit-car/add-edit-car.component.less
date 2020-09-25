@@ -1,3 +1,5 @@
+@background: hsl(302, 15%, 62%);
+
 input, label, select, button, li {
     position: relative;
     z-index: 1;
@@ -6,4 +8,24 @@ input, label, select, button, li {
 .title {
     position: relative;
     z-index: 1;
+}
+
+.is-6 {
+    @media (pointer:coarse) and (orientation:portrait) {
+        width: 100%
+    }
+}
+
+.cars-add {
+    text-align: center;
+    margin-bottom: 4%;
+}
+
+.cars-add .select {
+    width: 50%;
+}
+
+.cars-add .select select {
+    width: 100%;
+    text-align: center;
 }
