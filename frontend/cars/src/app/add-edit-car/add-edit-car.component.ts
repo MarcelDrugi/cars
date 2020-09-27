@@ -71,6 +71,7 @@ export class AddEditCarComponent implements OnInit {
       },
       () => {
         this.getCars();
+        window.scrollTo(0, 0);
       }
     );
   }
@@ -234,6 +235,7 @@ export class AddEditCarComponent implements OnInit {
       },
       () => {
         this.getCars();
+        window.scrollTo(0, 0);
       }
     );
   }
@@ -248,6 +250,7 @@ export class AddEditCarComponent implements OnInit {
         this.changeImgSrc = null;
         this.delConfirmation = true;
         this.cars = this.cars.filter((car: Car) => car.reg_number !== this.selectedCar.reg_number);
+        window.scrollTo(0, 0);
 
       },
       error => {
@@ -257,6 +260,12 @@ export class AddEditCarComponent implements OnInit {
         }
       }
     );
+  }
+
+  public disableWarning(): void {
+    this.createConfirmation = false;
+    this.updateConfirmation = false;
+    this.delConfirmation = false;
   }
 
   ngOnInit(): void {

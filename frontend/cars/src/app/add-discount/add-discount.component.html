@@ -1,90 +1,112 @@
+<article *ngIf="discountCreated" class="message is-primary">
+  <div class="message-header">
+    <p>UWAGA !</p>
+    <button class="delete" aria-label="delete" (click)="disableWarning()"></button>
+  </div>
+  <div class="message-body">
+      Nowa zniżka została dodana do bazy. Teraz możesz przypisać ją do klientów.
+  </div>
+</article>
+<article *ngIf="discountDeleted" class="message is-primary">
+  <div class="message-header">
+    <p>UWAGA !</p>
+    <button class="delete" aria-label="delete" (click)="disableWarning()"></button>
+  </div>
+  <div class="message-body">
+      Zniżka została skasowana. Przypisani klienci straci możliwość korzystania z niej.
+  </div>
+</article>
 <section class="section">
   <div class="tabs is-centered">
     <ul>
-      <li><a [routerLink]="['/addcar']">Dodaj auto</a></li>
-      <li><a [routerLink]="['/addsegment']">Stwórz nowy segment z cennikiem</a></li>
-      <li class="is-active"><a [routerLink]="['/adddiscount']">Przyznaj zniżki</a></li>
+      <li><a [routerLink]="['/addcar']">edytuj flotę</a></li>
+      <li><a [routerLink]="['/addsegment']">stwórz/edytuj segmenty i cenniki</a></li>
+      <li class="is-active"><a [routerLink]="['/adddiscount']">zniżki</a></li>
     </ul>
   </div>
   <div class="columns">
-    <div class="column is-6">
+    <div class="column is-half discount-add">
+      <div class="background"></div>
       <div>
-        <h1 class="title">PRZYPISZ ZNIŻKĘ DO KLIENTA</h1>
+        <h1 class="title">PRZYPISZ ZNIŻKĘ DO KONTA</h1>
       </div>
       <label>Klienci: </label>
-      <select (change)="clientSelection($event.target.value)">
-        <option value="" disabled [defaultSelected]=true>wybierz klienta</option>
-        <option *ngFor="let client of clients let i = index" [value]="i">
-          {{client.user.username}} ({{client.user.first_name}} {{client.user.last_name}})
-        </option>
-      </select>
+      <div class="select is-primary">
+        <select (change)="clientSelection($event.target.value)">
+          <option value="" disabled [defaultSelected]=true>wybierz klienta</option>
+          <option *ngFor="let client of clients let i = index" [value]="i">
+            {{client.user.username}} ({{client.user.first_name}} {{client.user.last_name}})
+          </option>
+        </select>
+      </div>
       <div *ngIf="selectedClient">
         <div *ngIf="selectedClient.discount.length > 0">
-          AKTUALNE ZNIŻKI
-          <div *ngFor="let discount of selectedClient.discount">{{discount.discount_code}} ({{discount.discount_value}}%) <button (click)="delDiscount(discount.id)">usuń zniżkę</button></div>
+          <label>AKTUALNE ZNIŻKI</label>
+          <div *ngFor="let discount of selectedClient.discount" class="discount"><span class="discount-data">• {{discount.discount_code}} ({{discount.discount_value}}%)</span> <button (click)="delDiscount(discount.id)" class="button is-primary">usuń zniżkę</button></div>
         </div>
-        <div *ngIf="selectedClient.discount.length == 0">
-          BRAK ZNIŻEK PRZYPISANYCH DO TEGO KONTA
+        <div *ngIf="selectedClient.discount.length == 0" class="no-discount">
+          <label>BRAK ZNIŻEK PRZYPISANYCH DO TEGO KONTA</label>
         </div>
         <div>
           <div>
-            <label> Dostępne zniżki</label>
-            <select (change)="discountSelection($event)">
-              <option value="" disabled [defaultSelected]=true>wybierz zniżkę</option>
-              <option *ngFor="let discount of discounts let i = index" [value]="i">
-                {{discount.discount_code}} ({{discount.discount_value}})
-              </option>
-            </select>
+            <label> Dostępne zniżki:</label>
+            <div class="select is-primary">
+              <select (change)="discountSelection($event)">
+                <option value="" disabled [defaultSelected]=true>wybierz zniżkę</option>
+                <option *ngFor="let discount of discounts let i = index" [value]="i">
+                  {{discount.discount_code}} ({{discount.discount_value}}%)
+                </option>
+              </select>
+            </div>
           </div>
-          <button *ngIf="addDiscountButton" (click)="assignDiscount('add')"> PRZYPISZ ZNIŻKĘ DO TEGO KONTA</button>
+          <button *ngIf="addDiscountButton" (click)="assignDiscount('add')" class="button is-primary">przypisz zniżkę do tego klienta</button>
         </div>
       </div>
     </div>
-    <div class="column is-6">
+    <div class="column is-half discount-modify">
+      <div class="background"></div>
       <div>
         <h1 class="title">DODAWANIE NOWEJ ZNIŻKI</h1>
       </div>
       <form [formGroup]="addDiscount" (ngSubmit)="validNewDiscount()">
-
         <div class="form-group">
           <label>Kod zniżki: </label>
-          <input type="text" formControlName="discount_code" class="form-control" />
+          <input type="text" formControlName="discount_code" class="form-control input is-primary" />
           <div *ngIf="sentNewDiscount && addDiscount.controls.discount_code.errors">
-              <div *ngIf="addDiscount.controls.discount_code.errors.required">Proszę podać kod zniżki</div>
+              <div *ngIf="addDiscount.controls.discount_code.errors.required" class="error">Proszę podać kod zniżki</div>
           </div>
         </div>
 
         <div class="form-group">
           <label>wartość zniżki: </label>
-          <input type="text" formControlName="discount_value" class="form-control" />
+          <input type="text" formControlName="discount_value" class="form-control input is-primary" />
           <div *ngIf="sentNewDiscount && addDiscount.controls.discount_value.errors">
-              <div *ngIf="addDiscount.controls.discount_value.errors.required">Proszę podać procentową wysokość zniżki</div>
+              <div *ngIf="addDiscount.controls.discount_value.errors.required" class="error">Proszę podać procentową wysokość zniżki</div>
           </div>
         </div>
-        <div *ngIf="responseError && sentNewDiscount"> Nieprawidłowe dane. Sprawdź czy kod kuponu nie jest zajęty.</div>
-        <button>Stwórz zniżkę</button>
-
+        <div *ngIf="responseError && sentNewDiscount" class="error"> Nieprawidłowe dane. Sprawdź czy kod kuponu nie jest zajęty.</div>
+        <button class="button is-primary">stwórz zniżkę</button>
       </form>
       <br>
-      <div>
-        SKASUJ ZNIŻKĘ
+      <h1 class="title">SKASUJ ZNIŻKĘ</h1>
+      <label> Istniejące zniżki:</label>
+      <div class="select is-primary">
+        <select (change)="discountToRemove($event)">
+          <option value="" [defaultSelected]=true>wybierz zniżkę</option>
+          <option *ngFor="let discount of discounts let i = index" [value]="i">
+            {{discount.discount_code}} ({{discount.discount_value}})
+          </option>
+        </select>
       </div>
-      <label> Istniejące zniżki</label>
-      <select (change)="discountToRemove($event)">
-        <option value="" [defaultSelected]=true>wybierz zniżkę</option>
-        <option *ngFor="let discount of discounts let i = index" [value]="i">
-          {{discount.discount_code}} ({{discount.discount_value}})
-        </option>
-      </select>
-      <div *ngIf="selectedDiscountToRemove">
-        <div>
-          UWAGA! <br>
+      <div *ngIf="selectedDiscountToRemove" class="no-discount">
+        <label>
+          UWAGA! <br />
           Poniżsi klienci stracą tę zniżkę!
-        </div>
+        </label>
         <div *ngIf="assignedClients">
-          <div *ngFor="let client of assignedClients"> {{client.user.username}} </div>
+          <div *ngFor="let client of assignedClients" class="discount-user"> <label>• {{client.user.username}}</label> </div>
         </div>
-        <button (click)="removeDiscount()">kasuj</button>
+        <button (click)="removeDiscount()" class="button is-primary">kasuj</button>
       </div>
     </div>
   </div>

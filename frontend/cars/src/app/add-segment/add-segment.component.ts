@@ -89,6 +89,7 @@ export class AddSegmentComponent implements OnInit {
       },
       () => {
         this.getSegments();
+        window.scrollTo(0, 0);
       }
     );
   }
@@ -111,6 +112,7 @@ export class AddSegmentComponent implements OnInit {
       },
       () => {
         this.getSegments();
+        window.scrollTo(0, 0);
       }
     );
   }
@@ -145,9 +147,9 @@ export class AddSegmentComponent implements OnInit {
 
     this.existingSegmentForm = this.formBuilder.group({
       name: [this.selectedSegment.name, Validators.required],
-      hour: [this.selectedSegment.pricing.hour, [Validators.pattern('[0-9]{1,3}\.[0-9]{2}'), Validators.required]],
-      day: [this.selectedSegment.pricing.day, [Validators.pattern('[0-9]{1,4}\.[0-9]{2}'), Validators.required]],
-      week: [this.selectedSegment.pricing.week, [Validators.pattern('[0-9]{1,5}\.[0-9]{2}'), Validators.required]],
+      hour: [this.selectedSegment.pricing.hour.toFixed(2), [Validators.pattern('[0-9]{1,3}\.[0-9]{2}'), Validators.required]],
+      day: [this.selectedSegment.pricing.day.toFixed(2), [Validators.pattern('[0-9]{1,4}\.[0-9]{2}'), Validators.required]],
+      week: [this.selectedSegment.pricing.week.toFixed(2), [Validators.pattern('[0-9]{1,5}\.[0-9]{2}'), Validators.required]],
     });
   }
 
@@ -161,6 +163,7 @@ export class AddSegmentComponent implements OnInit {
         this.existingSegmentForm.reset();
         this.delConfirmation = true;
         this.segments = this.segments.filter((segment: Segment) => segment.id !== this.selectedSegment.id);
+        window.scrollTo(0, 0);
       },
       error => {
         console.log(error);
@@ -169,6 +172,12 @@ export class AddSegmentComponent implements OnInit {
         }
       }
     );
+  }
+
+  public disableWarning(): void {
+    this.createConfirmation = false;
+    this.updateConfirmation = false;
+    this.delConfirmation = false;
   }
 
   ngOnInit(): void {

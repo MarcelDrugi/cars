@@ -133,7 +133,7 @@ export class ClientProfileComponent implements OnInit {
     );
   }
 
-  public disableWarning():void {
+  public disableWarning(): void {
     this.newData = false;
     this.newPassword = false;
     this.wrongPass = false;

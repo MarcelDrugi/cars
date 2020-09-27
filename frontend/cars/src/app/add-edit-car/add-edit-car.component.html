@@ -1,38 +1,66 @@
+<article *ngIf="createConfirmation" class="message is-primary">
+  <div class="message-header">
+    <p>UWAGA !</p>
+    <button class="delete" aria-label="delete" (click)="disableWarning()"></button>
+  </div>
+  <div class="message-body">
+      Nowy samochód został dodany do bazy.
+  </div>
+</article>
+<article *ngIf="updateConfirmation" class="message is-primary">
+  <div class="message-header">
+    <p>UWAGA !</p>
+    <button class="delete" aria-label="delete" (click)="disableWarning()"></button>
+  </div>
+  <div class="message-body">
+      Dane pojazdu zostały zaktualizowane pomyślnie.
+  </div>
+</article>
+<article *ngIf="delConfirmation" class="message is-primary">
+  <div class="message-header">
+    <p>UWAGA !</p>
+    <button class="delete" aria-label="delete" (click)="disableWarning()"></button>
+  </div>
+  <div class="message-body">
+      Samochód został usunięty z bazy danych.
+  </div>
+</article>
 <section class="section">
   <div class="tabs is-centered">
     <ul>
-      <li class="is-active"><a [routerLink]="['/addcar']">Dodaj auto</a></li>
-      <li><a [routerLink]="['/addsegment']">Stwórz nowy segment z cennikiem</a></li>
-      <li><a [routerLink]="['/adddiscount']">Przyznaj zniżki</a></li>
+      <li class="is-active"><a [routerLink]="['/addcar']">edytuj flotę</a></li>
+      <li><a [routerLink]="['/addsegment']">stwórz/edytuj segmenty i cenniki</a></li>
+      <li><a [routerLink]="['/adddiscount']">zniżki</a></li>
     </ul>
   </div>
   <br>
   <br>
   <br>
   <div class="columns cars">
-    <div class="column is-6 cars-add">
-      <h4 class="title is-4"> WPROWADŹ NOWY SAMOCHÓD SAMOCHÓD</h4>
+    <div class="column is-half cars-add">
+      <div class="background"></div>
+      <h4 class="title is-4"> WPROWADŹ NOWY SAMOCHÓD</h4>
       <form [formGroup]="addCarForm" (ngSubmit)="validData('create')">
         <div class="form-group">
           <label>Marka: </label>
           <input type="text" formControlName="brand" class="form-control input is-primary" />
           <div *ngIf="sent && addCarForm.controls.brand.errors" class="regFormError">
-              <div *ngIf="addCarForm.controls.brand.errors.required">Proszę podać markę</div>
+              <div *ngIf="addCarForm.controls.brand.errors.required" class="error">Proszę podać markę</div>
           </div>
         </div>
         <div class="form-group">
           <label>Model: </label>
           <input type="text" formControlName="model" class="form-control input is-primary" />
           <div *ngIf="sent && addCarForm.controls.model.errors" class="regFormError">
-              <div *ngIf="addCarForm.controls.model.errors.required">Proszę podać nazwę modelu.</div>
+              <div *ngIf="addCarForm.controls.model.errors.required" class="error">Proszę podać nazwę modelu.</div>
           </div>
         </div>
         <div class="form-group">
           <label>Nr rejestracyjny: </label>
           <input type="text" formControlName="reg_number" class="form-control input is-primary" />
           <div *ngIf="sent && addCarForm.controls.reg_number.errors" class="regFormError">
-              <div *ngIf="addCarForm.controls.reg_number.errors.required">Proszę podać nr rejestracyjny</div>
-              <div *ngIf="addCarForm.controls.reg_number.errors.minlength || addCarForm.controls.reg_number.errors.maxlength">Niepoprawny format nr rejestracyjnego</div>
+              <div *ngIf="addCarForm.controls.reg_number.errors.required" class="error">Proszę podać nr rejestracyjny</div>
+              <div *ngIf="addCarForm.controls.reg_number.errors.minlength || addCarForm.controls.reg_number.errors.maxlength" class="error">Niepoprawny format nr rejestracyjnego</div>
           </div>
         </div>
         <div class="form-group">
@@ -45,59 +73,58 @@
             </select>
           </div>
           <div *ngIf="sent && addCarForm.controls.segment.errors" class="regFormError">
-              <div *ngIf="addCarForm.controls.segment.errors.required">Proszę wybrać segment</div>
+              <div *ngIf="addCarForm.controls.segment.errors.required" class="error">Proszę wybrać segment</div>
           </div>
         </div>
         <div class="form-group">
-          <label> <img [hidden]="!createImgSrc" src={{createImgSrc}} width="80" height="80"> Zdjęcie: </label>
+          <label> Zdjęcie: </label>
+          <img [hidden]="!createImgSrc" src={{createImgSrc}}>
           <input type="file" (change)="validImg($event, 'create')" formControlName="img" type="file"  class="form-control file" />
-          <div *ngIf="sizeError" class="regFormError">
+          <div *ngIf="sizeError" class="regFormError error">
             Zbyt duży plik. Maksymalny rozmiar to: {{maxSize/1000}}KB
           </div>
         </div>
         <div class="form-group">
           <label>Opis pojazdu: </label>
-          <input type="text" formControlName="description" class="form-control textarea" />
+          <textarea type="text" formControlName="description" class="form-control is-primary"></textarea>
         </div>
         <button class="button is-primary">Stwórz auto</button>
       </form>
-
-      <div *ngIf="createConfirmation">
-        STWORZONO SAMOCHÓD!
-      </div>
     </div>
-    <div class="column is-6">
+    <div class="column is-half cars-modify">
+      <div class="background"></div>
       <h4 class="title is-4"> ZMODYFIKUJ/USUŃ ISTNIEJĄCY SAMOCHÓD</h4>
       <form>
         <div class="form-group">
-          <label>Samochód: </label>
-          <select (change)="carSelection($event)">
-            <option value="" disabled [defaultSelected]=true>wybierz samochód</option>
-            <option *ngFor="let car of cars" [value]="car.reg_number">
-              {{car.brand}} {{car.model}} {{car.reg_number}}
-            </option>
-          </select>
+          <div class="select is-primary">
+            <select (change)="carSelection($event)">
+              <option value="" disabled [defaultSelected]=true>wybierz samochód</option>
+              <option *ngFor="let car of cars" [value]="car.reg_number">
+                {{car.brand}} {{car.model}} {{car.reg_number}}
+              </option>
+            </select>
+          </div>
         </div>
       </form>
       <div *ngIf="editCar">
         <form [formGroup]="existingCarForm" (ngSubmit)="validData('update')">
           <div class="form-group">
             <label>Marka: </label>
-            <input type="text" formControlName="brand" class="form-control" />
+            <input type="text" formControlName="brand" class="form-control input is-primary" />
             <div *ngIf="editionSent && existingCarForm.controls.brand.errors" class="regFormError">
                 <div *ngIf="existingCarForm.controls.brand.errors.required">Proszę podać markę</div>
             </div>
           </div>
           <div class="form-group">
             <label>Model: </label>
-            <input type="text" formControlName="model" class="form-control" />
+            <input type="text" formControlName="model" class="form-control input is-primary" />
             <div *ngIf="editionSent && existingCarForm.controls.model.errors" class="regFormError">
                 <div *ngIf="existingCarForm.controls.model.errors.required">Proszę podać nazwę modelu.</div>
             </div>
           </div>
           <div class="form-group">
             <label>Nr rejestracyjny: </label>
-            <input type="text" formControlName="reg_number" class="form-control" />
+            <input type="text" formControlName="reg_number" class="form-control input is-primary" />
             <div *ngIf="editionSent && existingCarForm.controls.reg_number.errors" class="regFormError">
                 <div *ngIf="existingCarForm.controls.reg_number.errors.required">Proszę podać nr rejestracyjny</div>
                 <div *ngIf="existingCarForm.controls.reg_number.errors.minlength || existingCarForm.controls.reg_number.errors.maxlength">Niepoprawny format nr rejestracyjnego</div>
@@ -105,36 +132,33 @@
           </div>
           <div class="form-group">
             <label>Segment: </label>
-            <select (change)="addSegment($event.target.value)">
-              <option value="selectedCar.segment['id']" [defaultSelected]=true>{{selectedCar.segment['name']}}</option>
-              <option *ngFor="let segment of segments" [value]="segment.id">
-                {{segment.name}}
-              </option>
-            </select>
+            <div class="select is-primary">
+              <select (change)="addSegment($event.target.value)">
+                <option value="selectedCar.segment['id']" [defaultSelected]=true>{{selectedCar.segment['name']}}</option>
+                <option *ngFor="let segment of segments" [value]="segment.id">
+                  {{segment.name}}
+                </option>
+              </select>
+            </div>
             <div *ngIf="editionSent && existingCarForm.controls.segment.errors" class="regFormError">
                 <div *ngIf="existingCarForm.controls.segment.errors.required">Proszę wybrać segment</div>
             </div>
           </div>
           <div class="form-group">
-            <label ><img [hidden]="!changeImgSrc" src={{changeImgSrc}} width="80" height="80">Zmień zdjęcie</label>
-            <input type="file" (change)="validImg($event, 'change')" formControlName="img" class="form-control" />
+            <label>Zmień zdjęcie</label>
+            <img [hidden]="!changeImgSrc" src={{changeImgSrc}}>
+            <input type="file" (change)="validImg($event, 'change')" formControlName="img" class="form-control file" />
             <div *ngIf="sizeError" class="regFormError">
               Zbyt duży plik. Maksymalny rozmiar to: {{maxSize/1000}}KB
             </div>
           </div>
           <div class="form-group">
             <label>Opis pojazdu: </label>
-            <input type="text" formControlName="description" class="form-control" />
+            <textarea type="text" formControlName="description" class="form-control"></textarea>
           </div>
-          <button>Zmień auto</button>
+          <button class="button is-primary">Zmień auto</button>
         </form>
-        <button (click)="deleteCar()">USUŃ SAMOCHÓD</button>
-        <div *ngIf="updateConfirmation">
-          ZMIENIONO DANE SAMOCHODU!
-        </div>
-        <div *ngIf="delConfirmation">
-          USUNIĘTO SAMOCHÓD
-        </div>
+        <button (click)="deleteCar()" class="button is-primary">USUŃ SAMOCHÓD</button>
       </div>
     </div>
   </div>

@@ -98,6 +98,7 @@ export class CarDetailsComponent implements OnInit {
     this.rangeError = false;
     this.loginError = false;
     this.allowError = false;
+    //window.scrollTo(0, 0);
   }
 
   public validData(): void {

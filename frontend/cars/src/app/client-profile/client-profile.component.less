@@ -137,6 +137,7 @@ button {
   position: relative;
   margin-bottom: 4%;
   height: 100%;
+  animation: left .7s linear;
 }
 
 .left-button {
@@ -247,6 +248,7 @@ button {
     display: block;
   }
   height: 100%;
+  animation: right .7s linear;
 }
 
 .right .title {
@@ -366,4 +368,12 @@ button {
 
 @keyframes message {
   0% { transform: translateX(-100vw); }
+}
+
+@keyframes right {
+  0% { transform: translateY(-100vh); }
+}
+
+@keyframes left {
+  0% { transform: translateY(100vh); }
 }

@@ -1,3 +1,7 @@
+@background: hsl(302, 15%, 62%);
+@bulma-primary: hsl(171, 100%, 41%);
+@error: hsl(0, 47%, 59%);
+
 input, label, select, button, li {
     position: relative;
     z-index: 1;
@@ -6,4 +10,255 @@ input, label, select, button, li {
 .title {
     position: relative;
     z-index: 1;
+    width: 86%;
+    margin-left: auto;
+    margin-right: auto;
+    @media (pointer:coarse) and (orientation: landscape){
+        font-size: 2.5vw;
+      }
+      @media (pointer:coarse) and (orientation: portrait){
+        font-size: 6vw;
+      }
+}
+
+.discount-add, .discount-modify {
+    position: relative;
+    text-align: center;
+    margin-bottom: 4%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        margin-bottom: 5%;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        margin-bottom: 5vh;
+    }
+    height: 100%;
+}
+
+
+.is-half {
+    @media (pointer:coarse) and (orientation:portrait) {
+        display: block;
+        width: 100%;
+    }
+}
+
+.columns {
+    @media (pointer:coarse) and (orientation:portrait) {
+        display: block;
+    }
+}
+
+.background {
+    position: absolute;
+    opacity: 0.9;
+    background-color: @background;
+    height: 101%;
+    width: 90%;
+    margin-top: -1%;
+    margin-left: 3.5%;
+    border-radius: 40px;
+}
+
+label {
+    display: block;
+    font-size: 120%;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 2vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 5.8vw;
+    }
+    font-weight: 450;
+}
+
+.no-discount label {
+    color: @bulma-primary;
+    font-weight: 800;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.discount-user label {
+    color: black;
+}
+
+.widget {
+    width: 60%;
+    @media (pointer:coarse) and (orientation:portrait) {
+        width: 80%;
+    }
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.select {
+    .widget;
+    margin-top: 2%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        height: 7vh;
+        font-size: 1.8vw;
+        margin-top: 4%;
+        margin-bottom: 4%;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        height: 4.4vh;
+        font-size: 4vw;
+        margin-top: 6%;
+        margin-bottom: 6%;
+    }
+}
+
+.select select {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    @media (pointer:coarse) and (orientation:landscape) {
+        padding-top: 0px;
+    }
+}
+
+.input {
+    .widget;
+    @media (pointer:coarse) and (orientation:landscape) {
+        height: 7vh;
+        font-size: 1.8vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        height: 4.4vh;
+        font-size: 5vw;
+    }
+}
+
+.button {
+    .widget;
+    position: relative;
+    z-index: 1;
+    font-size: 100%;
+    margin-top: 1%;
+    margin-bottom: 4%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 1.7vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 5.1vw;
+    }
+}
+
+.button:hover {
+    color: black;
+    font-weight: 450;
+    border: 2px solid black;
+    background-color: @background;
+}
+
+.discount .button {
+    margin-left: 30px;
+    width: auto;
+}
+
+.discount {
+    position: relative;
+    z-index: 1;
+    font-size: 120%;
+
+    margin-left: auto;
+    margin-right: auto;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 1.8vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 4.1vw;
+    }
+    font-weight: 450;
+}
+
+.discount .discount-data {
+    display: inline-block;
+    padding-top: 2%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        padding-top: 3%;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        padding-top: 2vh;
+    }
+}
+
+.form-group label {
+    font-size: 120%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 2vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 5.8vw;
+    }
+    font-weight: 450;
+}
+
+.error {
+    .widget;
+    position: relative;
+    z-index: 1;
+    font-size: 110%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 1.5vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 3.9vw;
+    }
+    font-weight: 600;
+    color: @error;
+    background-color: @bulma-primary;
+    border-radius: 2%;
+}
+
+ul {
+    background-color: @background;
+    margin-left: 1%;
+    margin-right: 1%;
+    border-radius: 20px;
+}
+
+li {
+    font-size: 130%;
+    //background-color: @bulma-primary;
+    margin-left: 1%;
+    margin-right: 1%;
+    border-radius: 15px;
+    @media (pointer:coarse) and (orientation:landscape) {
+        font-size: 1.8vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        font-size: 2.9vw;
+        font-size: 700;
+    }
+}
+
+a:hover {
+    color: black;
+}
+
+.message {
+    position: relative;
+    z-index: 1;
+    width: 60%;
+    @media (pointer:coarse) and (orientation:landscape) {
+        width: 80%;
+        font-size: 1.5vw;
+    }
+    @media (pointer:coarse) and (orientation:portrait) {
+        width: 95%;
+        font-size: 4vw;
+    }
+    margin-left: auto;
+    margin-right: auto;
+    animation: message .3s linear;
+}
+
+@keyframes message {
+    0% { transform: translateX(-100vw); }
 }

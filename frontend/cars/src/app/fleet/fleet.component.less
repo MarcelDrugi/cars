@@ -50,7 +50,7 @@
         visibility: visible;
         font-size: 5vw
     }
-    animation: left-shake 1.3s linear;
+    animation: left-shake 1.5s linear;
 }
 
 .select-form {
@@ -139,6 +139,7 @@
         margin-right: 15%;
         text-align: center;
     }
+    animation: car-position .6s linear;
 }
 
 .select select {
@@ -187,6 +188,7 @@
     position: relative;
     z-index: 2;
     background-color: @bulma-primary;
+    animation: table .6s linear;
 }
 .pricing table th {
     font-weight: 500;
@@ -208,9 +210,14 @@
 
 }
 
+@keyframes table {
+    0% { transform: translateX(100vw) }
+
+}
+
 @keyframes left-shake {
     0% { transform: translateY(-100vh); }
-    70% { transform: translateY(5vh); }
-    80% { transform: translateY(-3vh); } 
-    90% { transform: translateY(1vh); } 
+    70% { transform: translateY(7vh); }
+    80% { transform: translateY(-4vh); } 
+    90% { transform: translateY(2vh); } 
 }

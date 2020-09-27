@@ -80,6 +80,9 @@ ul, p, h1 {
 }
 .link a:hover {
     font-weight: 800;
+    img {
+        animation: img 1.6s infinite;
+    }
 }
 
 .gh {
@@ -120,4 +123,10 @@ img {
 
 @keyframes background-expand {
     0% { transform: translateX(200vw); }
+}
+
+@keyframes img {
+    0% { transform: translateY(0vw); }
+    50% { transform: translateY(-1vw); }
+    0% { transform: translateY(0vw); }
 }

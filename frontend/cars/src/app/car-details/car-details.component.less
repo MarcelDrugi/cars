@@ -86,6 +86,7 @@
   }
   position: relative;
   z-index: 1;
+  animation: calendar .4s linear;
 }
 
 .calendar input {
@@ -115,6 +116,7 @@
   position: relative;
   z-index: 1;
   text-align: center;
+  animation: calendar .4s linear;
 }
 
 .confirmation-button button {
@@ -153,6 +155,7 @@
   text-align: center;
   position: relative;
   z-index: 1;
+  animation: label 1.3s linear;
 }
 
 .car-horizontal {
@@ -441,4 +444,17 @@
 
 @keyframes message {
   0% { transform: translateX(-100vw); }
+}
+
+@keyframes calendar {
+  0% { transform: translateY(-100vh); }
+}
+
+@keyframes label {
+  0% { transform: translateY(-100vh); }
+  30% { transform: translateY(-100vh); }
+  60% { transform: translateY(3vh); }
+  70% { transform: translateY(-9vh); }
+  80% { transform: translateY(1vh); }
+  90% { transform: translateY(-4vh); }
 }

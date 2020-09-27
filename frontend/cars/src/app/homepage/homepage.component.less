@@ -117,6 +117,7 @@
     margin-left: 25%;
     //margin-bottom: 2vh;
   }
+  animation: button .3s linear;
 }
 
 .confirmation-button .button {
@@ -140,6 +141,7 @@
   }
   .widget-size;
   text-align-last:center;
+  animation: select .4s linear;
 }
 
 .select select {
@@ -195,6 +197,7 @@
     margin-top: 4vh;
   }
   text-align: center;
+  animation: titleY 1.3s linear;
 }
 
 .car-label .homepage-title {
@@ -230,6 +233,7 @@
     display: none;
   }
   text-align: center;
+  animation: fleet .7s linear;
 }
 
 .fleet-label .homepage-subtitle {
@@ -267,6 +271,7 @@
 .car {
   text-align: center;
   z-index: 1;
+  animation: car .7s linear;
 }
 
 .car img {
@@ -322,4 +327,27 @@
 
 @keyframes message {
   0% { transform: translateX(-100vw); }
+}
+
+@keyframes car {
+  0% { transform: translateX(-100vw); }
+}
+
+@keyframes fleet {
+  0% { transform: translateX(100vw); }
+}
+
+@keyframes titleY {
+  0% { transform: translateY(-100vh); }
+  70% { transform: translateY(5vh); }
+  80% { transform: translateY(-3vh); } 
+  90% { transform: translateY(1vh); } 
+}
+
+@keyframes select {
+  0% { transform: translateY(-8vh); }
+}
+
+@keyframes button {
+  0% { transform: translateY(8vh); }
 }

@@ -35,6 +35,10 @@ export class AddDiscountComponent implements OnInit {
   public sentNewDiscount = false;
   public responseError = false;
 
+  // messages switches
+  public discountCreated = false;
+  public discountDeleted = false;
+
   constructor(
     private discountService: DiscountService,
     private accDataService: AccDataService,
@@ -138,6 +142,8 @@ export class AddDiscountComponent implements OnInit {
       },
       () => {
         this.getDiscounts();
+        this.discountCreated = true;
+        window.scrollTo(0, 0);
       }
     );
   }
@@ -166,6 +172,8 @@ export class AddDiscountComponent implements OnInit {
       },
       () => {
         this.getDiscounts();
+        this.discountDeleted = true;
+        window.scrollTo(0, 0);
       }
     );
   }
@@ -185,6 +193,11 @@ export class AddDiscountComponent implements OnInit {
         }
       });
     });
+  }
+
+  public disableWarning(): void {
+    this.discountCreated = false;
+    this.discountDeleted = false;
   }
 
   ngOnInit(): void {
