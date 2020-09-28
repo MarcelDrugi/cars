@@ -35,13 +35,6 @@
     <div class="car-horizontal columns">
         <div class="column is-5 photo">
             <img src={{car.img}}>
-        </div>
-        <div class="column is-7 info">
-            <div class="info-up">
-                <div class="background"></div>
-                <div *ngIf="car" class="car-name"> {{car.brand}} {{car.model}}</div>
-                <div *ngIf="car" class="car-description"> {{car.description}}</div>
-            </div>
             <div class="pricing">
                 <div class="pricing-info"> CENNIK:</div>
                 <table class="table">
@@ -67,6 +60,13 @@
                 </table>
             </div>
         </div>
+        <div class="column is-7 info">
+            <div class="info-up">
+                <div class="background"></div>
+                <div *ngIf="car" class="car-name"> {{car.brand}} {{car.model}}</div>
+                <div *ngIf="car" class="car-description" [innerHTML]="car.description"> </div>
+            </div>
+        </div>
     </div>
 
     <div class="car-vertical">
@@ -77,7 +77,7 @@
             <div class="info-up">
                 <div class="background"></div>
                 <div *ngIf="car" class="car-name"> {{car.brand}} {{car.model}}</div>
-                <div *ngIf="car" class="car-description"> {{car.description}}</div>
+                <div *ngIf="car" class="car-description" [innerHTML]="car.description"> </div>
             </div>
             <div class="pricing">
                 <div class="pricing-info"> CENNIK:</div>

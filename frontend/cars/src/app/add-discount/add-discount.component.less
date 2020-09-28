@@ -2,6 +2,30 @@
 @bulma-primary: hsl(171, 100%, 41%);
 @error: hsl(0, 47%, 59%);
 
+::ng-deep body {
+    z-index: -1;
+    @media (orientation: landscape) and (max-width: 1922px) {
+      background-image: url(/assets/static/profile1.jpg);
+      background-position: center;
+      background-attachment: fixed;
+    }
+    @media (orientation: landscape) and (min-width: 1921px) {
+      background-image: url(/assets/static/profile2.jpg);
+      background-position: center;
+      background-attachment: fixed;
+    }
+    @media (orientation:portrait) and (max-height: 1922px) {
+      background-image: url(/assets/static/profile3.jpg);
+      background-position: center;
+      background-attachment: fixed;
+    }
+    @media (orientation:portrait) and (min-height: 1922px) {
+      background-image: url(/assets/static/profile4.jpg);
+      background-position: center;
+      background-attachment: fixed;
+    }
+}
+
 input, label, select, button, li {
     position: relative;
     z-index: 1;

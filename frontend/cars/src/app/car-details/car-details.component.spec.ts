@@ -9,6 +9,9 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Pricing } from '../models/pricing.model';
+import { Segment } from '../models/segment.model';
+import { Car } from '../models/car.model';
 
 describe('CarDetailsComponent', () => {
   let component: CarDetailsComponent;
@@ -30,13 +33,18 @@ describe('CarDetailsComponent', () => {
   }));
 
   beforeEach(() => {
-    history.pushState({carId: 1}, '', '')
     fixture = TestBed.createComponent(CarDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
+  beforeEach(() => {
+    let car: Car = {id: 0, brand: 'someBrand', model: 'someModel', reg_number: 'abcde123', description: 'some description', segment: 0, img: null};
+    window.history.pushState({car: car}, '', '');
+  });
+
   it('should create', () => {
+
     expect(component).toBeTruthy();
   });
 

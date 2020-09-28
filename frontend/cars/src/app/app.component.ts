@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AccDataService } from './shared/services/acc-data.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'rental-root',
@@ -22,7 +23,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   // loading bar switch
   public pageLoader: boolean;
 
-  constructor(private accDataService: AccDataService, private router: Router) { this.employee = false, this.pageLoader = true }
+  constructor(private accDataService: AccDataService, private router: Router, private cdRef:ChangeDetectorRef) { this.employee = false, this.pageLoader = true }
 
   public logOut() {
     this.accDataService.setToken('');
@@ -65,5 +66,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public ngAfterViewInit(): void {
     this.pageLoader = false;
+    this.cdRef.detectChanges();
   }
 }

@@ -4,6 +4,7 @@ import { LogService } from '../services/log.service';
 import { FormBuilder } from '@angular/forms';
 import { AccDataService } from '../shared/services/acc-data.service';
 import { HttpClient } from '@angular/common/http';
+import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 describe('LogComponent', () => {
@@ -12,6 +13,7 @@ describe('LogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
       declarations: [LogComponent],
       providers: [
         {

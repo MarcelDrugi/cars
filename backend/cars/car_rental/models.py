@@ -63,7 +63,7 @@ class PriceLists(models.Model):
 
 class Segments(models.Model):
     name = models.CharField(
-        max_length=16,
+        max_length=32,
         help_text='Select type of car'
     )
     pricing = models.ForeignKey(

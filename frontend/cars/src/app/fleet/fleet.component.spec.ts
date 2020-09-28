@@ -4,7 +4,29 @@ import { FleetComponent } from './fleet.component';
 import { GetPublicDataService } from '../services/get-public-data.service';
 import { AccDataService } from '../shared/services/acc-data.service';
 import { HttpClient } from '@angular/common/http';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { Segment } from '../models/segment.model';
+import { Pricing } from '../models/pricing.model';
+import { Car } from '../models/car.model';
+
+class MockPublicService {
+  public pricing: Pricing = {id: 0, hour:5, day: 10, week:20};
+  public segment: Segment = {id: 0, name: 'someName', pricing: this.pricing};
+
+  public getSegment(): Observable<any> {
+    return of([this.segment, this.segment]);
+  }
+  
+  public car: Car = {id: 0, brand: 'someBrand', model: 'someModel', reg_number: 'abcde123', description: 'some description', segment: 0, img: null};
+
+  public getCars(): Observable<Array<Car>> {
+    return of([this.car, this.car]);
+  }
+  
+  public getCar(carId: number): Observable<Car> {
+    return of(this.car);
+  }
+}
 
 describe('FleetComponent', () => {
   let component: FleetComponent;
@@ -13,9 +35,16 @@ describe('FleetComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ FleetComponent ],
-      providers: [GetPublicDataService, AccDataService, { provide: HttpClient, useValue: { post: () => of([{ }]), get: () => of([{ }])} },]
+      providers: [{ provide: GetPublicDataService, useValue: MockPublicService }, AccDataService, { provide: HttpClient, useValue: { post: () => of([{ }]), get: () => of([{ }])} },]
     })
     .compileComponents();
+
+    TestBed.overrideComponent(FleetComponent, {
+      set: {
+        providers: [{ provide: GetPublicDataService, useClass: MockPublicService }]
+      }
+    });
+
   }));
 
   beforeEach(() => {
@@ -38,13 +67,13 @@ describe('FleetComponent', () => {
     expect(getSegments).toHaveBeenCalled();
   });
 
-  it('ngOnInit should assign a value 1 to selectedSegment', () => {
+  it('ngOnInit should assign a value 0 to selectedSegment', () => {
     component.ngOnInit();
-    expect(component.selectedSegment).toEqual(1);
+    expect(component.selectedSegment).toEqual(0);
   });
 
   it('checkSegment() should assign a value to selectedSegment', () => {
-    const someSegmentId = 7;
+    const someSegmentId = 0;
     const fakeEvent = {target: {value: someSegmentId}}
 
     component.checkSegment(fakeEvent)

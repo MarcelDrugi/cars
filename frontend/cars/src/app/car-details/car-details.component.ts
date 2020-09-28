@@ -17,7 +17,6 @@ import { Segment } from '../models/segment.model';
 export class CarDetailsComponent implements OnInit {
 
   // data containers
-  //private carId: number;
   public car: Car;
   private terms: Array<Reservation>;
   public segment: Segment;
@@ -98,7 +97,6 @@ export class CarDetailsComponent implements OnInit {
     this.rangeError = false;
     this.loginError = false;
     this.allowError = false;
-    //window.scrollTo(0, 0);
   }
 
   public validData(): void {
@@ -121,6 +119,9 @@ export class CarDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (window.history.state.car == null) {
+      this.router.navigateByUrl('');
+    }
     this.car = window.history.state.car;
     this.segment = window.history.state.segment;
     this.getTerms(this.car.id);

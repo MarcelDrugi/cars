@@ -60,7 +60,7 @@ describe('AppComponent', () => {
   it('username should be equal username-variable ', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.username').textContent).toEqual('Jesteś zalogowany jako ' + username);
+    expect(compiled.querySelector('.username').textContent).toEqual('Witaj ' + username + '!');
   });
 
   it('calling logOut() should call 3 AccDataService methods: setUsername, setToken, setClient', () => {
@@ -94,7 +94,7 @@ describe('AppComponent', () => {
     component.ngOnInit();
     fixture.detectChanges();
     const displayUsername = fixture.debugElement.query(By.css('.username')).nativeElement;
-    expect(displayUsername.textContent).toBe('Jesteś zalogowany jako ' + subscribedUsername);
+    expect(displayUsername.textContent).toBe('Witaj ' + subscribedUsername + '!');
   });
 
 });

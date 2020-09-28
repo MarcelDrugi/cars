@@ -96,9 +96,9 @@ describe('AddSegmentComponent', () => {
     prepareSegmentSelection();
 
     expect(component.existingSegmentForm.value.name).toEqual(segment.name);
-    expect(component.existingSegmentForm.value.hour).toEqual(segment.pricing.hour);
-    expect(component.existingSegmentForm.value.day).toEqual(segment.pricing.day);
-    expect(component.existingSegmentForm.value.week).toEqual(segment.pricing.week);
+    expect(component.existingSegmentForm.value.hour).toEqual(segment.pricing.hour.toFixed(2));
+    expect(component.existingSegmentForm.value.day).toEqual(segment.pricing.day.toFixed(2));
+    expect(component.existingSegmentForm.value.week).toEqual(segment.pricing.week.toFixed(2));
   });
 
   it('deleteSegment() should reset existingSegmentForm', () => {
