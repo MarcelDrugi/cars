@@ -24,6 +24,7 @@ export class LogService {
     const httpOptions = {
       headers,
     };
+    console.log(logUser);
     return this.http.post<Token>(url, logUser, httpOptions);
   }
 
