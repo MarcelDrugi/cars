@@ -2,10 +2,32 @@
 
 
 ::ng-deep body {
-    background-image: url(/assets/static/location1.jpg);
-    background-position: center;
-    background-attachment: fixed;
-}
+    @media (orientation: landscape) and (max-width: 1922px) {
+      background-image: url(/assets/static/homepageI.jpg);
+      background-position: center;
+      background-attachment: fixed;
+    }
+    @media (orientation: landscape) and (min-width: 1921px) and (max-width: 2600px) {
+      background-image: url(/assets/static/homepageJ.jpg);
+      background-attachment: fixed;
+    }
+    @media (orientation: landscape) and (min-width: 2601px) {
+      background-image: url(/assets/static/homepageK.jpg);
+      background-attachment: fixed;
+    }
+    @media (orientation:portrait) and (max-height: 1922px) {
+      background-image: url(/assets/static/homepageL.jpg);
+      background-attachment: fixed;
+    }
+    @media (orientation:portrait) and (min-height: 1922px)  and (max-height: 2600px) {
+      background-image: url(/assets/static/homepageM.jpg);
+      background-attachment: fixed;
+    }
+    @media (orientation:portrait) and (min-height: 2601px) {
+      background-image: url(/assets/static/homepageN.jpg);
+      background-attachment: fixed;
+    }
+  }
 
 
 .horizontal {

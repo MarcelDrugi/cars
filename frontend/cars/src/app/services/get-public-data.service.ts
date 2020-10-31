@@ -21,7 +21,7 @@ export class GetPublicDataService {
     const url = this.backendInfoService.absolutePath + 'segments';
     const token = this.accDataService.getToken();
     let headers: HttpHeaders;
-    if (token !== 'null' && token !== '') {
+    if (token && token != 'null' && token !== '') {
       headers = new HttpHeaders({
         Authorization: 'JWT ' + token
       });
@@ -39,7 +39,7 @@ export class GetPublicDataService {
     const url = this.backendInfoService.absolutePath + 'cars';
     const token = this.accDataService.getToken();
     let headers: HttpHeaders;
-    if (token !== 'null' && token !== '') {
+    if (token && token != 'null' && token !== '') {
       headers = new HttpHeaders({
         Authorization: 'JWT ' + token
       });
@@ -57,7 +57,7 @@ export class GetPublicDataService {
     const url = this.backendInfoService.absolutePath + 'cars/' + carId;
     const token = this.accDataService.getToken();
     let headers: HttpHeaders;
-    if (token !== 'null' && token !== '') {
+    if (token && token != 'null' && token !== '') {
       headers = new HttpHeaders({
         Authorization: 'JWT ' + token
       });
@@ -75,7 +75,7 @@ export class GetPublicDataService {
     const url = this.backendInfoService.absolutePath + 'terms/' + carId;
     const token = this.accDataService.getToken();
     let headers: HttpHeaders;
-    if (token !== 'null' && token !== '') {
+    if (token && token != 'null' && token !== '') {
       headers = new HttpHeaders({
         Authorization: 'JWT ' + token
       });

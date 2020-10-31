@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterEvent } from '@angular/router';
 import { AccDataService } from './shared/services/acc-data.service';
 import { ChangeDetectorRef } from '@angular/core';
 
@@ -21,9 +21,32 @@ export class AppComponent implements OnInit, AfterViewInit {
   public globalClass: string;
 
   // loading bar switch
-  public pageLoader: boolean;
+  public pageLoader = true;
 
-  constructor(private accDataService: AccDataService, private router: Router, private cdRef:ChangeDetectorRef) { this.employee = false, this.pageLoader = true }
+  constructor(private accDataService: AccDataService, private router: Router, private cdRef:ChangeDetectorRef) {
+    this.employee = false
+
+    router.events.subscribe((event: RouterEvent) => {
+      this.navigationInterceptor(event)
+    })
+  }
+
+  navigationInterceptor(event: RouterEvent): void {
+    if (event instanceof NavigationStart) {
+      this.pageLoader = true;
+    }
+    if (event instanceof NavigationEnd) {
+      this.pageLoader = false;
+    }
+
+    // Set loading state to false in both of the below events to hide the spinner in case a request fails
+    if (event instanceof NavigationCancel) {
+      this.pageLoader = false;
+    }
+    if (event instanceof NavigationError) {
+      this.pageLoader = false;
+    }
+  }
 
   public logOut() {
     this.accDataService.setToken('');
@@ -31,7 +54,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.accDataService.setClient('');
     this.router.navigateByUrl('');
   }
+
   public ngOnInit(): void {
+
     this.accDataService.getUsername().subscribe((username: string) => {
       this.username = username;
     });
@@ -44,7 +69,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
 
-    console.log(this.accDataService.getToken());
     if (window.innerHeight > window.innerWidth) {
       this.mobile = true;
     }

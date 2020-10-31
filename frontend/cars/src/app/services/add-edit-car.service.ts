@@ -64,7 +64,6 @@ export class AddEditCarService {
   }
 
   public updateSegment(segmentData: Segment): Observable<Token> {
-    console.log('ID: ', segmentData.id)
     const url = this.backendInfoService.absolutePath + 'segments/' + segmentData.id;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',

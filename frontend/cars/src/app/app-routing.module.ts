@@ -15,6 +15,7 @@ import { AddDiscountComponent } from './add-discount/add-discount.component';
 import { SuccessComponent } from './success/success.component';
 import { FailComponent } from './fail/fail.component';
 import { ClientProfileComponent } from './client-profile/client-profile.component';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 
 const routes: Routes = [
@@ -37,7 +38,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'})],
+  exports: [RouterModule],
+  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}]
 })
 export class AppRoutingModule { }

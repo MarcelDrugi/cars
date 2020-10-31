@@ -55,14 +55,10 @@ export class LogComponent implements OnInit {
         if (error.status === 400) {
           this.usernamePasswordError = true;
         }
-        else {
-          console.log(error);
-        }
       },
       () => {
         this.logService.getClient(this.logUser.username).subscribe(
           resp => {
-            console.log(resp)
             this.accDataService.setClient(resp.client);
             this.user = resp.client;
             this.router.navigateByUrl('');

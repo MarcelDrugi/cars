@@ -16,7 +16,6 @@ export class AccDataService {
   }
 
   public getToken(): string {
-    console.log(localStorage.getItem('token'))
     return localStorage.getItem('token');
   }
 
@@ -26,7 +25,6 @@ export class AccDataService {
       this.setClient('');
     }
     localStorage.setItem('token', token);
-    console.log(localStorage.getItem('token'))
   }
 
   public setUsername(username: string): void {

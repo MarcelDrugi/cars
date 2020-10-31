@@ -41,7 +41,6 @@ export class CarDetailsComponent implements OnInit {
     this.getPublicDataService.getTerms(carId).subscribe(
       (terms: Array<Reservation>) => {
         this.terms = terms;
-        console.log(this.terms)
       },
       error => {
         console.log(error);
@@ -56,7 +55,6 @@ export class CarDetailsComponent implements OnInit {
     this.getPublicDataService.getCar(carId).subscribe(
       (car: Car) => {
         this.car = car;
-        console.log('mój samochód', this.car)
       },
       error => {
         console.log(error);

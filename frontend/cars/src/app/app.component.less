@@ -570,7 +570,7 @@
 
 .ninety-five-per {
     height: 0; 
-    background-image: unset;
+    background-image: none !important;
     min-height: 0;
 }
 
@@ -583,7 +583,7 @@
         83% { height: 100vh }
         90% {
             background-image: url('/assets/static/heroM.jpg');
-            .ninety-per
+            .ninety-per;
         }
         95.1% { .ninety-five-per }
         100% { height: @herosize; min-height: 0px; }

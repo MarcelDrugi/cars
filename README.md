@@ -1,5 +1,7 @@
 # CAR RENTAL
-#### Pre-production. The application is in development (70% complete).
+#### Pre-production. The application is in development (80% complete).
+#### live: http://crrental.s3-website-eu-west-1.amazonaws.com
+#### API doc: http://crental.pythonanywhere.com/redoc
 ## Running the application in development mode
 #### To start the app, follow the steps below.
 ###### 1. Clone repo:

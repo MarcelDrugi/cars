@@ -59,7 +59,6 @@ export class RegComponent implements OnInit {
   private postRegData(): void {
     this.regService.postRegData(this.clientData).subscribe(
       (post: Register) => {
-        console.log(post);
         this.router.navigateByUrl('signin');
       },
       error => {
@@ -91,8 +90,6 @@ export class RegComponent implements OnInit {
     };
 
     this.img = img.target['files'].item(0);
-    console.log('img: ', this.img)
-
 
     if (this.img.size > this.maxSize) {
       this.sizeError = true;

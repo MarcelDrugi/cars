@@ -79,7 +79,6 @@ export class ClientProfileComponent implements OnInit {
       this.avatar = this.basicAvatar;
       this.client = parsedClient.user;
       this.clientId = parsedClient.id;
-      console.log('TESTY!!!!!!', this.clientId)
     });
   }
 

@@ -8,6 +8,6 @@ export class BackendInfoService {
   public absolutePath: string;
 
   constructor() {
-    this.absolutePath = 'http://127.0.0.1:8000/';
+    this.absolutePath ='http://127.0.0.1:8000/';
   }
 }
