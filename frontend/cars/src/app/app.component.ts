@@ -23,29 +23,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   // loading bar switch
   public pageLoader = true;
 
-  constructor(private accDataService: AccDataService, private router: Router, private cdRef:ChangeDetectorRef) {
+  constructor(private accDataService: AccDataService, private router: Router, private cdRef:ChangeDetectorRef, ) {
     this.employee = false
-
-    router.events.subscribe((event: RouterEvent) => {
-      this.navigationInterceptor(event)
-    })
-  }
-
-  navigationInterceptor(event: RouterEvent): void {
-    if (event instanceof NavigationStart) {
-      this.pageLoader = true;
-    }
-    if (event instanceof NavigationEnd) {
-      this.pageLoader = false;
-    }
-
-    // Set loading state to false in both of the below events to hide the spinner in case a request fails
-    if (event instanceof NavigationCancel) {
-      this.pageLoader = false;
-    }
-    if (event instanceof NavigationError) {
-      this.pageLoader = false;
-    }
   }
 
   public logOut() {
@@ -90,6 +69,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   public ngAfterViewInit(): void {
     this.pageLoader = false;
+
     this.cdRef.detectChanges();
   }
 }
